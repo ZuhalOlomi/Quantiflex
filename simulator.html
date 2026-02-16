@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMG Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background: #0e1013; color: #50fa7b; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .card { background: #1c1e26; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 80%; margin-top: 50px; }
+        #status { font-size: 0.8em; color: #ff79c6; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div id="status">WAITING FOR ESP32...</div>
+        <h2 style="margin: 0 0 20px 0;">Simulated Signal Feed</h2>
+        <canvas id="emgChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('emgChart').getContext('2d');
+        const status = document.getElementById('status');
+        
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Signal Strength',
+                    borderColor: '#50fa7b',
+                    backgroundColor: 'rgba(80, 250, 123, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    data: [],
+                    fill: true,
+                    tension: 0.4 // Makes the fake wave look smooth
+                }]
+            },
+            options: {
+                animation: false,
+                scales: {
+                    x: { display: false },
+                    y: { min: 0, max: 4095 }
+                }
+            }
+        });
+
+        const gateway = `ws://192.168.4.1/ws`;
+        let socket = new WebSocket(gateway);
+
+        socket.onopen = () => status.innerText = "● SYSTEM ONLINE (Simulating Data)";
+        socket.onclose = () => status.innerText = "○ DISCONNECTED";
+        
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            chart.data.labels.push(data.t);
+            chart.data.datasets[0].data.push(data.v);
+
+            if (chart.data.labels.length > 50) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+            chart.update();
+        };
+    </script>
+</body>
+</html>
