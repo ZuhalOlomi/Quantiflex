@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTBiome Knee Sleeve - Data Analysis</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>UTBiome Knee Sleeve</h1>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="analysis.html" class="active">Analysis</a></li>
+                <li><a href="video.html">Video Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="analysis-hero">
+            <h2>Patient Progress Analytics</h2>
+            <p>Comprehensive data visualization for informed clinical decisions</p>
+        </section>
+
+        <section class="charts-section">
+            <div class="chart-container">
+                <h3>Range of Motion Progress</h3>
+                <canvas id="romChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Session Completion Rate</h3>
+                <canvas id="completionChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Pain Level Trends</h3>
+                <canvas id="painChart"></canvas>
+            </div>
+        </section>
+
+        <section class="data-summary">
+            <h2>Patient Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Current ROM</h3>
+                    <p class="metric-value">92°</p>
+                    <p class="metric-change">+15° from baseline</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Adherence Rate</h3>
+                    <p class="metric-value">85%</p>
+                    <p class="metric-change">Excellent compliance</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Average Pain</h3>
+                    <p class="metric-value">2/10</p>
+                    <p class="metric-change">-4 points improvement</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Treatment Duration</h3>
+                    <p class="metric-value">6 weeks</p>
+                    <p class="metric-change">4 weeks remaining</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const romCtx = document.getElementById('romChart').getContext('2d');
+
+            const romChart = new Chart(romCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Live ROM Data',
+                        data: [],
+                        borderColor: '#4d82ad',
+                        backgroundColor: 'rgba(77, 130, 173, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 4095   // ESP32 ADC max
+                        }
+                    }
+                }
+            });
+
+            function fetchData() {
+                fetch('/data')
+                    .then(response => response.text())
+                    .then(value => {
+
+                        const now = new Date().toLocaleTimeString();
+
+                        romChart.data.labels.push(now);
+                        romChart.data.datasets[0].data.push(parseInt(value));
+
+                        // Keep last 20 points
+                        if (romChart.data.labels.length > 20) {
+                            romChart.data.labels.shift();
+                            romChart.data.datasets[0].data.shift();
+                        }
+
+                        romChart.update();
+                    });
+            }
+
+            setInterval(fetchData, 200);
+        });
+    </script>
+</body>
+
+</html>

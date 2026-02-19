@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login | UTBiome</title>
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -22,34 +25,66 @@
     </header>
 
     <main>
-
         <section class="contact-section">
             <h2>User Login</h2>
             <h3>One step away from accessing data-driven insights</h3>
 
-            <div class=" gs_reveal_fromLeft contact-box">
-                <form>
+            <div id="successNotification" class="success-notification" style="display: none;">
+                <div class="success-content">
+                    <span class="success-icon">✓</span>
+                    <div>
+                        <h3>Welcome back!</h3>
+                        <p id="successMessage">You have successfully logged in</p>
+                    </div>
+                </div>
+            </div>
 
-                    <label for="name">Username</label>
-                    <input type="text" id="name" name="name" placeholder="example@email.com" required>
+            <div class="gs_reveal_fromLeft contact-box">
+                <form id="authForm">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="example@email.com" required>
 
-                    <label for="email">Password</label>
-                    <input type="email" id="email" name="email" placeholder="***********" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="***********" required>
 
-                    <button type="button" onclick="login()">Log In</button>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="button" onclick="login()" style="flex: 1;">Log In</button>
+                        <button type="button" onclick="signup()" style="flex: 1; background-color: #555;">Sign Up</button>
+                    </div>
 
+                    <div style="text-align: center; margin: 20px 0; color: #888; font-size: 0.9rem; border-top: 1px solid #eee; line-height: 0.1em;">
+                        <span style="background:#fff; padding:0 10px;">OR</span>
+                    </div>
+
+                    <div id="g_id_onload"
+                         data-client_id="636243090875-5go88q82a3qodkaqtbmkti6vmg83vee2.apps.googleusercontent.com"
+                         data-callback="handleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+
+                    <div class="g_id_signin" 
+                         data-type="standard" 
+                         data-shape="rectangular" 
+                         data-theme="outline" 
+                         data-text="signin_with" 
+                         data-size="large" 
+                         data-logo_alignment="left"
+                         data-width="100%">
+                    </div>
                 </form>
             </div>
         </section>
-
     </main>
 
     <footer>
         <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <script>
-        // GSAP Scroll Animation
+        // Your existing GSAP Scroll Animation code
         function animateFrom(elem, direction) {
             direction = direction || 1;
             var x = 0, y = direction * 100;
@@ -68,7 +103,7 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
-            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+            gsap.utils.toArray(".gs_reveal_fromLeft").forEach(function (elem) {
                 hide(elem);
                 ScrollTrigger.create({
                     trigger: elem,
@@ -82,5 +117,4 @@
 
     <script src="auth.js"></script>
 </body>
-
 </html>

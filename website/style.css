@@ -21,6 +21,14 @@ body {
     align-items: center;
     animation: fadeIn 0.8s ease-out;
 }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-card {
+    transition: all 0.3s ease-in-out;
+}
 
 @keyframes fadeIn {
     from {
@@ -694,6 +702,58 @@ canvas {
 
 .contact-box button:hover {
     background: #3a6788;
+}
+
+.success-notification {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.4s ease-out;
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.success-icon {
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.success-notification h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+}
+
+.success-notification p {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 footer {
