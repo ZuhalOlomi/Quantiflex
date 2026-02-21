@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UTBiome Knee Sleeve - Data Analysis</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Internal CSS for the controls in case your style.css is missing them */
+        .controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #f4f7f6; border-radius: 8px; }
+        button { padding: 10px 25px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; margin: 0 10px; transition: 0.3s; }
+        .btn-start { background-color: #28a745; color: white; }
+        .btn-stop { background-color: #dc3545; color: white; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .status-online { color: #28a745; font-weight: bold; margin-left: 15px; }
+        .status-offline { color: #666; font-weight: bold; margin-left: 15px; }
+    </style>
 </head>
 
 <body>
@@ -28,107 +37,119 @@
             <p>Comprehensive data visualization for informed clinical decisions</p>
         </section>
 
+        <section class="controls">
+            <button id="startBtn" class="btn-start">Start Tracking</button>
+            <button id="stopBtn" class="btn-stop" disabled>Stop Tracking</button>
+            <span id="statusIndicator" class="status-offline">System Idle</span>
+        </section>
+        
         <section class="charts-section">
             <div class="chart-container">
                 <h3>Range of Motion Progress</h3>
                 <canvas id="romChart"></canvas>
             </div>
-
-            <div class="chart-container">
-                <h3>Session Completion Rate</h3>
-                <canvas id="completionChart"></canvas>
-            </div>
-
-            <div class="chart-container">
-                <h3>Pain Level Trends</h3>
-                <canvas id="painChart"></canvas>
-            </div>
-        </section>
+            </section>
 
         <section class="data-summary">
             <h2>Patient Summary</h2>
             <div class="summary-grid">
                 <div class="summary-card">
                     <h3>Current ROM</h3>
-                    <p class="metric-value">92°</p>
-                    <p class="metric-change">+15° from baseline</p>
-                </div>
-                <div class="summary-card">
-                    <h3>Adherence Rate</h3>
-                    <p class="metric-value">85%</p>
-                    <p class="metric-change">Excellent compliance</p>
-                </div>
-                <div class="summary-card">
-                    <h3>Average Pain</h3>
-                    <p class="metric-value">2/10</p>
-                    <p class="metric-change">-4 points improvement</p>
-                </div>
-                <div class="summary-card">
-                    <h3>Treatment Duration</h3>
-                    <p class="metric-value">6 weeks</p>
-                    <p class="metric-change">4 weeks remaining</p>
+                    <p id="liveValue" class="metric-value">0°</p>
+                    <p class="metric-change">Live Input</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
-    </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
+            // 1. SELECT ELEMENTS
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const status = document.getElementById('statusIndicator');
+            const liveValDisplay = document.getElementById('liveValue');
             const romCtx = document.getElementById('romChart').getContext('2d');
 
+            // 2. STATE VARIABLES
+            let isTracking = false;
+            let dataFetchInterval = null;
+
+            // 3. INITIALIZE CHART
             const romChart = new Chart(romCtx, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [{
-                        label: 'Live ROM Data',
+                        label: 'Live ROM (ADC)',
                         data: [],
                         borderColor: '#4d82ad',
                         backgroundColor: 'rgba(77, 130, 173, 0.1)',
-                        tension: 0.3,
+                        tension: 0.4,
                         fill: true
                     }]
                 },
                 options: {
                     responsive: true,
                     animation: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 4095   // ESP32 ADC max
-                        }
-                    }
+                    scales: { y: { beginAtZero: true, max: 4095 } }
                 }
             });
 
-            function fetchData() {
+            // 4. FETCH LOGIC
+            function updateData() {
+                if (!isTracking) return;
+
                 fetch('http://192.168.4.1/data')
                     .then(response => response.text())
                     .then(value => {
+                        const numericValue = parseInt(value);
+                        if (isNaN(numericValue)) return;
 
-                        const now = new Date().toLocaleTimeString();
+                        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
+                        // Update Chart
                         romChart.data.labels.push(now);
-                        romChart.data.datasets[0].data.push(parseInt(value));
+                        romChart.data.datasets[0].data.push(numericValue);
+                        
+                        // Update Summary Metric
+                        liveValDisplay.textContent = numericValue + " pts";
 
-                        // Keep last 20 points
+                        // Maintain rolling window (20 points)
                         if (romChart.data.labels.length > 20) {
                             romChart.data.labels.shift();
                             romChart.data.datasets[0].data.shift();
                         }
-
                         romChart.update();
+                    })
+                    .catch(err => {
+                        console.warn("ESP32 not reachable. Check connection to ESP32 Wi-Fi.");
                     });
             }
 
-            setInterval(fetchData, 200);
+            // 5. BUTTON EVENT LISTENERS
+            startBtn.onclick = function() {
+                isTracking = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                status.textContent = "Live Tracking...";
+                status.className = "status-online";
+                
+                // Start the interval only when clicked
+                dataFetchInterval = setInterval(updateData, 200);
+            };
+
+            stopBtn.onclick = function() {
+                isTracking = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                status.textContent = "System Idle";
+                status.className = "status-offline";
+                
+                // Clear the interval to save browser resources
+                clearInterval(dataFetchInterval);
+            };
         });
     </script>
 </body>
-
 </html>
