@@ -2,6 +2,8 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
 
+#define RGB_BUILTIN 21
+
 const char* ssid = "UTBiome_Knee";
 const char* password = "password123";
 const int sensorPin = 3;
@@ -32,7 +34,21 @@ void setup() {
 
   // WebSocket event handler
   ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
-    if (type == WS_EVT_CONNECT) client->text("Connected");
+    if (type == WS_EVT_CONNECT) {
+  client->text("Connected");
+}
+else if (type == WS_EVT_DATA) {
+  String msg = "";
+  for (size_t i = 0; i < len; i++) msg += (char)data[i];
+
+  if (msg == "start") {
+    trackingActive = true;
+  } else if (msg == "stop") {
+    trackingActive = false;
+  }
+
+  updateHardwareFeedback();
+}
   });
   server.addHandler(&ws);
 
