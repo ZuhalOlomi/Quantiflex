@@ -1,59 +1,47 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
+#include <AsyncTCP.h>
 
 const char* ssid = "UTBiome_Knee";
 const char* password = "password123";
-
 const int sensorPin = 3;
 bool trackingActive = false;
 
 AsyncWebServer server(80);
+AsyncWebSocket ws("/ws"); // Speed fix: WebSocket
 
-// Helper function to set the onboard RGB LED color
 void updateHardwareFeedback() {
   if (trackingActive) {
-    // Green: (Pin, Red, Green, Blue)
-    neopixelWrite(RGB_BUILTIN, 0, 64, 0); 
-    Serial.println("LED: Green (Tracking)");
+    neopixelWrite(RGB_BUILTIN, 0, 64, 0); // Green
   } else {
-    // Red: (Pin, Red, Green, Blue)
-    neopixelWrite(RGB_BUILTIN, 64, 0, 0); 
-    Serial.println("LED: Red (Idle)");
+    neopixelWrite(RGB_BUILTIN, 64, 0, 0); // Red
   }
 }
 
 void setup() {
+  // HEAT FIX: Lower CPU frequency to 80MHz (Standard is 240MHz)
+  setCpuFrequencyMhz(80); 
+  
   Serial.begin(115200);
-  
-  // No pinMode needed for neopixelWrite, it handles it internally
-  
-  // Initialize to Red (System Idle)
   updateHardwareFeedback();
 
   WiFi.softAP(ssid, password);
-  Serial.print("ESP32 IP: ");
-  Serial.println(WiFi.softAPIP());
+  
+  // HEAT FIX: Power Management for Wi-Fi
+  WiFi.setSleep(true); 
 
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-
-  server.on("/data", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (trackingActive) {
-      int sensorValue = analogRead(sensorPin);
-      request->send(200, "text/plain", String(sensorValue));
-    } else {
-      request->send(200, "text/plain", "OFF");
-    }
+  // WebSocket event handler
+  ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
+    if (type == WS_EVT_CONNECT) client->text("Connected");
   });
+  server.addHandler(&ws);
 
   server.on("/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
     if (request->hasParam("state")) {
       String state = request->getParam("state")->value();
       trackingActive = (state == "start");
-      updateHardwareFeedback(); 
+      updateHardwareFeedback();
       request->send(200, "text/plain", "OK");
-    } else {
-      request->send(400, "text/plain", "Missing State");
     }
   });
 
@@ -61,5 +49,15 @@ void setup() {
 }
 
 void loop() {
-  // The web server runs in the background
+  ws.cleanupClients();
+  
+  if (trackingActive) {
+    // Read and send immediately
+    int val = analogRead(sensorPin);
+    ws.textAll(String(val));
+    delay(20); // ~50Hz sampling is usually enough for smooth visual EMG
+  } else {
+    // HEAT FIX: Slow down the loop when idle
+    delay(100); 
+  }
 }
