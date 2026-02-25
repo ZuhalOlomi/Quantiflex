@@ -269,11 +269,26 @@
                 };
             }
 
+            function filterGlitches(values) {
+                // Filter out hardware glitches (values >= 4000)
+                const GLITCH_THRESHOLD = 4000;
+                return values.filter(v => v < GLITCH_THRESHOLD);
+            }
+
             function runAnalysis(isFromUpload = false, fileName = "") {
                 if (sessionData.length === 0) return;
 
-                const ch1Values = sessionData.map(d => d.v1);
-                const ch2Values = sessionData.map(d => d.v2);
+                // Filter glitches before analysis
+                let ch1Values = sessionData.map(d => d.v1);
+                let ch2Values = sessionData.map(d => d.v2);
+                
+                ch1Values = filterGlitches(ch1Values);
+                ch2Values = filterGlitches(ch2Values);
+
+                if (ch1Values.length === 0 || ch2Values.length === 0) {
+                    analyticsContent.innerHTML = `<p style="color:red;">No valid data after filtering glitches</p>`;
+                    return;
+                }
 
                 const peak1 = Math.max(...ch1Values);
                 const peak2 = Math.max(...ch2Values);
@@ -281,7 +296,7 @@
                 const avg2 = Math.round(ch2Values.reduce((a, b) => a + b) / ch2Values.length);
                 const duration = (sessionData.length * 0.02).toFixed(1); // 20ms delay
 
-                // Simple contraction count (based on Ch1)
+                // Simple contraction count (based on Ch1 filtered values)
                 let flexCount = 0;
                 for (let i = 1; i < ch1Values.length; i++) {
                     if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i - 1] <= FLEX_THRESHOLD) flexCount++;
@@ -349,9 +364,21 @@
                 runAnalysis();
             };
 
+            clearBtn.onclick = function () {
+                if (confirm("Delete all session history?")) {
+                    localStorage.removeItem('utbiome_history');
+                    renderHistory();
+                    analyticsContent.innerHTML = `<p style="color:#999">History cleared.</p>`;
+                }
+            };
+
             downloadBtn.onclick = function () {
+                // Filter glitches before downloading CSV
+                const GLITCH_THRESHOLD = 4000;
+                const filteredData = sessionData.filter(row => row.v1 < GLITCH_THRESHOLD && row.v2 < GLITCH_THRESHOLD);
+                
                 let csvContent = "data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2\n";
-                sessionData.forEach(row => { csvContent += `${row.time},${row.v1},${row.v2}\n`; });
+                filteredData.forEach(row => { csvContent += `${row.time},${row.v1},${row.v2}\n`; });
                 const link = document.createElement("a");
                 link.setAttribute("href", encodeURI(csvContent));
                 link.setAttribute("download", `UTBiome_Session_${Date.now()}.csv`);
