@@ -51,24 +51,11 @@
             border: none;
         }
 
-        .btn-start {
-            background: #28a745;
-            color: white;
-        }
+        .btn-start { background: #28a745; color: white; }
+        .btn-stop { background: #dc3545; color: white; }
+        .btn-clear { background: #6c757d; color: white; margin-left: auto; }
 
-        .btn-stop {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-clear {
-            background: #6c757d;
-            color: white;
-            margin-left: auto;
-        }
-
-        .btn-start:disabled,
-        .btn-stop:disabled {
+        .btn-start:disabled, .btn-stop:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
@@ -89,16 +76,8 @@
             border-bottom: 1px dashed #eee;
         }
 
-        .metric-label {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .metric-value {
-            font-weight: bold;
-            color: #4d82ad;
-            font-size: 1.1em;
-        }
+        .metric-label { color: #666; font-size: 0.9em; }
+        .metric-value { font-weight: bold; color: #4d82ad; font-size: 1.1em; }
 
         .upload-section {
             display: flex;
@@ -119,8 +98,7 @@
             margin-top: 15px;
         }
 
-        .history-table th,
-        .history-table td {
+        .history-table th, .history-table td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid #eee;
@@ -143,11 +121,8 @@
 
     <main>
         <section class="analysis-hero">
-
             <h2>Patient Progress Analytics</h2>
-
             <p>Comprehensive data visualization for informed clinical decisions</p>
-
         </section>
 
         <section class="upload-section">
@@ -163,7 +138,7 @@
         <div class="dashboard-grid">
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 style="margin:0">Live EMG Activity</h3>
+                    <h3 style="margin:0">Dual Channel EMG Activity</h3>
                     <div class="button-group">
                         <span id="statusIndicator" style="font-size: 0.8em; color: #888;">System Idle</span>
                         <button id="startBtn" class="btn-action btn-start">Start</button>
@@ -181,8 +156,7 @@
                     <p style="color:#999">No active session data.</p>
                 </div>
                 <button id="downloadCsvBtn" class="btn-action"
-                    style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download
-                    CSV</button>
+                    style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download CSV</button>
             </div>
         </div>
 
@@ -193,8 +167,8 @@
                     <thead>
                         <tr style="background:#f8fafc">
                             <th>Date</th>
-                            <th>Peak Intensity</th>
-                            <th>Avg Intensity</th>
+                            <th>Peak (Ch1/Ch2)</th>
+                            <th>Avg (Ch1/Ch2)</th>
                             <th>Contractions</th>
                             <th>Duration</th>
                         </tr>
@@ -217,26 +191,37 @@
             const csvFileInput = document.getElementById('csvFileInput');
             const romCtx = document.getElementById('romChart').getContext('2d');
 
-            let sessionData = [];
+            let sessionData = []; // Now stores {time, v1, v2}
             let isTracking = false;
             let socket;
-            const ESP_IP = "192.168.4.1"; // No http:// for WebSocket
+            const ESP_IP = "192.168.4.1"; 
             const FLEX_THRESHOLD = 1500;
 
-            // --- Chart Setup ---
+            // --- Chart Setup with TWO Datasets ---
             const romChart = new Chart(romCtx, {
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'EMG Amplitude',
-                        data: [],
-                        borderColor: '#4d82ad',
-                        backgroundColor: 'rgba(77, 130, 173, 0.1)',
-                        tension: 0.3,
-                        pointRadius: 0,
-                        fill: true
-                    }]
+                    datasets: [
+                        {
+                            label: 'Muscle 1 (GPIO 2)',
+                            data: [],
+                            borderColor: '#4d82ad',
+                            backgroundColor: 'rgba(77, 130, 173, 0.1)',
+                            tension: 0.3,
+                            pointRadius: 0,
+                            fill: true
+                        },
+                        {
+                            label: 'Muscle 2 (GPIO 3)',
+                            data: [],
+                            borderColor: '#e67e22', // Orange contrast
+                            backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                            tension: 0.3,
+                            pointRadius: 0,
+                            fill: true
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -249,29 +234,33 @@
                 }
             });
 
-            // --- WebSocket Logic ---
             function initWebSocket() {
                 socket = new WebSocket(`ws://${ESP_IP}/ws`);
-
                 socket.onopen = () => { console.log("WebSocket Connected"); };
-
                 socket.onmessage = (event) => {
                     if (!isTracking) return;
 
-                    const numericValue = parseInt(event.data);
-                    if (isNaN(numericValue)) return;
+                    // Split "val1,val2"
+                    const parts = event.data.split(',');
+                    if (parts.length < 2) return;
+
+                    const v1 = parseInt(parts[0]);
+                    const v2 = parseInt(parts[1]);
+                    if (isNaN(v1) || isNaN(v2)) return;
 
                     const now = new Date().toLocaleTimeString();
-                    sessionData.push({ time: now, value: numericValue });
+                    sessionData.push({ time: now, v1: v1, v2: v2 });
 
                     romChart.data.labels.push(now);
-                    romChart.data.datasets[0].data.push(numericValue);
+                    romChart.data.datasets[0].data.push(v1);
+                    romChart.data.datasets[1].data.push(v2);
 
                     if (romChart.data.labels.length > 100) {
                         romChart.data.labels.shift();
                         romChart.data.datasets[0].data.shift();
+                        romChart.data.datasets[1].data.shift();
                     }
-                    romChart.update('none'); // Update without animation lag
+                    romChart.update('none');
                 };
 
                 socket.onclose = () => {
@@ -283,30 +272,40 @@
             function runAnalysis(isFromUpload = false, fileName = "") {
                 if (sessionData.length === 0) return;
 
-                const values = sessionData.map(d => d.value);
-                const peak = Math.max(...values);
-                const avg = Math.round(values.reduce((a, b) => a + b) / values.length);
-                const duration = (sessionData.length * 0.05).toFixed(1); // Assuming ~20ms delay on ESP
+                const ch1Values = sessionData.map(d => d.v1);
+                const ch2Values = sessionData.map(d => d.v2);
 
+                const peak1 = Math.max(...ch1Values);
+                const peak2 = Math.max(...ch2Values);
+                const avg1 = Math.round(ch1Values.reduce((a, b) => a + b) / ch1Values.length);
+                const avg2 = Math.round(ch2Values.reduce((a, b) => a + b) / ch2Values.length);
+                const duration = (sessionData.length * 0.02).toFixed(1); // 20ms delay
+
+                // Simple contraction count (based on Ch1)
                 let flexCount = 0;
-                for (let i = 1; i < values.length; i++) {
-                    if (values[i] > FLEX_THRESHOLD && values[i - 1] <= FLEX_THRESHOLD) flexCount++;
+                for (let i = 1; i < ch1Values.length; i++) {
+                    if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i - 1] <= FLEX_THRESHOLD) flexCount++;
                 }
 
                 const sessionID = isFromUpload ? fileName : `live-${Date.now()}`;
-                const summary = { id: sessionID, date: new Date().toLocaleString(), peak, avg, duration, flexCount };
+                const summary = { 
+                    id: sessionID, 
+                    date: new Date().toLocaleString(), 
+                    peak: `${peak1}/${peak2}`, 
+                    avg: `${avg1}/${avg2}`, 
+                    duration, 
+                    flexCount 
+                };
 
                 let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-                const isDuplicate = history.some(item => item.id === sessionID);
-
-                if (!isDuplicate) {
+                if (!history.some(item => item.id === sessionID)) {
                     history.unshift(summary);
                     localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 20)));
                 }
 
                 analyticsContent.innerHTML = `
-                    <div class="metric-row"><span class="metric-label">Peak Intensity</span><span class="metric-value">${peak}</span></div>
-                    <div class="metric-row"><span class="metric-label">Avg Intensity</span><span class="metric-value">${avg}</span></div>
+                    <div class="metric-row"><span class="metric-label">Peak (Ch1/Ch2)</span><span class="metric-value">${peak1} / ${peak2}</span></div>
+                    <div class="metric-row"><span class="metric-label">Avg (Ch1/Ch2)</span><span class="metric-value">${avg1} / ${avg2}</span></div>
                     <div class="metric-row"><span class="metric-label">Contractions</span><span class="metric-value">${flexCount}</span></div>
                     <div class="metric-row"><span class="metric-label">Duration</span><span class="metric-value">${duration}s</span></div>
                 `;
@@ -328,15 +327,13 @@
                 `).join('');
             }
 
-            // --- Event Handlers ---
             startBtn.onclick = function () {
                 sessionData = [];
                 romChart.data.labels = [];
                 romChart.data.datasets[0].data = [];
+                romChart.data.datasets[1].data = [];
                 analyticsContent.innerHTML = `<p style="color:#4d82ad">Recording...</p>`;
-
                 socket.send("start");
-
                 isTracking = true;
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
@@ -345,7 +342,6 @@
 
             stopBtn.onclick = function () {
                 socket.send("stop");
-
                 isTracking = false;
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
@@ -353,43 +349,9 @@
                 runAnalysis();
             };
 
-            csvFileInput.addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const lines = event.target.result.split('\n');
-                    sessionData = [];
-                    romChart.data.labels = [];
-                    romChart.data.datasets[0].data = [];
-                    for (let i = 1; i < lines.length; i++) {
-                        const cols = lines[i].split(',');
-                        if (cols.length >= 2) {
-                            const val = parseInt(cols[1]);
-                            sessionData.push({ time: cols[0], value: val });
-                            romChart.data.labels.push(cols[0]);
-                            romChart.data.datasets[0].data.push(val);
-                        }
-                    }
-                    romChart.update();
-                    runAnalysis(true, file.name);
-                    status.textContent = "CSV Analyzed";
-                    csvFileInput.value = "";
-                };
-                reader.readAsText(file);
-            });
-
-            clearBtn.onclick = function () {
-                if (confirm("Delete all session history?")) {
-                    localStorage.removeItem('utbiome_history');
-                    renderHistory();
-                    analyticsContent.innerHTML = `<p style="color:#999">History cleared.</p>`;
-                }
-            };
-
             downloadBtn.onclick = function () {
-                let csvContent = "data:text/csv;charset=utf-8,Timestamp,EMG_Value\n";
-                sessionData.forEach(row => { csvContent += `${row.time},${row.value}\n`; });
+                let csvContent = "data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2\n";
+                sessionData.forEach(row => { csvContent += `${row.time},${row.v1},${row.v2}\n`; });
                 const link = document.createElement("a");
                 link.setAttribute("href", encodeURI(csvContent));
                 link.setAttribute("download", `UTBiome_Session_${Date.now()}.csv`);
