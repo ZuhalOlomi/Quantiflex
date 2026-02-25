@@ -3,36 +3,63 @@
  */
 
 // Saves credentials to browser memory
+// 1. New function to handle the UI toggle
+function setRole(role) {
+    // 1. Update the hidden input
+    document.getElementById("currentRole").value = role;
+    
+    // 2. Manage Button active classes
+    const btnPatient = document.getElementById("btn-patient");
+    const btnClinician = document.getElementById("btn-clinician");
+    const selector = document.getElementById("role-selector");
+
+    if (role === 'patient') {
+        btnPatient.classList.add("active");
+        btnClinician.classList.remove("active");
+        selector.classList.remove("selector-clinician");
+    } else {
+        btnPatient.classList.remove("active");
+        btnClinician.classList.add("active");
+        selector.classList.add("selector-clinician");
+    }
+}
+
+/**
+ * UPDATED SECTION 1: MANUAL LOGIN / SIGNUP
+ */
 function signup() {
     const user = document.getElementById("username").value;
     const pass = document.getElementById("password").value;
+    const role = document.getElementById("currentRole").value; // Get active role
 
     if (user && pass) {
-        localStorage.setItem("localUser", user);
-        localStorage.setItem("localPass", pass);
-        alert("Account created successfully! You can now log in.");
+        // Save using role-specific keys so they don't overwrite each other
+        localStorage.setItem(`${role}_user`, user);
+        localStorage.setItem(`${role}_pass`, pass);
+        alert(`${role.charAt(0).toUpperCase() + role.slice(1)} account created!`);
     } else {
         alert("Please fill in both fields.");
     }
 }
 
-// Checks input against browser memory
 function login() {
     const userInput = document.getElementById("username").value;
     const passInput = document.getElementById("password").value;
+    const role = document.getElementById("currentRole").value; // Get active role
 
-    const savedUser = localStorage.getItem("localUser");
-    const savedPass = localStorage.getItem("localPass");
+    // Retrieve the specific credentials for THIS role
+    const savedUser = localStorage.getItem(`${role}_user`);
+    const savedPass = localStorage.getItem(`${role}_pass`);
 
     if (userInput === savedUser && passInput === savedPass) {
         localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("userName", userInput.split('@')[0]); // Use email prefix as name
+        localStorage.setItem("userRole", role); // Store the role for the dashboard
+        localStorage.setItem("userName", userInput.split('@')[0]);
         showLoginSuccess(userInput.split('@')[0]);
     } else {
-        alert("Invalid username or password. (Did you Sign Up first?)");
+        alert(`Invalid ${role} credentials. Did you sign up as a ${role} first?`);
     }
 }
-
 /**
  * SECTION 2: GOOGLE OAUTH LOGIC
  */

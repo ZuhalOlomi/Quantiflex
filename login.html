@@ -41,6 +41,21 @@
 
             <div class="gs_reveal_fromLeft contact-box">
                 <form id="authForm">
+
+                    <div class="toggle-wrapper">
+                        <div class="role-toggle">
+                            <div id="role-selector" class="selector-patient"></div>
+                            
+                            <button type="button" id="btn-patient" class="toggle-btn active" onclick="setRole('patient')">
+                                Patient
+                            </button>
+                            <button type="button" id="btn-clinician" class="toggle-btn" onclick="setRole('clinician')">
+                                Clinician
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="currentRole" value="patient">
+
                     <label for="username">Username</label>
                     <input type="text" id="username" placeholder="example@email.com" required>
 

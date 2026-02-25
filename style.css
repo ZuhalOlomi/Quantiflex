@@ -944,3 +944,56 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     font-weight: bold;
     margin-top: 15px;
 }
+
+/* login slider thingy */
+/* Container: The "Track" */
+.role-toggle {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    background: #adc4e2; /* Light gray track */
+    padding: 4px;
+    border-radius: 12px;
+    margin: 0 auto;
+}
+
+/* The actual buttons (Invisible backgrounds) */
+.toggle-btn {
+    position: relative;
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    background: transparent !important; /* Forces background to disappear */
+    outline: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 2; /* Sits above the slider */
+    transition: color 0.3s ease;
+    color: #64748b; /* Muted gray text when not selected */
+}
+
+/* Text color change when active */
+.toggle-btn.active {
+    color: white;
+}
+
+/* The Sliding Blue Box */
+#role-selector {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    width: calc(50% - 4px);
+    background: #4d82ad; /* Your specific blue */
+    border-radius: 10px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1; /* Sits behind the text */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* The sliding animation */
+.selector-clinician {
+    transform: translateX(100%);
+}
