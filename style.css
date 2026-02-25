@@ -358,7 +358,7 @@ p {
 /* About page styles */
 .about-hero {
     text-align: center;
-    padding: 3rem 2rem;
+    padding: 2rem 2rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
@@ -371,7 +371,7 @@ p {
 .hero-subtitle {
     font-size: 1.2rem;
     color: #666;
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     line-height: 1.6;
 }
