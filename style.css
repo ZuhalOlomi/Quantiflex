@@ -10,16 +10,7 @@ p,
 ul {
     margin: 0;
     padding: 0;
-}
 
-body {
-    font-family: "Georgia", serif;
-    background: #f4f4f4;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeIn 0.8s ease-out;
 }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -40,28 +31,48 @@ body {
     }
 }
 
-header {
-    width: 100%;
-    max-width: 1217px;
-    background: #4d82ad;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-}
-
 h1 {
     font-family: "Segoe Script", serif;
     font-size: 2.5rem;
     font-weight: bold;
 }
 
+body {
+    font-family: "Georgia", serif;
+    background: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Header - Full width with proper padding */
+header {
+    width: 100%;
+    background: #4d82ad;
+    color: #fff;
+    text-align: center;
+    padding: 15px 20px;
+    box-sizing: border-box;
+}
+
+header h1 {
+    font-family: "Segoe Script", serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+/* Navigation - Clean spacing */
 nav ul {
     list-style: none;
     padding: 0;
-    margin: 10px 0;
+    margin: 0;
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 25px;
 }
 
 nav ul li a {
@@ -69,21 +80,18 @@ nav ul li a {
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
+    padding: 5px 0;
 }
 
-nav ul li a:hover,
-nav ul li a.active {
-    color: #a9acb1;
-}
-
+/* Main content - Full width */
 main {
+    margin: 0;
+    padding: 0;
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     background: #fff;
-    padding: 20px;
     text-align: center;
-    margin: 8px;
-    border-radius: 5px;
+    border-radius: 0;
 }
 
 .box {
@@ -996,4 +1004,76 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 /* The sliding animation */
 .selector-clinician {
     transform: translateX(100%);
+}
+/* Video hero - Full width fix */
+.video-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0 !important;
+}
+
+#bgVideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-50%) translateY(-50%);
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Hero overlay - white fade */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    z-index: 1;
+}
+
+/* Hero text styling */
+.video-hero .hero-text {
+    position: relative;
+    z-index: 2;
+    color: #2c3e50;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.video-hero .hero-text h2,
+.video-hero .hero-text h3,
+.video-hero .hero-text p {
+    color: gainsboro;
+}
+
+.video-hero .btn-secondary {
+    background: transparent;
+    border: 2px solid gainsboro;
+    color: gainsboro;
+}
+
+.video-hero .btn-primary {
+    background: #4d82ad;
+    color: white;
+    border: 2px solid white;
+}
+
+/* Or if you want a gradient fade instead of solid */
+.hero-overlay-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%);
+    z-index: 1;
 }
