@@ -91,23 +91,31 @@
         /* ---- CENTERING THE HERO TEXT (requested change) ---- */
         .hero {
             display: flex;
-            align-items: center;        /* vertical centering */
-            justify-content: center;     /* horizontal centering */
-            min-height: 70vh;            /* give it some height to actually center */
-            text-align: center;           /* center the inner text */
+            align-items: center;
+            /* vertical centering */
+            justify-content: center;
+            /* horizontal centering */
+            min-height: 70vh;
+            /* give it some height to actually center */
+            text-align: center;
+            /* center the inner text */
         }
 
         .hero-text {
-            max-width: 800px;              /* keep it readable, not too wide */
-            margin: 0 auto;                 /* fallback centering */
+            max-width: 800px;
+            /* keep it readable, not too wide */
+            margin: 0 auto;
+            /* fallback centering */
         }
 
         .hero-text p {
-            text-align: center;              /* override previous left alignment */
+            text-align: center;
+            /* override previous left alignment */
         }
 
         .cta-buttons {
-            justify-content: center;          /* center the buttons */
+            justify-content: center;
+            /* center the buttons */
         }
 
         /* Keep all other original styles intact */
@@ -119,24 +127,21 @@
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .login-options .btn-primary,
             .login-options .btn-secondary {
                 width: 250px;
             }
-            
+
             /* already centered, but ensure no regression */
             .hero-text p {
                 text-align: center;
             }
-            
+
             .cta-buttons {
                 justify-content: center;
             }
         }
-
-        
-
     </style>
     <script src="auth.js"></script>
 </head>
@@ -148,7 +153,6 @@
             <ul>
                 <li><a href="home.html" class="active">Home</a></li>
                 <li><a href="about.html">About</a></li>
-                <li><a href="video.html">Video Demo</a></li>
                 <li><a href="login.html">Login</a></li>
             </ul>
         </nav>
@@ -156,32 +160,32 @@
 
     <main>
         <!-- Hero section now has centered content (both axes) -->
-<section class="hero video-hero">
-    <video id="bgVideo" preload="auto" muted playsinline autoplay loop>
-        <source src="knee_extension.mov" type="video/mp4">
-    </video>
-    <div class="hero-overlay"></div>
-    <div class="hero-text gs_reveal">
-        <h2>Streamline Knee Rehabilitation</h2>
-        <h3>Track Progress Visually</h3>
-        <p>
-            Transforming knee rehabilitation using real-time data from our smart knee sleeve.<br>
-            <br>Utilize our intuitive dashboard to monitor patient progress, enhance adherence, and optimize
-            recovery outcomes.
-        </p>
-        <div class="cta-buttons">
-            <a href="video.html" class="btn-secondary">Watch Demo</a>
-            <a href="login.html" class="btn-primary">Get Started</a>
-        </div>
-    </div>
-</section>
+        <section class="hero video-hero">
+            <video id="bgVideo" preload="auto" muted playsinline autoplay loop>
+                <source src="knee_extension.mov" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="hero-text gs_reveal">
+                <h2>Streamline Knee Rehabilitation</h2>
+                <h3>Track Progress Visually</h3>
+                <p>
+                    Transforming knee rehabilitation using real-time data from our smart knee sleeve.<br>
+                    <br>Utilize our intuitive dashboard to monitor patient progress, enhance adherence, and optimize
+                    recovery outcomes.
+                </p>
+                <div class="cta-buttons">
+                    <a href="video.html" class="btn-secondary">Watch Demo</a>
+                    <a href="login.html" class="btn-primary">Get Started</a>
+                </div>
+            </div>
+        </section>
         <!-- Centered Login Call-to-Action - Preserving original colors -->
         <section class="login-prompt gs_reveal">
             <h2>Ready to Transform Your Rehabilitation Journey?</h2>
             <p>Join hundreds of patients and clinicians already using UTBiome</p>
             <div class="login-options">
-                <a href="login.html" class="btn-primary">Patient Login</a>
-                <a href="login.html" class="btn-secondary">Clinician Login</a>
+                <a href="login.html?role=patient" class="btn-primary">Patient Login</a>
+                <a href="login.html?role=clinician" class="btn-secondary">Clinician Login</a>
             </div>
             <div class="create-account-link">
                 <p>New user? <a href="login.html">Create an account</a></p>
@@ -318,8 +322,8 @@
     <footer>
         <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
         <p style="margin-top: 10px; font-size: 0.9rem;">
-            <a href="about.html" style="color: #4d82ad; text-decoration: none;">About</a> | 
-            <a href="video.html" style="color: #4d82ad; text-decoration: none;">Video Demo</a> | 
+            <a href="about.html" style="color: #4d82ad; text-decoration: none;">About</a> |
+            <a href="video.html" style="color: #4d82ad; text-decoration: none;">Video Demo</a> |
             <a href="login.html" style="color: #4d82ad; text-decoration: none;">Login</a>
         </p>
     </footer>
@@ -353,11 +357,11 @@
                     onLeave: function () { hide(elem) }
                 });
             });
-            
+
             // Update navigation based on login status (but keep login option visible)
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const loginLink = document.querySelector('nav ul li a[href="login.html"]');
-            
+
             if (isLoggedIn && loginLink) {
                 loginLink.textContent = "Dashboard";
                 loginLink.href = localStorage.getItem("userRole") === "clinician" ? "clinician_dashboard.html" : "analysis.html";
@@ -365,15 +369,15 @@
         });
 
         // Scroll-controlled video
-// Simple autoplay video background
-document.addEventListener('DOMContentLoaded', function() {
-    const video = document.getElementById('bgVideo');
-    
-    if (video) {
-        // Convert .mov to supported format
-        video.play().catch(e => console.log("Autoplay failed:", e));
-    }
-});
+        // Simple autoplay video background
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('bgVideo');
+
+            if (video) {
+                // Convert .mov to supported format
+                video.play().catch(e => console.log("Autoplay failed:", e));
+            }
+        });
     </script>
 
     <script src="app.js"></script>
