@@ -191,3 +191,43 @@ function logout() {
     localStorage.clear(); 
     window.location.href = "logout.html";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Get the 'role' parameter from the URL (e.g., login.html?role=clinician)
+    const urlParams = new URLSearchParams(window.location.search);
+    const roleParam = urlParams.get('role');
+
+    // 2. If the URL says clinician, toggle the UI automatically
+    if (roleParam === 'clinician') {
+        setRole('clinician');
+    } else if (roleParam === 'patient') {
+        setRole('patient');
+    }
+
+    // ... (Keep the rest of your existing session check logic below) ...
+    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+    // ...
+});
+
+async function updateDashboardData() {
+    try {
+        const response = await fetch('http://127.0.0.1:5001/api/live-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+
+        // Update your UI elements with the backend response
+        // data.liveRom = 5.8, data.liveRms = 0.48298
+        if(document.getElementById('rom-display')) {
+            document.getElementById('rom-display').innerText = `${data.liveRom}°`;
+        }
+        console.log("Live Data synced:", data);
+        
+    } catch (error) {
+        console.error("Could not connect to the knee sleeve backend:", error);
+    }
+}
+
+// Refresh data every 2 seconds
+setInterval(updateDashboardData, 2000);

@@ -16,9 +16,8 @@
         <h1>UTBiome Knee Sleeve</h1>
         <nav>
             <ul>
-                <li><a href="home.html">Home</a></li>
+                <li><a href="main.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
-                <li><a href="analysis.html">Analysis</a></li>
                 <li><a href="video.html">Video Demo</a></li>
             </ul>
         </nav>
@@ -56,7 +55,7 @@
                         </div>
                     </div>
                     <input type="hidden" id="currentRole" value="patient">
-                    
+
                     <label for="username">Username</label>
                     <input type="text" id="username" placeholder="example@email.com" required>
 
@@ -65,20 +64,18 @@
 
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button type="button" onclick="login()" style="flex: 1;">Log In</button>
-                        <button type="button" onclick="signup()" style="flex: 1; background-color: #555;">Sign
-                            Up</button>
+                        <button type="button" onclick="signup()" style="flex: 1; background-color: #555;">Sign Up</button>
                     </div>
 
-                    <div
-                        style="text-align: center; margin: 20px 0; color: #888; font-size: 0.9rem; border-top: 1px solid #eee; line-height: 0.1em;">
+                    <div style="text-align: center; margin: 20px 0; color: #888; font-size: 0.9rem; border-top: 1px solid #eee; line-height: 0.1em;">
                         <span style="background:#fff; padding:0 10px;">OR</span>
                     </div>
 
                     <div id="g_id_onload"
-                        data-client_id="636243090875-5go88q82a3qodkaqtbmkti6vmg83vee2.apps.googleusercontent.com"
+                        data-client_id="415928026156-jctjji6t3vv2mb7v5cpttkstjn8dku9p.apps.googleusercontent.com"
                         data-callback="handleCredentialResponse" data-auto_prompt="false">
                     </div>
-
+                    
                     <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
                         data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="100%">
                     </div>
@@ -95,7 +92,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // Your existing GSAP Scroll Animation code
+        // GSAP Scroll Animation code
         function animateFrom(elem, direction) {
             direction = direction || 1;
             var x = 0, y = direction * 100;

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border: 1px solid #e0e0e0;
         }
 
@@ -67,7 +68,7 @@
         .patient-table-container {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             overflow-x: auto;
         }
@@ -186,8 +187,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .error-message {
@@ -255,9 +261,17 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -266,11 +280,11 @@
                 align-items: flex-start;
                 gap: 15px;
             }
-            
+
             .search-box {
                 width: 100%;
             }
-            
+
             .table-header {
                 flex-direction: column;
                 gap: 15px;
@@ -278,6 +292,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>QuantiFlex</h1>
@@ -295,8 +310,9 @@
         <div class="dashboard-header">
             <div>
                 <h2>Clinician Dashboard</h2>
-                <p>Welcome back, <span id="userName" style="font-weight: 600; color: #4d82ad;"></span>! 
-                   <span class="live-indicator"></span> Live data streaming from backend</p>
+                <p>Welcome back, <span id="userName" style="font-weight: 600; color: #4d82ad;"></span>!
+                    <span class="live-indicator"></span> Live data streaming from backend
+                </p>
             </div>
             <div>
                 <button id="refreshBtn" class="refresh-btn">🔄 Refresh Data</button>
@@ -344,7 +360,7 @@
                         <option value="all">All Patients</option>
                         <option value="high">High Adherence (>75%)</option>
                         <option value="medium">Medium Adherence (50-75%)</option>
-                        <option value="low">Low Adherence (<50%)</option>
+                        <option value="low">Low Adherence (<50%)< /option>
                     </select>
                 </div>
             </div>
@@ -388,13 +404,62 @@
                 </table>
             </div>
         </div>
+        <div style="width: 80%; margin: auto;">
+            <canvas id="liveKneeChart"></canvas>
+        </div>
+
+        <script src="chart.umd.min.js"></script>
+        <script>
+            const ctx = document.getElementById('liveKneeChart').getContext('2d');
+            const liveChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [], // Time stamps
+                    datasets: [{
+                        label: 'Knee Angle (ROM)',
+                        data: [],
+                        borderColor: '#007bff',
+                        tension: 0.4
+                    }]
+                },
+                options: { scales: { y: { beginAtZero: true, max: 90 } } }
+            });
+
+            // Fetch and update every 2 seconds
+            async function fetchLiveData() {
+                try {
+                    const response = await fetch('http://127.0.0.1:5001/api/live-data', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({}) // Sending empty JSON to satisfy backend
+                    });
+                    const data = await response.json();
+
+                    // Add new data point to graph
+                    const now = new Date().toLocaleTimeString();
+                    liveChart.data.labels.push(now);
+                    liveChart.data.datasets[0].data.push(data.liveRom);
+
+                    // Keep only last 10 points for scroll effect
+                    if (liveChart.data.labels.length > 10) {
+                        liveChart.data.labels.shift();
+                        liveChart.data.datasets[0].data.shift();
+                    }
+
+                    liveChart.update();
+                } catch (err) { console.error("Knee Sleeve disconnected:", err); }
+            }
+
+            setInterval(fetchLiveData, 2000);
+        </script>
+
     </main>
 
     <footer>
         <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
         <p style="margin-top: 10px; font-size: 0.9rem;">
-            <a href="about.html" style="color: #4d82ad; text-decoration: none;">About</a> | 
-            <a href="video.html" style="color: #4d82ad; text-decoration: none;">Video Demo</a> | 
+            <a href="about.html" style="color: #4d82ad; text-decoration: none;">About</a> |
+            <a href="video.html" style="color: #4d82ad; text-decoration: none;">Video Demo</a> |
             <a href="login.html" style="color: #4d82ad; text-decoration: none;">Login</a>
         </p>
     </footer>
@@ -412,19 +477,19 @@
             if (userName) {
                 document.getElementById('userName').textContent = userName;
             }
-            
+
             // Check if user is logged in and is clinician
             const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
             const userRole = localStorage.getItem('userRole');
-            
+
             if (!isLoggedIn || userRole !== 'clinician') {
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             // Load patient data
             fetchPatients();
-            
+
             // Start live data monitoring
             startLiveDataMonitoring();
         });
@@ -457,11 +522,11 @@
                 }
 
                 const data = await response.json();
-                
+
                 if (data && data.patients) {
                     currentPatients = data.patients;
                     filteredPatients = [...currentPatients];
-                    
+
                     if (currentPatients.length === 0) {
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noData').style.display = 'block';
@@ -477,7 +542,7 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('errorText').textContent = 'Failed to connect to backend. Using demo data.';
-                
+
                 // Use mock data as fallback
                 useMockData();
             }
@@ -535,7 +600,7 @@
                     status: "active"
                 }
             ];
-            
+
             filteredPatients = [...currentPatients];
             updateDashboard();
         }
@@ -550,21 +615,21 @@
                         body: JSON.stringify({
                             imu: [[0, 0, 1], [0, 0.1, 0.99]],
                             emg: [
-                                [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8],
-                                [0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75]
+                                [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                                [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75]
                             ]
                         })
                     });
 
                     const data = await response.json();
-                    
+
                     // Update live sessions count if there's active data
                     if (data && data.activeSessions !== undefined) {
                         document.getElementById('liveSessions').textContent = data.activeSessions;
                     }
-                    
+
                     console.log('Live data update:', data);
-                    
+
                 } catch (error) {
                     console.error('Error fetching live data:', error);
                 }
@@ -574,10 +639,10 @@
         function updateDashboard() {
             // Update statistics
             updateStats();
-            
+
             // Render table
             renderPatientTable(filteredPatients);
-            
+
             // Hide loading, show table
             document.getElementById('loading').style.display = 'none';
             document.getElementById('tableContainer').style.display = 'block';
@@ -585,16 +650,16 @@
 
         function updateStats() {
             const totalPatients = currentPatients.length;
-            
+
             // Calculate average adherence based on contraction counts
             const avgContractions = currentPatients.reduce((sum, p) => sum + (p.contractions || 0), 0) / totalPatients;
             const avgAdherence = Math.min(100, Math.round((avgContractions / 200) * 100)); // Normalize to percentage
-            
+
             // Count high risk patients (low contraction counts or attention status)
-            const highRisk = currentPatients.filter(p => 
+            const highRisk = currentPatients.filter(p =>
                 p.status === 'attention' || (p.contractions && p.contractions < 50)
             ).length;
-            
+
             // Live sessions count from backend or estimate
             const liveSessions = currentPatients.filter(p => p.status === 'active').length;
 
@@ -610,11 +675,11 @@
 
             patients.forEach(patient => {
                 const row = document.createElement('tr');
-                
+
                 // Determine status badge
                 let statusClass = 'badge-high';
                 let statusText = 'Active';
-                
+
                 if (patient.status === 'attention' || (patient.contractions && patient.contractions < 50)) {
                     statusClass = 'badge-low';
                     statusText = 'Needs Attention';
@@ -625,8 +690,8 @@
 
                 // Format date
                 const lastSession = patient.lastSession ? new Date(patient.lastSession) : new Date();
-                const formattedDate = lastSession.toLocaleDateString('en-US', { 
-                    month: 'short', 
+                const formattedDate = lastSession.toLocaleDateString('en-US', {
+                    month: 'short',
                     day: 'numeric',
                     year: 'numeric'
                 });
@@ -679,8 +744,8 @@
             filteredPatients = currentPatients.filter(patient => {
                 // Search filter
                 const matchesSearch = patient.name.toLowerCase().includes(searchTerm) ||
-                                    (patient.injury && patient.injury.toLowerCase().includes(searchTerm));
-                
+                    (patient.injury && patient.injury.toLowerCase().includes(searchTerm));
+
                 // Status filter
                 let matchesFilter = true;
                 if (filterValue === 'high') {
@@ -690,7 +755,7 @@
                 } else if (filterValue === 'low') {
                     matchesFilter = patient.contractions < 50 || patient.status === 'attention';
                 }
-                
+
                 return matchesSearch && matchesFilter;
             });
 
@@ -720,11 +785,11 @@
                 p.contractions || '',
                 p.status || 'active'
             ]);
-            
+
             csvData.unshift(headers);
-            
+
             const csvContent = csvData.map(row => row.join(',')).join('\n');
-            
+
             // Download CSV
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -741,7 +806,10 @@
                 window.location.href = 'login.html';
             }
         });
+
+
     </script>
     <script src="auth.js"></script>
 </body>
+
 </html>

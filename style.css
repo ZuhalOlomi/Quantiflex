@@ -1043,7 +1043,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .video-hero .hero-text {
     position: relative;
     z-index: 2;
-    color: #2c3e50;
+    color: white;
     max-width: 800px;
     margin: 0 auto;
     padding: 0 20px;
@@ -1056,9 +1056,9 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 }
 
 .video-hero .btn-secondary {
-    background: transparent;
-    border: 2px solid gainsboro;
-    color: gainsboro;
+    background: #4d82ad;
+    border: 2px solid white;
+    color: white;
 }
 
 .video-hero .btn-primary {
