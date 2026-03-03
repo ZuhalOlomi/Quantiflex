@@ -136,6 +136,35 @@
             width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px;
         }
         .legend-label { font-size: 0.82em; color: #555; display: flex; align-items: center; }
+
+        /* NEW: Calendar and View Button Styles */
+        .calendar-controls { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            background: #f8fafc; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+            border: 1px solid #e1e8ed; 
+        }
+        .calendar-input { 
+            padding: 8px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            font-family: inherit; 
+        }
+        .btn-view { 
+            background: #007bff; 
+            color: white; 
+            padding: 6px 12px; 
+            font-size: 0.85em; 
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-view:hover { background: #0056b3; }
     </style>
 </head>
 
@@ -144,7 +173,7 @@
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
-                <li><a href="home.html">Home</a></li>
+                <li><a href="main.html">Home</a></li>
                 <li><a href="analysis.html" class="active">Analysis</a></li>
             </ul>
         </nav>
@@ -163,18 +192,17 @@
                 <button onclick="document.getElementById('csvFileInput').click()" class="btn-action"
                     style="background:#555; color:white;">Upload Session CSV</button>
             </div>
-            <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </section>
 
-        <!-- Top row: EMG chart and IMU chart side by side (equal size) -->
-         <div class="button-group">
-            <button id="startBtn" class="btn-action btn-start">Start</button>
-            <button id="stopBtn" class="btn-action btn-stop" disabled>Stop</button>
-            <span id="statusIndicator" style="font-size: 0.8em; color: #888;">System Idle</span>
+        <div class="button-group" style="max-width: 1400px; margin: 0 auto; width: 95%;">
+            <button id="startBtn" class="btn-action btn-start">Start Exercise</button>
+            <button id="stopBtn" class="btn-action btn-stop" disabled>Stop & Save Log</button>
+            <span id="statusIndicator" style="font-size: 0.8em; color: #888;">Hardware Idle</span>
+            
+            <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </div>
 
         <div class="dashboard-grid">
-            <!-- EMG Chart -->
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">Dual Channel EMG Activity</h3>
@@ -184,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- IMU Chart -->
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">
@@ -199,7 +226,6 @@
             </div>
         </div>
 
-        <!-- Bottom row: Session analytics -->
         <div class="dashboard-bottom">
             <div class="analytics-card" id="analyticsCard">
                 <h3 style="margin-top:0">Session Results</h3>
@@ -210,7 +236,6 @@
                     style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download CSV</button>
             </div>
 
-            <!-- IMU live readout card -->
             <div class="analytics-card">
                 <h3 style="margin-top:0">Live IMU Readout</h3>
                 <div class="metric-row">
@@ -230,16 +255,24 @@
         </div>
 
         <section class="history-section" style="max-width:1400px; margin: 0 auto 50px auto; padding: 0 20px;">
-            <h3>Patient Performance History</h3>
+            <h3>Exercise Log Calendar</h3>
+            
+            <div class="calendar-controls">
+                <label for="calendarPicker" style="font-weight:bold;">Filter by Date:</label>
+                <input type="date" id="calendarPicker" class="calendar-input">
+                <button id="resetDateBtn" class="btn-action" style="background: #e1e8ed; color: #333;">Show All</button>
+            </div>
+
             <div style="background:white; border-radius:12px; border: 1px solid #e1e8ed; overflow:hidden;">
                 <table class="history-table">
                     <thead>
                         <tr style="background:#f8fafc">
-                            <th>Date</th>
+                            <th>Date & Time</th>
                             <th>Peak (Ch1/Ch2)</th>
                             <th>Avg (Ch1/Ch2)</th>
                             <th>Contractions</th>
                             <th>Duration</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="sessionHistory"></tbody>
@@ -248,11 +281,14 @@
         </section>
     </main>
 
+    <script src="auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const startBtn = document.getElementById('startBtn');
             const stopBtn = document.getElementById('stopBtn');
             const clearBtn = document.getElementById('clearHistoryBtn');
+            const calendarPicker = document.getElementById('calendarPicker');
+            const resetDateBtn = document.getElementById('resetDateBtn');
             const status = document.getElementById('statusIndicator');
             const analyticsContent = document.getElementById('analyticsContent');
             const downloadBtn = document.getElementById('downloadCsvBtn');
@@ -261,15 +297,15 @@
             const romCtx = document.getElementById('romChart').getContext('2d');
             const imuCtx = document.getElementById('imuChart').getContext('2d');
 
-            // Live IMU readout elements
             const liveImu1 = document.getElementById('liveImu1');
             const liveImu2 = document.getElementById('liveImu2');
             const liveDelta = document.getElementById('liveDelta');
 
-            let sessionData = []; // stores {time, v1, v2, i1, i2}
+            let sessionData = []; 
             let isTracking = false;
             let socket;
             const ESP_IP = "192.168.4.1";
+            const BACKEND_URL = "http://127.0.0.1:5001"; // Flask Server
             const FLEX_THRESHOLD = 1500;
 
             // ── EMG Chart ──────────────────────────────────────────────────
@@ -278,36 +314,11 @@
                 data: {
                     labels: [],
                     datasets: [
-                        {
-                            label: 'Muscle 1 (GPIO 2)',
-                            data: [],
-                            borderColor: '#4d82ad',
-                            backgroundColor: 'rgba(77, 130, 173, 0.1)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: true
-                        },
-                        {
-                            label: 'Muscle 2 (GPIO 3)',
-                            data: [],
-                            borderColor: '#e67e22',
-                            backgroundColor: 'rgba(230, 126, 34, 0.1)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: true
-                        }
+                        { label: 'Muscle 1 (GPIO 2)', data: [], borderColor: '#4d82ad', backgroundColor: 'rgba(77, 130, 173, 0.1)', tension: 0.3, pointRadius: 0, fill: true },
+                        { label: 'Muscle 2 (GPIO 3)', data: [], borderColor: '#e67e22', backgroundColor: 'rgba(230, 126, 34, 0.1)', tension: 0.3, pointRadius: 0, fill: true }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
-                    scales: {
-                        y: { beginAtZero: true, max: 4095, title: { display: true, text: 'Amplitude' } },
-                        x: { display: false }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true, max: 4095 }, x: { display: false } } }
             });
 
             // ── IMU Chart ──────────────────────────────────────────────────
@@ -316,118 +327,67 @@
                 data: {
                     labels: [],
                     datasets: [
-                        {
-                            label: 'IMU 1 — Upper (°)',
-                            data: [],
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.08)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: false,
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'IMU 2 — Lower (°)',
-                            data: [],
-                            borderColor: '#9b59b6',
-                            backgroundColor: 'rgba(155, 89, 182, 0.08)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: false,
-                            borderWidth: 2
-                        }
+                        { label: 'IMU 1 — Upper (°)', data: [], borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.08)', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 2 },
+                        { label: 'IMU 2 — Lower (°)', data: [], borderColor: '#9b59b6', backgroundColor: 'rgba(155, 89, 182, 0.08)', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 2 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
-                    scales: {
-                        y: {
-                            suggestedMin: -10,
-                            suggestedMax: 100,
-                            title: { display: true, text: 'Degrees (°)' }
-                        },
-                        x: { display: false }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { suggestedMin: -10, suggestedMax: 100 }, x: { display: false } } }
             });
 
             // ── WebSocket ─────────────────────────────────────────────────
             function initWebSocket() {
-                // Don't stack connection attempts
-                if (socket && (socket.readyState === WebSocket.CONNECTING || 
-                            socket.readyState === WebSocket.OPEN)) return;
-
+                if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) return;
                 socket = new WebSocket(`ws://${ESP_IP}/ws`);
 
-                socket.onopen = () => {
-                    console.log("WebSocket Connected");
-                    status.textContent = "Connected";
-                };
+                socket.onopen = () => { status.textContent = "Hardware Connected"; };
 
                 socket.onmessage = (event) => {
                     if (!isTracking) return;
                     const parts = event.data.split(',');
                     if (parts.length < 4) return;
-                    const v1 = parseInt(parts[0]);
-                    const v2 = parseInt(parts[1]);
-                    const i1 = parseFloat(parts[2]);
-                    const i2 = parseFloat(parts[3]);
+                    const v1 = parseInt(parts[0]), v2 = parseInt(parts[1]), i1 = parseFloat(parts[2]), i2 = parseFloat(parts[3]);
                     if (isNaN(v1) || isNaN(v2) || isNaN(i1) || isNaN(i2)) return;
+                    
                     const now = new Date().toLocaleTimeString();
                     sessionData.push({ time: now, v1, v2, i1, i2 });
+                    
                     pushToChart(romChart, now, v1, v2);
                     pushToChart(imuChart, now, i1, i2);
+                    
                     liveImu1.textContent = i1.toFixed(1) + '°';
                     liveImu2.textContent = i2.toFixed(1) + '°';
                     liveDelta.textContent = Math.abs(i1 - i2).toFixed(1) + '°';
                 };
 
-                socket.onclose = () => {
-                    status.textContent = "Reconnecting...";
-                    setTimeout(initWebSocket, 2000);
-                };
-
-                socket.onerror = () => {
-                    socket.close(); // Force onclose to fire so reconnect logic runs cleanly
-                };
+                socket.onclose = () => { status.textContent = "Reconnecting..."; setTimeout(initWebSocket, 2000); };
+                socket.onerror = () => { socket.close(); };
             }
 
             function pushToChart(chart, label, val1, val2) {
                 chart.data.labels.push(label);
                 chart.data.datasets[0].data.push(val1);
                 chart.data.datasets[1].data.push(val2);
-
                 if (chart.data.labels.length > 150) {
-                    chart.data.labels.shift();
-                    chart.data.datasets[0].data.shift();
-                    chart.data.datasets[1].data.shift();
+                    chart.data.labels.shift(); chart.data.datasets[0].data.shift(); chart.data.datasets[1].data.shift();
                 }
                 chart.update('none');
             }
 
             function clearChart(chart) {
-                chart.data.labels = [];
-                chart.data.datasets.forEach(d => d.data = []);
-                chart.update();
+                chart.data.labels = []; chart.data.datasets.forEach(d => d.data = []); chart.update();
             }
 
-            // ── Analysis ──────────────────────────────────────────────────
-            function filterGlitches(values) {
-                const GLITCH_THRESHOLD = 2800;
-                return values.filter(v => v < GLITCH_THRESHOLD);
-            }
+            // ── Analysis & Save ───────────────────────────────────────────
+            function filterGlitches(values) { return values.filter(v => v < 2800); }
 
-            function runAnalysis(isFromUpload = false, fileName = "") {
+            async function runAnalysis(isFromUpload = false, fileName = "") {
                 if (sessionData.length === 0) return;
 
                 let ch1Values = filterGlitches(sessionData.map(d => d.v1));
                 let ch2Values = filterGlitches(sessionData.map(d => d.v2));
 
                 if (ch1Values.length === 0 || ch2Values.length === 0) {
-                    analyticsContent.innerHTML = `<p style="color:red;">No valid data after filtering glitches</p>`;
+                    analyticsContent.innerHTML = `<p style="color:red;">No valid data recorded.</p>`;
                     return;
                 }
 
@@ -442,31 +402,26 @@
                     if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i - 1] <= FLEX_THRESHOLD) flexCount++;
                 }
 
-                // IMU summary
                 const imu1Values = sessionData.map(d => d.i1).filter(v => !isNaN(v));
                 const imu2Values = sessionData.map(d => d.i2).filter(v => !isNaN(v));
                 const peakAngle1 = imu1Values.length ? Math.max(...imu1Values).toFixed(1) : '—';
                 const peakAngle2 = imu2Values.length ? Math.max(...imu2Values).toFixed(1) : '—';
-                const avgDelta = imu1Values.length
-                    ? (sessionData.reduce((acc, d) => acc + Math.abs(d.i1 - d.i2), 0) / sessionData.length).toFixed(1)
-                    : '—';
+                const avgDelta = imu1Values.length ? (sessionData.reduce((acc, d) => acc + Math.abs(d.i1 - d.i2), 0) / sessionData.length).toFixed(1) : '—';
 
                 const sessionID = isFromUpload ? fileName : `live-${Date.now()}`;
+                const dateObj = new Date();
+                
                 const summary = {
                     id: sessionID,
-                    date: new Date().toLocaleString(),
+                    date: dateObj.toLocaleString(),
+                    dateString: dateObj.toISOString().split('T')[0], // YYYY-MM-DD format for calendar filter
                     peak: `${peak1}/${peak2}`,
                     avg: `${avg1}/${avg2}`,
                     duration,
                     flexCount
                 };
 
-                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-                if (!history.some(item => item.id === sessionID)) {
-                    history.unshift(summary);
-                    localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 20)));
-                }
-
+                // Update UI Sidebar
                 analyticsContent.innerHTML = `
                     <p style="margin:0 0 10px 0; font-size:0.8em; color:#aaa; text-transform:uppercase; letter-spacing:0.05em;">EMG</p>
                     <div class="metric-row"><span class="metric-label">Peak (Ch1/Ch2)</span><span class="metric-value">${peak1} / ${peak2}</span></div>
@@ -480,11 +435,40 @@
                 `;
 
                 downloadBtn.style.display = isFromUpload ? "none" : "block";
+
+                // Save locally
+                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+                if (!history.some(item => item.id === sessionID)) {
+                    history.unshift(summary);
+                    localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 50)));
+                }
+                
+                try {
+                    localStorage.setItem('raw_' + sessionID, JSON.stringify(sessionData));
+                } catch(e) { console.warn("Local storage full, cannot save raw trace."); }
+
                 renderHistory();
+
+                // Post to Flask Backend
+                if(!isFromUpload) {
+                    try {
+                        fetch(`${BACKEND_URL}/api/save-session`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ summary, rawData: sessionData })
+                        }).catch(e => console.log("Backend offline, data saved locally."));
+                    } catch(e) {}
+                }
             }
 
-            function renderHistory() {
+            // ── Calendar & Rendering ──────────────────────────────────────
+            function renderHistory(filterDate = null) {
                 let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+                
+                if (filterDate) {
+                    history = history.filter(s => s.dateString === filterDate);
+                }
+
                 historyList.innerHTML = history.map(s => `
                     <tr>
                         <td>${s.date}</td>
@@ -492,120 +476,81 @@
                         <td>${s.avg}</td>
                         <td>${s.flexCount}</td>
                         <td>${s.duration}s</td>
+                        <td><button class="btn-view" onclick="replaySession('${s.id}')">View Plot</button></td>
                     </tr>
                 `).join('');
             }
 
-            // ── Controls ──────────────────────────────────────────────────
+            // Global function to allow inline HTML onclick
+            window.replaySession = function(sessionID) {
+                const raw = localStorage.getItem('raw_' + sessionID);
+                if(raw) {
+                    const data = JSON.parse(raw);
+                    clearChart(romChart); 
+                    clearChart(imuChart);
+                    data.forEach(row => {
+                        pushToChart(romChart, row.time, row.v1, row.v2);
+                        pushToChart(imuChart, row.time, row.i1, row.i2);
+                    });
+                    status.textContent = "Viewing Historical Log";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("Raw telemetry for this session is no longer available locally.");
+                }
+            };
+
+            // Listeners
+            calendarPicker.addEventListener('change', (e) => { renderHistory(e.target.value); });
+            resetDateBtn.addEventListener('click', () => { calendarPicker.value = ""; renderHistory(); });
+
             startBtn.onclick = function () {
                 if (!socket || socket.readyState !== WebSocket.OPEN) {
-                    status.textContent = "Not connected — retrying...";
+                    status.textContent = "Not connected to Hardware — retrying...";
                     initWebSocket();
                     return;
                 }
-                sessionData = [];
-                clearChart(romChart);
-                clearChart(imuChart);
-                liveImu1.textContent = '—°';
-                liveImu2.textContent = '—°';
-                liveDelta.textContent = '—°';
-                analyticsContent.innerHTML = `<p style="color:#4d82ad">Recording...</p>`;
-                socket.send("start");
-                isTracking = true;
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
+                sessionData = []; clearChart(romChart); clearChart(imuChart);
+                liveImu1.textContent = '—°'; liveImu2.textContent = '—°'; liveDelta.textContent = '—°';
+                analyticsContent.innerHTML = `<p style="color:#4d82ad">Recording exercise...</p>`;
+                socket.send("start"); isTracking = true;
+                startBtn.disabled = true; stopBtn.disabled = false;
                 status.textContent = "Recording...";
             };
 
             stopBtn.onclick = function () {
-                isTracking = false; // Stop processing incoming data immediately on frontend too
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.send("stop");
-                }
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
+                isTracking = false; 
+                if (socket && socket.readyState === WebSocket.OPEN) socket.send("stop");
+                startBtn.disabled = false; stopBtn.disabled = true;
                 status.textContent = "Hardware Idle";
                 runAnalysis();
             };
 
             clearBtn.onclick = function () {
-                if (confirm("Delete all session history?")) {
+                if (confirm("Delete all session history? This action cannot be undone.")) {
                     localStorage.removeItem('utbiome_history');
+                    // Clean up raw data without deleting Auth tokens
+                    Object.keys(localStorage).forEach(key => {
+                        if (key.startsWith('raw_')) localStorage.removeItem(key);
+                    });
                     renderHistory();
                     analyticsContent.innerHTML = `<p style="color:#999">History cleared.</p>`;
                 }
             };
 
             downloadBtn.onclick = function () {
-                const GLITCH_THRESHOLD = 2800;
-                const filteredData = sessionData.filter(row => row.v1 < GLITCH_THRESHOLD && row.v2 < GLITCH_THRESHOLD);
+                const filteredData = sessionData.filter(row => row.v1 < 2800 && row.v2 < 2800);
                 let csvContent = "data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n";
-                filteredData.forEach(row => {
-                    csvContent += `${row.time},${row.v1},${row.v2},${row.i1},${row.i2}\n`;
-                });
+                filteredData.forEach(row => { csvContent += `${row.time},${row.v1},${row.v2},${row.i1},${row.i2}\n`; });
                 const link = document.createElement("a");
                 link.setAttribute("href", encodeURI(csvContent));
                 link.setAttribute("download", `UTBiome_Session_${Date.now()}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
             };
 
-            csvFileInput.onchange = function (e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const lines = event.target.result.trim().split('\n');
-
-                    // Skip header row if present
-                    const startIndex = isNaN(parseInt(lines[0].split(',')[1])) ? 1 : 0;
-
-                    sessionData = [];
-                    lines.slice(startIndex).forEach(line => {
-                        const parts = line.split(',');
-                        if (parts.length < 3) return;
-
-                        const time = parts[0].trim();
-                        const v1 = parseInt(parts[1]);
-                        const v2 = parseInt(parts[2]);
-                        const i1 = parts.length >= 4 ? parseFloat(parts[3]) : 0;
-                        const i2 = parts.length >= 5 ? parseFloat(parts[4]) : 0;
-
-                        if (!isNaN(v1) && !isNaN(v2)) {
-                            sessionData.push({ time, v1, v2, i1, i2 });
-                        }
-                    });
-
-                    if (sessionData.length === 0) {
-                        analyticsContent.innerHTML = `<p style="color:red;">No valid rows found in CSV.</p>`;
-                        return;
-                    }
-
-                    // Replay data into both charts
-                    clearChart(romChart);
-                    clearChart(imuChart);
-                    sessionData.forEach(row => {
-                        pushToChart(romChart, row.time, row.v1, row.v2);
-                        pushToChart(imuChart, row.time, row.i1, row.i2);
-                    });
-
-                    status.textContent = `Loaded: ${file.name}`;
-                    runAnalysis(true, file.name);
-
-                    // Reset input so same file can be re-uploaded
-                    csvFileInput.value = "";
-                };
-
-                reader.readAsText(file);
-            };
-
-            // ── Init ──────────────────────────────────────────────────────
+            // Init
             initWebSocket();
             renderHistory();
         });
     </script>
 </body>
-
 </html>
