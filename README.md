@@ -2,10 +2,10 @@
   <img src="UTBIOME-Logo-1.jpg" alt="UTBiome Logo" width="150"/>
 </p>
 
-# UTBiome Knee Sleeve – ACL Rehabilitation Tracking Platform
+# Quantiflex – ACL Rehabilitation Tracking Platform
 
 ## Project Overview
-The **UTBiome Knee Sleeve** is a clinically-integrated wearable system designed to quantify recovery following **Anterior Cruciate Ligament (ACL) reconstruction**. Standard rehabilitation currently lacks objective, home-based quantitative tools, leading to a high risk of re-injury. 
+The **Quantiflex** is a clinically-integrated wearable system designed to quantify recovery following **Anterior Cruciate Ligament (ACL) reconstruction**. Standard rehabilitation currently lacks objective, home-based quantitative tools, leading to a high risk of re-injury. 
 
 Our platform bridges this gap by combining **Inertial Measurement Units (IMUs)** and **Surface Electromyography (sEMG)** to provide real-time neuromuscular and kinematic data through a non-invasive, home-based wearable.
 
@@ -60,4 +60,5 @@ tnbc-website/
 │   ├── app.py         # Flask API (Port 5001)
 │   └── processor.py   # Signal processing engine
 └── data/              # Subject data and clinical PDFs
+
 
