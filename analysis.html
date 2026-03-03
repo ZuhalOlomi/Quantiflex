@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuantiFlex - Data Analysis</title>
+    <title>UTBiome Knee Sleeve - Data Analysis</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -141,11 +141,13 @@
 
 <body>
     <header>
-        <h1>QuantiFlex</h1>
+        <h1>UTBiome Knee Sleeve</h1>
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="analysis.html" class="active">Analysis</a></li>
+                <li><a href="video.html">Video Demo</a></li>
             </ul>
         </nav>
     </header>
@@ -177,7 +179,7 @@
             <!-- EMG Chart -->
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 style="margin:0">Dual Channel EMG Activity</h3>
+                    <h3 style="margin:0">EMG Feed</h3>
                 </div>
                 <div style="padding: 20px; height: 380px;">
                     <canvas id="romChart"></canvas>
@@ -188,7 +190,7 @@
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">
-                        IMU Orientation — Knee Angle
+                        IMU Feed
                         <span class="imu-badge imu-badge-thigh">Upper</span>
                         <span class="imu-badge imu-badge-shank">Lower</span>
                     </h3>
@@ -317,24 +319,39 @@
                     labels: [],
                     datasets: [
                         {
-                            label: 'IMU 1 — Upper (°)',
+                            // Thigh angle — thin, transparent, background reference line
+                            label: 'IMU 1 — Thigh (°)',
                             data: [],
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.08)',
+                            borderColor: 'rgba(46, 204, 113, 0.35)',
+                            backgroundColor: 'transparent',
                             tension: 0.3,
                             pointRadius: 0,
                             fill: false,
-                            borderWidth: 2
+                            borderWidth: 1.5,
+                            borderDash: [4, 4]  // Dashed so it's clearly secondary
                         },
                         {
-                            label: 'IMU 2 — Lower (°)',
+                            // Shin angle — thin, transparent, background reference line
+                            label: 'IMU 2 — Shin (°)',
                             data: [],
-                            borderColor: '#9b59b6',
-                            backgroundColor: 'rgba(155, 89, 182, 0.08)',
+                            borderColor: 'rgba(155, 89, 182, 0.35)',
+                            backgroundColor: 'transparent',
                             tension: 0.3,
                             pointRadius: 0,
                             fill: false,
-                            borderWidth: 2
+                            borderWidth: 1.5,
+                            borderDash: [4, 4]
+                        },
+                        {
+                            // Knee flexion — bold, solid, primary graph element
+                            label: 'Knee Flexion (°)',
+                            data: [],
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.08)',
+                            tension: 0.4,
+                            pointRadius: 0,
+                            fill: true,
+                            borderWidth: 3  // Bold
                         }
                     ]
                 },
@@ -342,11 +359,26 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11 },
+                                // Style knee flexion label differently in legend
+                                generateLabels: (chart) => {
+                                    const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    labels[2].fontColor = '#e74c3c';
+                                    labels[2].text = '⬤ ' + labels[2].text;
+                                    return labels;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             suggestedMin: -10,
-                            suggestedMax: 100,
+                            suggestedMax: 120,
                             title: { display: true, text: 'Degrees (°)' }
                         },
                         x: { display: false }
@@ -369,20 +401,43 @@
 
                 socket.onmessage = (event) => {
                     if (!isTracking) return;
+
                     const parts = event.data.split(',');
                     if (parts.length < 4) return;
+
                     const v1 = parseInt(parts[0]);
                     const v2 = parseInt(parts[1]);
                     const i1 = parseFloat(parts[2]);
                     const i2 = parseFloat(parts[3]);
+
                     if (isNaN(v1) || isNaN(v2) || isNaN(i1) || isNaN(i2)) return;
+
                     const now = new Date().toLocaleTimeString();
+                    const kneeFlexion = Math.abs(i1 - i2);
+
                     sessionData.push({ time: now, v1, v2, i1, i2 });
+
+                    // EMG chart — unchanged
                     pushToChart(romChart, now, v1, v2);
-                    pushToChart(imuChart, now, i1, i2);
-                    liveImu1.textContent = i1.toFixed(1) + '°';
-                    liveImu2.textContent = i2.toFixed(1) + '°';
-                    liveDelta.textContent = Math.abs(i1 - i2).toFixed(1) + '°';
+
+                    // IMU chart — push all 3 datasets manually (don't use pushToChart, it only handles 2)
+                    imuChart.data.labels.push(now);
+                    imuChart.data.datasets[0].data.push(i1);           // Thigh
+                    imuChart.data.datasets[1].data.push(i2);           // Shin
+                    imuChart.data.datasets[2].data.push(kneeFlexion);  // Knee flexion angle
+
+                    if (imuChart.data.labels.length > 150) {
+                        imuChart.data.labels.shift();
+                        imuChart.data.datasets[0].data.shift();
+                        imuChart.data.datasets[1].data.shift();
+                        imuChart.data.datasets[2].data.shift();
+                    }
+                    imuChart.update('none');
+
+                    // Live readout
+                    liveImu1.textContent  = i1.toFixed(1) + '°';
+                    liveImu2.textContent  = i2.toFixed(1) + '°';
+                    liveDelta.textContent = kneeFlexion.toFixed(1) + '°';
                 };
 
                 socket.onclose = () => {
@@ -588,7 +643,18 @@
                     clearChart(imuChart);
                     sessionData.forEach(row => {
                         pushToChart(romChart, row.time, row.v1, row.v2);
-                        pushToChart(imuChart, row.time, row.i1, row.i2);
+                        const knee = Math.abs(row.i1 - row.i2);
+                        imuChart.data.labels.push(row.time);
+                        imuChart.data.datasets[0].data.push(row.i1);
+                        imuChart.data.datasets[1].data.push(row.i2);
+                        imuChart.data.datasets[2].data.push(knee);
+                        if (imuChart.data.labels.length > 150) {
+                            imuChart.data.labels.shift();
+                            imuChart.data.datasets[0].data.shift();
+                            imuChart.data.datasets[1].data.shift();
+                            imuChart.data.datasets[2].data.shift();
+                        }
+                        imuChart.update('none');
                     });
 
                     status.textContent = `Loaded: ${file.name}`;
