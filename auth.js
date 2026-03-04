@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const nav = document.querySelector('nav ul');
         if (nav && !document.querySelector('.logout-btn')) {
             const logoutLi = document.createElement('li');
-            logoutLi.innerHTML = '<button onclick="logout()" class="logout-btn" style="background:none; border:none; color:#007bff; cursor:pointer; font-size:1rem;">Logout</button>';
+            logoutLi.innerHTML = '<button onclick="logout()" class="logout-btn" style="background:none; border:none; color:white; cursor:pointer; font-size:1rem;">Logout</button>';
             nav.appendChild(logoutLi);
         }
     }
