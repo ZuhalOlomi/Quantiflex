@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTBiome Knee Sleeve - Video Demo</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>UTBiome Knee Sleeve</h1>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="analysis.html">Analysis</a></li>
+                <li><a href="recovery.html">Recovery</a></li>
+                <li><a href="video.html" class="active">Video Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="video-hero gs_reveal">
+            <div class="video-intro">
+                <h2>See How UTBiome Transforms Knee Rehabilitation</h2>
+                <p class="video-subtitle">Watch our comprehensive demo to discover how our smart knee sleeve and
+                    analytics platform work together to improve patient outcomes</p>
+            </div>
+
+            <div class="video-container gs_reveal gs_reveal_fromRight">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="UTBiome Knee Sleeve Demo Video"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="video-caption">
+                    <p>Full demonstration of the UTBiome Knee Sleeve system - 5:24</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="video-features">
+            <h2 class="gs_reveal">What You'll See in This Demo</h2>
+            <div class="features-grid">
+                <div class="feature-card gs_reveal gs_reveal_fromLeft">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Device Setup</h3>
+                    <p>Learn how to properly fit and calibrate the knee sleeve for accurate data collection</p>
+                </div>
+                <div class="feature-card gs_reveal">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-time Analytics</h3>
+                    <p>See live data streaming and how it translates to actionable insights for clinicians</p>
+                </div>
+                <div class="feature-card gs_reveal gs_reveal_fromRight">
+                    <div class="feature-icon">👨‍⚕️</div>
+                    <h3>Clinical Integration</h3>
+                    <p>Watch how physiotherapists use the dashboard to monitor multiple patients</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section gs_reveal">
+            <div class="cta-content">
+                <h2>Ready to Experience UTBiome?</h2>
+                <p>Start your free trial or schedule a personalized demo with our team</p>
+                <div class="cta-buttons">
+                    <a href="index.html" class="btn-primary">Start Free Trial</a>
+                    <a href="about.html#contact" class="btn-primary">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
+    <script>
+        // GSAP Scroll Animation
+        function animateFrom(elem, direction) {
+            direction = direction || 1;
+            var x = 0, y = direction * 100;
+            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
+            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
+            elem.style.transform = `translate(${x}px, ${y}px)`;
+            elem.style.opacity = "0";
+            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
+                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
+            });
+        }
+
+        function hide(elem) {
+            gsap.set(elem, { autoAlpha: 0 });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+                hide(elem);
+                ScrollTrigger.create({
+                    trigger: elem,
+                    onEnter: function () { animateFrom(elem) },
+                    onEnterBack: function () { animateFrom(elem, -1) },
+                    onLeave: function () { hide(elem) }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

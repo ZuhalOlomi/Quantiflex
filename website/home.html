@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTBiome Knee Sleeve - Rehabilitation Tracking</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+    <script src="auth.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>UTBiome Knee Sleeve</h1>
+        <nav>
+            <ul>
+                <li><a href="home.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="analysis.html">Analysis</a></li>
+                <li><a href="recovery.html">Recovery</a></li>
+                <li><a href="video.html">Video Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="content__heading gs_reveal">
+                <h2>Streamline Knee Rehabilitation.</h2>
+                <h3>Track Progress Visually</h3>
+                <p style="margin-left: 10px; margin-right: 10px;">
+                    Transforming knee rehabilitation using real-time data from our smart knee sleeve.<br>
+                    <br>Utilize our intuitive dashboard to monitor patient progress, enhance adherence, and optimize
+                    recovery outcomes.
+                </p>
+                <div class="cta-buttons">
+                    <a href="video.html" class="btn-primary">Video Demo</a>
+                    <a href="login.html" class="btn-primary">Login</a>
+                </div>
+            </div>
+            <div class="hero-visual gs_reveal gs_reveal_fromRight">
+                <div class="dashboard-preview">
+                    <div class="mock-chart">
+                        <div class="chart-header">Patient Progress Overview</div>
+                        <div class="chart-content">
+                            <div class="metric">Range of Motion (ROM): 92°</div>
+                            <div class="metric">Muscle Strength: 100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features gs_reveal">
+            <h2>Key Features for Clinicians</h2>
+            <div class="feature-grid">
+                <div class="feature-item gs_reveal gs_reveal_fromLeft">
+                    <h3>Real-time ROM Tracking</h3>
+                    <p>Monitor knee flexion and extension with precise sensor data from every rehabilitation session.
+                    </p>
+                </div>
+                <div class="feature-item gs_reveal">
+                    <h3>Adherence Analytics</h3>
+                    <p>See which patients are completing their prescribed exercises and identify those needing support.
+                    </p>
+                </div>
+                <div class="feature-item gs_reveal gs_reveal_fromRight">
+                    <h3>Progress Dashboards</h3>
+                    <p>Visualize recovery trends with clear charts and graphs for effective patient communication.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features gs_reveal">
+            <h2>A Brighter Future for Patients</h2>
+            <div class="feature-grid">
+                <div class="feature-item gs_reveal gs_reveal_fromLeft">
+                    <h3>Personalized Recovery Plans</h3>
+                    <p>Customized exercise protocols based on individual progress and capabilities.</p>
+                </div>
+                <div class="feature-item gs_reveal">
+                    <h3>Motivational Feedback</h3>
+                    <p>Stay engaged with visible milestones and achievement tracking throughout recovery.</p>
+                </div>
+                <div class="feature-item gs_reveal gs_reveal_fromRight">
+                    <h3>Remote Monitoring</h3>
+                    <p>Receive professional guidance and adjustments without frequent clinic visits.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <h2 style="margin-top: 30px;">Frequently Asked Questions (FAQs)</h2>
+
+            <div class="faq-container">
+                <!-- FAQ 1 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq1" class="faq-toggle">
+                    <label for="faq1" class="faq-question">
+                        <span>What is the UTBiome Knee Sleeve?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>The XXX knee sleeve is a wearable device that is designed to measure knee movement,
+                            range of motion, and other biomechanical data during rehabilitation exercises. It
+                            utilizes advanced sensors to provide real-time feedback and analytics to both patients
+                            and clinicians.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq2" class="faq-toggle">
+                    <label for="faq2" class="faq-question">
+                        <span>How accurate is the data collected by the knee sleeve?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            The UTBiome Knee Sleeve uses calibrated motion sensors (including inertial measurement
+                            units) to track
+                            joint angle, rotation, and acceleration in real time. The sensors are designed to minimize
+                            signal noise
+                            and drift, ensuring stable and consistent readings. Performance testing against
+                            clinical-grade motion
+                            analysis systems has shown strong agreement, supporting the accuracy of the raw movement
+                            data captured.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq3" class="faq-toggle">
+                    <label for="faq3" class="faq-question">
+                        <span>Who is the knee sleeve designed for?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            The UTBiome Knee Sleeve is designed for patients undergoing knee rehabilitation,
+                            including those recovering from surgeries such as ACL reconstruction, meniscus repair,
+                            or total knee replacement. It is also suitable for individuals with chronic knee
+                            conditions seeking to improve mobility and function.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq4" class="faq-toggle">
+                    <label for="faq4" class="faq-question">
+                        <span>How accurate is the data produced from the knee sleeve?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            The sleeve processes raw sensor data using validated biomechanical algorithms to generate
+                            meaningful rehabilitation metrics, such as range of motion (ROM), muscle strength, and
+                            activity trends. These outputs are aligned with established clinical assessment methods,
+                            helping ensure the results are both accurate and useful for tracking recovery progress.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq5" class="faq-toggle">
+                    <label for="faq5" class="faq-question">
+                        <span>Is my data safe?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Yes, UTBiome prioritizes data security and patient privacy. All data collected by the
+                            knee sleeve is encrypted and stored securely in compliance with healthcare regulations
+                            such as HIPAA.
+                        </p>
+                    </div>
+                </div>
+
+                <!--- FAQ 6 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq6" class="faq-toggle">
+                    <label for="faq6" class="faq-question">
+                        <span>Can clinicans use this for patient monitoring?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Absolutely! The UTBiome Knee Sleeve is designed to provide clinicians with real-time
+                            data and analytics to monitor patient progress remotely. This enables timely interventions
+                            and personalized treatment adjustments.
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+        <section>
+            <h2>Who are we?</h2>
+            <p>
+                We are a groups of students from the University of Toronto specializing in a variety of fields
+                including<br>
+                biomedical engineering, computer science, and design. Our mission is to revolutionize knee
+                rehabilitation<br>
+                through innovative technology and data-driven solutions.
+            </p>
+            <div class="group-photo-container gs_reveal gs_reveal_fromBottom">
+                <img src="team_photo.jpg" alt="UTBiome Team Photo" />
+                <p>Meet our dedicated team of experts in rehabilitation technology.</p>
+
+            </div>
+        </section>
+
+
+
+
+
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
+    <script>
+        // GSAP Scroll Animation
+        function animateFrom(elem, direction) {
+            direction = direction || 1;
+            var x = 0, y = direction * 100;
+            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
+            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
+            elem.style.transform = `translate(${x}px, ${y}px)`;
+            elem.style.opacity = "0";
+            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
+                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
+            });
+        }
+
+        function hide(elem) {
+            gsap.set(elem, { autoAlpha: 0 });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+                hide(elem);
+                ScrollTrigger.create({
+                    trigger: elem,
+                    onEnter: function () { animateFrom(elem) },
+                    onEnterBack: function () { animateFrom(elem, -1) },
+                    onLeave: function () { hide(elem) }
+                });
+            });
+        });
+    </script>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+
+</html>
