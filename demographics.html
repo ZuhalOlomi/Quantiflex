@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuantiFlex My Profile</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* Patient Profile Specific Styles */
+        .profile-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .profile-header h2 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .profile-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .save-status {
+            color: #27ae60;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .save-status.show {
+            opacity: 1;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Form Styles */
+        .profile-form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .form-section h3 {
+            color: #4d82ad;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4d82ad;
+            box-shadow: 0 0 0 3px rgba(77, 130, 173, 0.1);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            border-color: #3a6788;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #4d82ad;
+            color: white;
+            flex: 2;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a6788;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: #ecf0f1;
+            color: #34495e;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background-color: #bdc3c7;
+        }
+
+        /* Profile Display Styles */
+        .profile-display-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .patient-avatar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #4d82ad, #2c3e50);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .patient-name {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 10px 0 5px;
+        }
+
+        .patient-id {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card h4 {
+            color: #4d82ad;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .medical-history {
+            margin-top: 15px;
+        }
+
+        .condition-tag {
+            display: inline-block;
+            background: #4d82ad;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 0 5px 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>QuantiFlex</h1>
+        <nav>
+            <ul>
+                <li><a href="patient_home.html">Home</a></li>
+                <li><a href="analysis.html">Analysis</a></li>
+                <li><a href="demographics.html" class="active">My Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>My Profile</h2>
+                <div class="profile-status">
+                    <span class="save-status" id="saveStatus">
+                        ✓ Profile saved successfully
+                    </span>
+                </div>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Profile Form Section -->
+                <div class="profile-form-container">
+                    <h3>Edit Patient Information</h3>
+                    
+                    <form id="patientForm">
+                        <!-- Personal Information Section -->
+                        <div class="form-section">
+                            <h3>Personal Information</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth *</label>
+                                    <input type="date" id="dob" name="dob" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Gender *</label>
+                                    <select id="gender" name="gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                        <option value="prefer-not">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="bloodType">Blood Type</label>
+                                    <select id="bloodType" name="bloodType">
+                                        <option value="">Select Blood Type</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="height">Height (cm)</label>
+                                    <input type="number" id="height" name="height" min="0" max="250" step="0.1">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="weight">Weight (kg)</label>
+                                    <input type="number" id="weight" name="weight" min="0" max="300" step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="occupation">Occupation</label>
+                                    <input type="text" id="occupation" name="occupation">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information Section -->
+                        <div class="form-section">
+                            <h3>Contact Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emergencyContact">Emergency Contact</label>
+                                    <input type="tel" id="emergencyContact" name="emergencyContact">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea id="address" name="address" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Medical Information Section -->
+                        <div class="form-section">
+                            <h3>Medical Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="primaryCondition">Primary Condition</label>
+                                <input type="text" id="primaryCondition" name="primaryCondition" placeholder="e.g., ACL Reconstruction">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pre-existing Conditions</label>
+                                <div class="checkbox-group" id="conditions">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition1" name="conditions" value="diabetes">
+                                        <label for="condition1">Diabetes</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition2" name="conditions" value="hypertension">
+                                        <label for="condition2">Hypertension</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition3" name="conditions" value="asthma">
+                                        <label for="condition3">Asthma</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition4" name="conditions" value="arthritis">
+                                        <label for="condition4">Arthritis</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition5" name="conditions" value="osteoporosis">
+                                        <label for="condition5">Osteoporosis</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="condition6" name="conditions" value="other">
+                                        <label for="condition6">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="allergies">Allergies</label>
+                                <input type="text" id="allergies" name="allergies" placeholder="List any allergies">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="medications">Current Medications</label>
+                                <textarea id="medications" name="medications" rows="3" placeholder="List current medications and dosages"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notes">Additional Notes</label>
+                                <textarea id="notes" name="notes" rows="3" placeholder="Any additional information"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" id="saveProfileBtn">Save Profile</button>
+                            <button type="button" class="btn-secondary" id="clearFormBtn">Clear Form</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Profile Display Section -->
+                <div class="profile-display-container">
+                    <div class="patient-avatar">
+                        <div class="avatar-circle" id="avatarInitials">JD</div>
+                        <h3 class="patient-name" id="displayName">John Doe</h3>
+                        <p class="patient-id" id="displayPatientId">Patient ID: P-2024-0001</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Personal Details</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Date of Birth</div>
+                                <div class="info-value" id="displayDOB">Not specified</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Gender</div>
+                                <div class="info-value" id="displayGender">Not specified</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Blood Type</div>
+                                <div class="info-value" id="displayBloodType">Not specified</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Height / Weight</div>
+                                <div class="info-value" id="displayHeightWeight">Not specified</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Occupation</div>
+                                <div class="info-value" id="displayOccupation">Not specified</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Contact Information</h4>
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" id="displayEmail">Not specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value" id="displayPhone">Not specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Emergency Contact</div>
+                            <div class="info-value" id="displayEmergency">Not specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Address</div>
+                            <div class="info-value" id="displayAddress">Not specified</div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Medical Information</h4>
+                        <div class="info-item">
+                            <div class="info-label">Primary Condition</div>
+                            <div class="info-value" id="displayCondition">Not specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Pre-existing Conditions</div>
+                            <div class="info-value" id="displayPreExisting">None specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Allergies</div>
+                            <div class="info-value" id="displayAllergies">None specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Medications</div>
+                            <div class="info-value" id="displayMedications">None specified</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Additional Notes</div>
+                            <div class="info-value" id="displayNotes">None</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get form elements
+            const patientForm = document.getElementById('patientForm');
+            const saveStatus = document.getElementById('saveStatus');
+            const clearFormBtn = document.getElementById('clearFormBtn');
+
+            // Load saved data on page load
+            loadPatientData();
+
+            // Form submit handler
+            patientForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePatientData();
+            });
+
+            // Clear form button handler
+            clearFormBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all form data?')) {
+                    patientForm.reset();
+                    updateDisplayFromForm();
+                }
+            });
+
+            // Auto-update display as user types (optional - can be removed if too distracting)
+            const formInputs = patientForm.querySelectorAll('input, select, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateDisplayFromForm();
+                });
+                input.addEventListener('change', function() {
+                    updateDisplayFromForm();
+                });
+            });
+
+            // Function to save patient data
+            function savePatientData() {
+                // Collect form data
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    dob: document.getElementById('dob').value,
+                    gender: document.getElementById('gender').value,
+                    bloodType: document.getElementById('bloodType').value,
+                    height: document.getElementById('height').value,
+                    weight: document.getElementById('weight').value,
+                    occupation: document.getElementById('occupation').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    emergencyContact: document.getElementById('emergencyContact').value,
+                    address: document.getElementById('address').value,
+                    primaryCondition: document.getElementById('primaryCondition').value,
+                    allergies: document.getElementById('allergies').value,
+                    medications: document.getElementById('medications').value,
+                    notes: document.getElementById('notes').value,
+                    conditions: []
+                };
+
+                // Get checked conditions
+                document.querySelectorAll('input[name="conditions"]:checked').forEach(checkbox => {
+                    formData.conditions.push(checkbox.value);
+                });
+
+                // Save to localStorage
+                localStorage.setItem('patientProfile', JSON.stringify(formData));
+
+                // Update display
+                updateDisplayFromFormData(formData);
+
+                // Show save status
+                saveStatus.classList.add('show');
+                setTimeout(() => {
+                    saveStatus.classList.remove('show');
+                }, 3000);
+
+                console.log('Profile saved successfully!');
+            }
+
+            // Function to load patient data
+            function loadPatientData() {
+                const savedData = localStorage.getItem('patientProfile');
+                
+                if (savedData) {
+                    try {
+                        const formData = JSON.parse(savedData);
+                        
+                        // Populate form fields
+                        document.getElementById('firstName').value = formData.firstName || '';
+                        document.getElementById('lastName').value = formData.lastName || '';
+                        document.getElementById('dob').value = formData.dob || '';
+                        document.getElementById('gender').value = formData.gender || '';
+                        document.getElementById('bloodType').value = formData.bloodType || '';
+                        document.getElementById('height').value = formData.height || '';
+                        document.getElementById('weight').value = formData.weight || '';
+                        document.getElementById('occupation').value = formData.occupation || '';
+                        document.getElementById('email').value = formData.email || '';
+                        document.getElementById('phone').value = formData.phone || '';
+                        document.getElementById('emergencyContact').value = formData.emergencyContact || '';
+                        document.getElementById('address').value = formData.address || '';
+                        document.getElementById('primaryCondition').value = formData.primaryCondition || '';
+                        document.getElementById('allergies').value = formData.allergies || '';
+                        document.getElementById('medications').value = formData.medications || '';
+                        document.getElementById('notes').value = formData.notes || '';
+
+                        // Populate checkboxes
+                        document.querySelectorAll('input[name="conditions"]').forEach(checkbox => {
+                            checkbox.checked = formData.conditions && formData.conditions.includes(checkbox.value);
+                        });
+
+                        // Update display
+                        updateDisplayFromFormData(formData);
+                        
+                    } catch (e) {
+                        console.error('Error loading saved data:', e);
+                    }
+                } else {
+                    // Set default sample data
+                    setDefaultSampleData();
+                }
+            }
+
+            // Function to set default sample data
+            function setDefaultSampleData() {
+                const sampleData = {
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    dob: '1985-05-15',
+                    gender: 'male',
+                    bloodType: 'O+',
+                    height: '178',
+                    weight: '75.5',
+                    occupation: 'Teacher',
+                    email: 'john.doe@email.com',
+                    phone: '(555) 123-4567',
+                    emergencyContact: '(555) 987-6543',
+                    address: '123 Main St, Austin, TX 78701',
+                    primaryCondition: 'ACL Reconstruction - Right Knee',
+                    allergies: 'Penicillin',
+                    medications: 'Ibuprofen 200mg as needed',
+                    notes: 'Patient is responsive to treatment. Showing good progress.',
+                    conditions: ['arthritis']
+                };
+
+                // Populate form with sample data
+                document.getElementById('firstName').value = sampleData.firstName;
+                document.getElementById('lastName').value = sampleData.lastName;
+                document.getElementById('dob').value = sampleData.dob;
+                document.getElementById('gender').value = sampleData.gender;
+                document.getElementById('bloodType').value = sampleData.bloodType;
+                document.getElementById('height').value = sampleData.height;
+                document.getElementById('weight').value = sampleData.weight;
+                document.getElementById('occupation').value = sampleData.occupation;
+                document.getElementById('email').value = sampleData.email;
+                document.getElementById('phone').value = sampleData.phone;
+                document.getElementById('emergencyContact').value = sampleData.emergencyContact;
+                document.getElementById('address').value = sampleData.address;
+                document.getElementById('primaryCondition').value = sampleData.primaryCondition;
+                document.getElementById('allergies').value = sampleData.allergies;
+                document.getElementById('medications').value = sampleData.medications;
+                document.getElementById('notes').value = sampleData.notes;
+
+                // Set checkboxes
+                document.querySelectorAll('input[name="conditions"]').forEach(checkbox => {
+                    checkbox.checked = sampleData.conditions.includes(checkbox.value);
+                });
+
+                updateDisplayFromFormData(sampleData);
+            }
+
+            // Function to update display from form data
+            function updateDisplayFromForm() {
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    dob: document.getElementById('dob').value,
+                    gender: document.getElementById('gender').value,
+                    bloodType: document.getElementById('bloodType').value,
+                    height: document.getElementById('height').value,
+                    weight: document.getElementById('weight').value,
+                    occupation: document.getElementById('occupation').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    emergencyContact: document.getElementById('emergencyContact').value,
+                    address: document.getElementById('address').value,
+                    primaryCondition: document.getElementById('primaryCondition').value,
+                    allergies: document.getElementById('allergies').value,
+                    medications: document.getElementById('medications').value,
+                    notes: document.getElementById('notes').value,
+                    conditions: []
+                };
+
+                document.querySelectorAll('input[name="conditions"]:checked').forEach(checkbox => {
+                    formData.conditions.push(checkbox.value);
+                });
+
+                updateDisplayFromFormData(formData);
+            }
+
+            // Function to update display from form data object
+            function updateDisplayFromFormData(data) {
+                // Update name and avatar
+                const firstName = data.firstName || '';
+                const lastName = data.lastName || '';
+                const fullName = firstName + ' ' + lastName;
+                document.getElementById('displayName').textContent = fullName.trim() || 'Not specified';
+                
+                // Set avatar initials
+                const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'JD';
+                document.getElementById('avatarInitials').textContent = initials;
+
+                // Generate patient ID (in a real app, this would be consistent)
+                if (firstName || lastName) {
+                    const timestamp = new Date().getFullYear();
+                    document.getElementById('displayPatientId').textContent = `Patient ID: P-${timestamp}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+                }
+
+                // Format and display DOB
+                if (data.dob) {
+                    const dobDate = new Date(data.dob);
+                    const formattedDOB = dobDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    document.getElementById('displayDOB').textContent = formattedDOB;
+                } else {
+                    document.getElementById('displayDOB').textContent = 'Not specified';
+                }
+
+                // Display gender
+                const genderMap = {
+                    'male': 'Male',
+                    'female': 'Female',
+                    'other': 'Other',
+                    'prefer-not': 'Prefer not to say'
+                };
+                document.getElementById('displayGender').textContent = data.gender ? genderMap[data.gender] || data.gender : 'Not specified';
+
+                // Display blood type
+                document.getElementById('displayBloodType').textContent = data.bloodType || 'Not specified';
+
+                // Display height and weight
+                let heightWeight = [];
+                if (data.height) heightWeight.push(`${data.height} cm`);
+                if (data.weight) heightWeight.push(`${data.weight} kg`);
+                document.getElementById('displayHeightWeight').textContent = heightWeight.length ? heightWeight.join(' / ') : 'Not specified';
+
+                // Display occupation
+                document.getElementById('displayOccupation').textContent = data.occupation || 'Not specified';
+
+                // Display contact info
+                document.getElementById('displayEmail').textContent = data.email || 'Not specified';
+                document.getElementById('displayPhone').textContent = data.phone || 'Not specified';
+                document.getElementById('displayEmergency').textContent = data.emergencyContact || 'Not specified';
+                document.getElementById('displayAddress').textContent = data.address || 'Not specified';
+
+                // Display medical info
+                document.getElementById('displayCondition').textContent = data.primaryCondition || 'Not specified';
+                
+                // Display pre-existing conditions as tags
+                const conditionsContainer = document.getElementById('displayPreExisting');
+                if (data.conditions && data.conditions.length > 0) {
+                    const conditionLabels = {
+                        'diabetes': 'Diabetes',
+                        'hypertension': 'Hypertension',
+                        'asthma': 'Asthma',
+                        'arthritis': 'Arthritis',
+                        'osteoporosis': 'Osteoporosis',
+                        'other': 'Other'
+                    };
+                    
+                    let conditionsHtml = '';
+                    data.conditions.forEach(condition => {
+                        const label = conditionLabels[condition] || condition;
+                        conditionsHtml += `<span class="condition-tag">${label}</span>`;
+                    });
+                    conditionsContainer.innerHTML = conditionsHtml;
+                } else {
+                    conditionsContainer.innerHTML = 'None specified';
+                }
+
+                // Display allergies
+                document.getElementById('displayAllergies').textContent = data.allergies || 'None specified';
+                
+                // Display medications
+                document.getElementById('displayMedications').textContent = data.medications || 'None specified';
+                
+                // Display notes
+                document.getElementById('displayNotes').textContent = data.notes || 'None';
+            }
+        });
+    </script>
+</body>
+
+</html>
