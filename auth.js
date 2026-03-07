@@ -6,7 +6,7 @@
 function setRole(role) {
     const roleInput = document.getElementById("currentRole");
     if (roleInput) roleInput.value = role;
-
+    
     const btnPatient = document.getElementById("btn-patient");
     const btnClinician = document.getElementById("btn-clinician");
     const selector = document.getElementById("role-selector");
@@ -31,7 +31,7 @@ function setRole(role) {
 function signup() {
     const user = document.getElementById("username")?.value;
     const pass = document.getElementById("password")?.value;
-    const role = document.getElementById("currentRole")?.value;
+    const role = document.getElementById("currentRole")?.value; 
 
     if (!user || !pass) {
         alert("Please fill in both fields.");
@@ -46,7 +46,7 @@ function signup() {
 function login() {
     const userInput = document.getElementById("username")?.value;
     const passInput = document.getElementById("password")?.value;
-    const role = document.getElementById("currentRole")?.value;
+    const role = document.getElementById("currentRole")?.value; 
 
     if (!userInput || !passInput) {
         alert("Please fill in both fields.");
@@ -58,11 +58,11 @@ function login() {
 
     if (userInput === savedUser && passInput === savedPass) {
         const userName = userInput.split('@')[0];
-
+        
         localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("userRole", role);
+        localStorage.setItem("userRole", role); 
         localStorage.setItem("userName", userName);
-
+        
         showLoginSuccess(userName, role);
     } else {
         alert(`Invalid ${role} credentials. Please check your role or sign up.`);
@@ -93,7 +93,7 @@ function handleCredentialResponse(response) {
 function decodeJwtResponse(token) {
     let base64Url = token.split('.')[1];
     let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
@@ -106,9 +106,9 @@ function decodeJwtResponse(token) {
 function showLoginSuccess(userName, role) {
     const notification = document.getElementById("successNotification");
     const message = document.getElementById("successMessage");
-
+    
     const targetDashboard = (role === 'clinician') ? 'clinician_dashboard.html' : 'analysis.html';
-
+    
     if (notification && message) {
         message.textContent = `Welcome, ${userName}! Opening ${role} portal...`;
         notification.style.display = "block";
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
     const userRole = localStorage.getItem("userRole");
     const userName = localStorage.getItem("userName");
-
+    
     const path = window.location.pathname.toLowerCase();
     const filename = path.split('/').pop() || ''; // Get just the filename
 
@@ -132,10 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Filename:", filename);
     console.log("Logged In:", isLoggedIn);
     console.log("User Role:", userRole);
-    console.log("localStorage Contents:", { ...localStorage });
+    console.log("localStorage Contents:", {...localStorage});
 
     // 1. Update Navigation Links
-    const loginLink = document.querySelector('nav ul li a[href="login.html"]');
+    const loginLink = document.querySelector('nav ul li a[href="login.html"]'); 
     if (isLoggedIn && loginLink) {
         loginLink.textContent = userName || "Dashboard";
         loginLink.href = (userRole === "clinician") ? "clinician_dashboard.html" : "analysis.html";
@@ -146,18 +146,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const nav = document.querySelector('nav ul');
         if (nav && !document.querySelector('.logout-btn')) {
             const logoutLi = document.createElement('li');
-            logoutLi.innerHTML = '<li onclick="logout()" class="logout-btn" style="background:none; color: white; cursor:pointer;">Logout</li>';
+            logoutLi.innerHTML = '<button onclick="logout()" class="logout-btn" style="background:none; border:none; color:#007bff; cursor:pointer; font-size:1rem;">Logout</button>';
             nav.appendChild(logoutLi);
         }
     }
 
     // 3. SECURITY GUARD - FIXED VERSION
     // Skip security checks on login page and logout page
-    const publicPages = ['login.html', 'logout.html', 'home.html', 'about.html', 'video.html'];
-
-    if (publicPages.includes(filename)) {
+    if (filename === 'login.html' || filename === 'logout.html') {
+        console.log("On login/logout page - skipping security check");
         return;
     }
+
     // Check if user is not logged in at all
     if (!isLoggedIn) {
         console.log("User not logged in - redirecting to login");
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function logout() {
     console.log("Logging out...");
-    localStorage.clear();
+    localStorage.clear(); 
     window.location.href = "logout.html";
 }
 
@@ -219,58 +219,14 @@ async function updateDashboardData() {
 
         // Update your UI elements with the backend response
         // data.liveRom = 5.8, data.liveRms = 0.48298
-        if (document.getElementById('rom-display')) {
+        if(document.getElementById('rom-display')) {
             document.getElementById('rom-display').innerText = `${data.liveRom}°`;
         }
         console.log("Live Data synced:", data);
-
+        
     } catch (error) {
         console.error("Could not connect to the knee sleeve backend:", error);
     }
-}
-
-// This function is triggered by Google after a successful login
-function handleCredentialResponse(response) {
-    // 1. The 'credential' is a JWT (JSON Web Token) containing user info
-    const responsePayload = decodeJwtResponse(response.credential);
-
-    console.log("ID: " + responsePayload.sub);
-    console.log('Full Name: ' + responsePayload.name);
-    console.log('Email: ' + responsePayload.email);
-
-    // 2. Save session data so other pages know we are logged in
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("userName", responsePayload.name);
-    localStorage.setItem("userEmail", responsePayload.email);
-
-    // Get the role selected in your UI (Patient or Clinician)
-    const selectedRole = document.getElementById("currentRole").value;
-    localStorage.setItem("userRole", selectedRole);
-
-    // 3. Show your success notification
-    const notification = document.getElementById("successNotification");
-    const message = document.getElementById("successMessage");
-    message.textContent = `Welcome, ${responsePayload.name}! Redirecting...`;
-    notification.style.display = "block";
-
-    // 4. Redirect after a short delay
-    setTimeout(() => {
-        if (selectedRole === 'clinician') {
-            window.location.href = "clinician_dashboard.html";
-        } else {
-            window.location.href = "analysis.html";
-        }
-    }, 2000);
-}
-
-// Helper function to decode the Google JWT Token
-function decodeJwtResponse(token) {
-    let base64Url = token.split('.')[1];
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
 }
 
 // Refresh data every 2 seconds
