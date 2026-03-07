@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UTBiome Knee Sleeve - About Us</title>
+    <title>Quantiflex Knee Sleeve - About Us</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
@@ -34,7 +34,8 @@
                     <div class="card-icon"></div>
                     <h3>OUR MISSION</h3>
                     <p>
-                        At UTBiome, we aim to put patients first to clinicians by providing cutting-edge rehabilitation
+                        At Quantiflex, we aim to put patients first to clinicians by providing cutting-edge
+                        rehabilitation
                         technology that enhances recovery outcomes through real-time data and analytics.
                     </p>
                 </div>
@@ -59,11 +60,12 @@
                     <p style="padding: 20px;">
                         Our multidisciplinary team of engineers, life-science students, and researchers is dedicated to
                         advancing knee rehabilitation through innovative solutions that empower both patients and
-                        healthcare providers. The UTBIOME team consists of experts in biology and physiology, software
+                        healthcare providers. The Quantiflex team consists of experts in biology and physiology,
+                        software
                         engineers, and experts in data analytics.
                     </p><br>
                     <div class="group-photo-container gs_reveal gs_reveal_fromRight">
-                        <img src="team_photo.jpg" alt="UTBiome Team Photo" class="team-img" />
+                        <img src="team_photo.jpg" alt="Quantiflex Team Photo" class="team-img" />
                     </div>
 
                 </div>
@@ -146,38 +148,38 @@
                 });
             });
         </script>
-        </main>
+    </main>
 
-        <footer>
-            <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
-        </footer>
+    <footer>
+        <p>© 2025-2026 Quantiflex | Clinical Rehabilitation Technology</p>
+    </footer>
 
-        <script>
-            function animateFrom(elem, direction) {
-                direction = direction || 1;
-                var x = 0, y = direction * 100;
-                if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
-                else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
-                elem.style.transform = `translate(${x}px, ${y}px)`;
-                elem.style.opacity = "0";
-                gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
-                    duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
-                });
-            }
-            function hide(elem) { gsap.set(elem, { autoAlpha: 0 }); }
-            document.addEventListener("DOMContentLoaded", function () {
-                gsap.registerPlugin(ScrollTrigger);
-                gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
-                    hide(elem);
-                    ScrollTrigger.create({
-                        trigger: elem,
-                        onEnter: function () { animateFrom(elem) },
-                        onEnterBack: function () { animateFrom(elem, -1) },
-                        onLeave: function () { hide(elem) }
-                    });
+    <script>
+        function animateFrom(elem, direction) {
+            direction = direction || 1;
+            var x = 0, y = direction * 100;
+            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
+            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
+            elem.style.transform = `translate(${x}px, ${y}px)`;
+            elem.style.opacity = "0";
+            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
+                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
+            });
+        }
+        function hide(elem) { gsap.set(elem, { autoAlpha: 0 }); }
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+                hide(elem);
+                ScrollTrigger.create({
+                    trigger: elem,
+                    onEnter: function () { animateFrom(elem) },
+                    onEnterBack: function () { animateFrom(elem, -1) },
+                    onLeave: function () { hide(elem) }
                 });
             });
-        </script>
+        });
+    </script>
 </body>
 
 </html>

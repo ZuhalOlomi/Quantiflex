@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="UTBIOME-Logo-1.jpg" alt="UTBiome Logo" width="150"/>
+  <img src="UTBIOME-Logo-1.jpg" alt="Quantiflex Logo" width="150"/>
 </p>
 
 # Quantiflex – ACL Rehabilitation Tracking Platform
@@ -37,7 +37,7 @@ The system monitors the **Limb Symmetry Index (LSI)** to provide objective "Retu
 ---
 
 ## Competitive Differentiation
-| Feature | UTBiome | Consumer Trackers | Clinical Labs (Vicon) |
+| Feature | Quantiflex | Consumer Trackers | Clinical Labs (Vicon) |
 | :--- | :--- | :--- | :--- |
 | **Data Modality** | sEMG + IMU | IMU Only | IR Markers + EMG |
 | **Portability** | High (In-Home) | High | Low (Lab Bound) |
@@ -55,7 +55,7 @@ tnbc-website/
 ├── clinician_dashboard.html # Clinician monitoring portal (Live Telemetry)
 ├── logout.html        # Secure session termination UI
 ├── auth.js            # Unified Auth, Security Guard & Backend sync
-├── style.css          # Global UTBiome design system
+├── style.css          # Global Quantiflex design system
 ├── backend/
 │   ├── app.py         # Flask API (Port 5001)
 │   └── processor.py   # Signal processing engine

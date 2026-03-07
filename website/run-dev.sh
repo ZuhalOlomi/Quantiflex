@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Simple development runner for the UTBiome project
+# Simple development runner for the Quantiflex project
 # Starts backend (Flask) on port 5001 and a static HTTP server for the frontend on port 8000.
 # Usage: ./run-dev.sh
 

@@ -6,6 +6,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assign Recovery Plan | QuantiFlex</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Chat component styles */
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+            z-index: 1000;
+            display: none;
+            /* Hidden by default */
+        }
+
+        #chat-header {
+            background: #4d82ad;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .message.patient {
+            background: #e9ecef;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        .message.clinician {
+            background: #4d82ad;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        #chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e1e8ed;
+            display: flex;
+            gap: 10px;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #send-btn {
+            background: #4d82ad;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Chat Toggle Button */
+        #chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #4d82ad;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            font-size: 1.8rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #chat-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: #3a6d96;
+        }
+
+        /* Message bubble refined styles - Clinician View */
+        .message {
+            margin-bottom: 12px;
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.patient {
+            background: #ffffff;
+            color: #333;
+            align-self: flex-start;
+            border: 1px solid #e1e8ed;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message.clinician {
+            background: #4d82ad;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,6 +165,7 @@
                 <li><a href="home.html">Home</a></li>
                 <li><a href="clinician_dashboard.html">Dashboard</a></li>
                 <li><a href="assign_recovery.html" class="active">Assign Recovery</a></li>
+                <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -31,8 +181,10 @@
                     <label for="current-patient">Select Patient</label>
                     <select id="current-patient"
                         style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #999; font-family: 'Georgia', serif;">
-                        <option value="p101">John Doe (ACL Recovery)</option>
-                        <option value="p102">Jane Smith (Knee Replacement)</option>
+                        <option value="p101">John Smith (ACL Reconstruction)</option>
+                        <option value="p102">Sarah Johnson (Meniscus Repair)</option>
+                        <option value="p103">Michael Brown (Patellar Tendonitis)</option>
+                        <option value="p104">Emily Davis (ACL Reconstruction)</option>
                     </select>
                 </div>
 
@@ -72,21 +224,40 @@
                 </div>
 
                 <div id="current-plan">
-                    <h3 style="margin-bottom: 10px;">Current Plan for <span id="selected-patient-name">Patient</span>
+                    <h3 style="margin-bottom: 20px;">Current Plan for <span id="selected-patient-name">Patient</span>
                     </h3>
-                    <ul id="exercise-list" style="list-style: none; padding: 0;">
+                    <div id="exercise-list">
                         <!-- Assigned exercises will appear here -->
-                    </ul>
+                    </div>
                     <button onclick="saveFullPlan()"
                         style="width: 100%; background: #28a745; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px;">Save
                         Full Plan to Backend</button>
                 </div>
             </div>
         </section>
+
+        <!-- Chat Box -->
+        <div id="chat-toggle" onclick="toggleChat()">
+            <span>💬</span>
+        </div>
+
+        <div id="chat-container">
+            <div id="chat-header">
+                Chat with Patient
+                <span style="font-size: 1.2rem; cursor: pointer;" onclick="toggleChat()">×</span>
+            </div>
+            <div id="chat-messages">
+                <!-- Messages will be loaded here -->
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
     </main>
 
     <footer>
-        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+        <p>© 2025-2026 Quantiflex | Clinical Rehabilitation Technology</p>
     </footer>
 
     <script>
@@ -105,8 +276,66 @@
                 const data = await response.json();
                 currentExercises = data.exercises || [];
                 renderExercises();
+                loadMessages(); // Load chat for this patient
             } catch (err) {
                 console.error("Error loading plan:", err);
+            }
+        }
+
+        // Chat logic
+        async function loadMessages() {
+            const patientId = document.getElementById('current-patient').value;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/messages/${patientId}`);
+                const messages = await response.json();
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = messages.map(msg => `
+                    <div class="message ${msg.sender}">
+                        ${msg.text}
+                    </div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            } catch (err) {
+                console.error("Error loading messages:", err);
+            }
+        }
+
+        async function sendMessage() {
+            const patientId = document.getElementById('current-patient').value;
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patientId: patientId,
+                        sender: 'clinician',
+                        text: text,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    input.value = '';
+                    loadMessages();
+                }
+            } catch (err) {
+                console.error("Error sending message:", err);
+            }
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chat-container');
+            const toggle = document.getElementById('chat-toggle');
+            if (chat.style.display === 'none' || chat.style.display === '') {
+                chat.style.display = 'flex';
+                toggle.style.display = 'none';
+            } else {
+                chat.style.display = 'none';
+                toggle.style.display = 'flex';
             }
         }
 
@@ -139,24 +368,29 @@
         function renderExercises() {
             const list = document.getElementById('exercise-list');
             list.innerHTML = '';
+            if (currentExercises.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No exercises in current plan.</p>';
+                return;
+            }
+
             currentExercises.forEach((ex, index) => {
-                const li = document.createElement('li');
-                li.style.background = 'white';
-                li.style.padding = '10px';
-                li.style.marginBottom = '10px';
-                li.style.borderRadius = '5px';
-                li.style.border = '1px solid #ddd';
-                li.style.display = 'flex';
-                li.style.justifyContent = 'space-between';
-                li.style.alignItems = 'center';
-                li.innerHTML = `
-                    <div>
-                        <strong>${ex.name}</strong> - ${ex.sets}x${ex.reps}<br>
-                        <small style="color: #666;">${ex.tips || 'No tips added'}</small>
+                const card = document.createElement('div');
+                card.className = 'exercise-card';
+                card.innerHTML = `
+                    <img src="${ex.image || 'quad-set-thumb.jpg'}" alt="${ex.name}" class="exercise-image" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
+                    <div class="exercise-info">
+                        <h3>${ex.name}</h3>
+                        <div class="exercise-meta">
+                            <span>Sets: ${ex.sets}</span>
+                            <span>Reps: ${ex.reps}</span>
+                        </div>
+                        <div class="exercise-tips">
+                            <strong>Tip:</strong> ${ex.tips || 'Follow the instructions provided by your clinician.'}
+                        </div>
                     </div>
-                    <button onclick="removeExercise(${index})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Remove</button>
+                    <button class="remove-btn" onclick="removeExercise(${index})">Remove</button>
                 `;
-                list.appendChild(li);
+                list.appendChild(card);
             });
         }
 
@@ -181,7 +415,16 @@
         }
 
         // Initial load
-        window.onload = loadPatientPlan;
+        window.onload = () => {
+            loadPatientPlan();
+            // Poll for new messages every 5 seconds
+            setInterval(loadMessages, 5000);
+        };
+
+        // Enter key for chat
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 

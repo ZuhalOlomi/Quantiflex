@@ -181,7 +181,7 @@
 
         // 1. Render the table based on LocalStorage
         window.renderHistory = function (filterDate = null) {
-            const logs = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+            const logs = JSON.parse(localStorage.getItem('quantiflex_history') || "[]");
 
             // Filter by date if a date is selected in the calendar
             let displayLogs = filterDate ? logs.filter(l => l.dateString === filterDate) : logs;
@@ -217,7 +217,7 @@
             let csv = "Time,EMG1,EMG2,IMU1,IMU2\n" + raw.map(r => `${r.time},${r.v1},${r.v2},${r.i1},${r.i2}`).join('\n');
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-            a.download = `UTBiome_Log_${id}.csv`;
+            a.download = `Quantiflex_Log_${id}.csv`;
             a.click();
         };
 
@@ -405,11 +405,15 @@
             </div>
         </section>
 
+        <!-- Chat Box -->
+        <div id="chat-toggle" onclick="toggleChat()">
+            <span>💬</span>
+        </div>
+
         <div id="chat-container">
             <div id="chat-header">
                 Chat with Clinician
-                <span style="font-size: 1.2rem; cursor: pointer;"
-                    onclick="document.getElementById('chat-container').style.display='none'">×</span>
+                <span style="font-size: 1.2rem; cursor: pointer;" onclick="toggleChat()">×</span>
             </div>
             <div id="chat-messages">
                 <!-- Messages will be loaded here -->
@@ -419,7 +423,6 @@
                 <button id="send-btn" onclick="sendMessage()">Send</button>
             </div>
         </div>
-
     </main>
 
     <style>
@@ -438,6 +441,31 @@
             overflow: hidden;
             border: 1px solid #e1e8ed;
             z-index: 1000;
+            display: none;
+            /* Hidden by default */
+        }
+
+        #chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #4d82ad;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            font-size: 1.8rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #chat-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
         }
 
         #chat-header {
@@ -472,12 +500,39 @@
             color: white;
             align-self: flex-end;
             margin-left: auto;
+            border-bottom-right-radius: 2px;
         }
 
         .message.clinician {
-            background: #e9ecef;
+            background: #ffffff;
             color: #333;
             align-self: flex-start;
+            border: 1px solid #e1e8ed;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Message bubble refined styles - Patient View */
+        .message {
+            margin-bottom: 12px;
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         #chat-input-area {
@@ -549,6 +604,18 @@
                 }
             } catch (err) {
                 console.error("Error sending message:", err);
+            }
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chat-container');
+            const toggle = document.getElementById('chat-toggle');
+            if (chat.style.display === 'none' || chat.style.display === '') {
+                chat.style.display = 'flex';
+                toggle.style.display = 'none';
+            } else {
+                chat.style.display = 'none';
+                toggle.style.display = 'flex';
             }
         }
 
@@ -775,10 +842,10 @@
                     flexCount
                 };
 
-                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+                let history = JSON.parse(localStorage.getItem('quantiflex_history') || "[]");
                 if (!history.some(item => item.id === sessionID)) {
                     history.unshift(summary);
-                    localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 20)));
+                    localStorage.setItem('quantiflex_history', JSON.stringify(history.slice(0, 20)));
                 }
 
                 analyticsContent.innerHTML = `
@@ -798,7 +865,7 @@
             }
 
             function renderHistory() {
-                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+                let history = JSON.parse(localStorage.getItem('quantiflex_history') || "[]");
                 historyList.innerHTML = history.map(s => `
                     <tr>
                         <td>${s.date}</td>
@@ -844,7 +911,7 @@
 
             clearBtn.onclick = function () {
                 if (confirm("Delete all session history?")) {
-                    localStorage.removeItem('utbiome_history');
+                    localStorage.removeItem('quantiflex_history');
                     renderHistory();
                     analyticsContent.innerHTML = `<p style="color:#999">History cleared.</p>`;
                 }
@@ -859,7 +926,7 @@
                 });
                 const link = document.createElement("a");
                 link.setAttribute("href", encodeURI(csvContent));
-                link.setAttribute("download", `UTBiome_Session_${Date.now()}.csv`);
+                link.setAttribute("download", `Quantiflex_Session_${Date.now()}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -922,10 +989,10 @@
 
         // --- 1. NEW STORAGE HANDLERS (Add these) ---
         window.saveSessionToStorage = function (summary, rawData) {
-            let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+            let history = JSON.parse(localStorage.getItem('quantiflex_history') || "[]");
             history.unshift(summary);
             // Keep last 50 sessions
-            localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 50)));
+            localStorage.setItem('quantiflex_history', JSON.stringify(history.slice(0, 50)));
 
             // Save raw data for the CSV download button
             localStorage.setItem('raw_' + summary.id, JSON.stringify(rawData));
@@ -944,7 +1011,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `UTBiome_${id}.csv`;
+            a.download = `Quantiflex_${id}.csv`;
             a.click();
         };
 
@@ -981,7 +1048,7 @@
         // --- 3. REPLACED RENDER LOGIC ---
         function renderHistory(filterDate = null) {
             const historyList = document.getElementById('sessionHistory');
-            const logs = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+            const logs = JSON.parse(localStorage.getItem('quantiflex_history') || "[]");
 
             let displayLogs = filterDate ? logs.filter(l => l.dateString === filterDate) : logs;
 

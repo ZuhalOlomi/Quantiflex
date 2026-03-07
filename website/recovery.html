@@ -69,6 +69,8 @@
             overflow: hidden;
             border: 1px solid #e1e8ed;
             z-index: 1000;
+            display: none;
+            /* Hidden by default */
         }
 
         #chat-header {
@@ -88,25 +90,67 @@
             background: #f8fafc;
         }
 
-        .message {
-            margin-bottom: 10px;
-            max-width: 80%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
         .message.patient {
             background: #4d82ad;
             color: white;
             align-self: flex-end;
             margin-left: auto;
+            border-bottom-right-radius: 2px;
         }
 
         .message.clinician {
-            background: #e9ecef;
+            background: #ffffff;
             color: #333;
             align-self: flex-start;
+            border: 1px solid #e1e8ed;
+            border-bottom-left-radius: 2px;
+        }
+
+        #chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #4d82ad;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            font-size: 1.8rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #chat-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Message bubble refined styles - Patient View */
+        .message {
+            margin-bottom: 12px;
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         #chat-input-area {
@@ -173,11 +217,14 @@
         </div>
 
         <!-- Chat Box -->
+        <div id="chat-toggle" onclick="toggleChat()">
+            <span>💬</span>
+        </div>
+
         <div id="chat-container">
             <div id="chat-header">
                 Chat with Clinician
-                <span style="font-size: 1.2rem; cursor: pointer;"
-                    onclick="document.getElementById('chat-container').style.display='none'">×</span>
+                <span style="font-size: 1.2rem; cursor: pointer;" onclick="toggleChat()">×</span>
             </div>
             <div id="chat-messages">
                 <!-- Messages will be loaded here -->
@@ -190,7 +237,7 @@
     </main>
 
     <footer>
-        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+        <p>© 2025-2026 Quantiflex | Clinical Rehabilitation Technology</p>
     </footer>
 
     <script>
@@ -272,6 +319,18 @@
                 }
             } catch (err) {
                 console.error("Error sending message:", err);
+            }
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chat-container');
+            const toggle = document.getElementById('chat-toggle');
+            if (chat.style.display === 'none' || chat.style.display === '') {
+                chat.style.display = 'flex';
+                toggle.style.display = 'none';
+            } else {
+                chat.style.display = 'none';
+                toggle.style.display = 'flex';
             }
         }
 
