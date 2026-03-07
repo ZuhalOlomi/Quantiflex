@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuantiFlex - Patient Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+    <style>
+        /* Additional styles that preserve the original color scheme */
+        .welcome-banner {
+            background: linear-gradient(135deg, #4d82ad, #2c3e50);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .welcome-banner h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-family: "Georgia", serif;
+        }
+
+        .welcome-banner p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .patient-quick-stats {
+            display: flex;
+            gap: 30px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 50px;
+        }
+
+        .stat-badge {
+            text-align: center;
+        }
+
+        .stat-badge .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .stat-badge .label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Feature items modified for patient perspective */
+        .feature-item.personalized h3 {
+            color: #4d82ad;
+        }
+
+        .feature-item .progress-indicator {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* Navigation update for logged-in state */
+        nav ul li a[href="patient-home.html"] {
+            background: #4d82ad;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .patient-quick-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+                border-radius: 15px;
+            }
+        }
+
+        /* Keep all original hero centering */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            text-align: center;
+        }
+
+        .hero-text {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-text p {
+            text-align: center;
+        }
+
+        .cta-buttons {
+            justify-content: center;
+        }
+    </style>
+    <script src="auth.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>QuantiFlex</h1>
+        <nav>
+            <ul>
+                <li><a href="patient-home.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="analysis.html">My Progress</a></li>
+                <li><a href="patient-profile.html">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Personalized Welcome Banner -->
+        <div class="welcome-banner">
+            <div>
+                <h2>Welcome back, <span id="patientName">Michael</span>! 👋</h2>
+                <p>Your recovery is on track. Keep up the great work!</p>
+            </div>
+            <div class="patient-quick-stats">
+                <div class="stat-badge">
+                    <div class="value" id="currentROM">92°</div>
+                    <div class="label">Current ROM</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="value" id="sessionsCompleted">24</div>
+                    <div class="label">Sessions Done</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="value" id="streakDays">12</div>
+                    <div class="label">Day Streak</div>
+                </div>
+            </div>
+            <a href="home.html" class="logout-btn" id="logoutBtn">Logout</a>
+        </div>
+
+        <!-- Hero section - SAME STRUCTURE but personalized content -->
+        <section class="hero video-hero">
+            <video id="bgVideo" preload="auto" muted playsinline autoplay loop>
+                <source src="knee_extension.mov" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="hero-text gs_reveal">
+                <h2>Your Personalized Recovery Journey</h2>
+                <h3>Track Your Progress Daily</h3>
+                <p>
+                    Welcome to your personalized rehabilitation dashboard, <span id="heroPatientName">Michael</span>.<br>
+                    <br>We're tracking your knee recovery in real-time. You've completed 24 sessions so far, 
+                    improving your range of motion from 65° to 92°. Let's continue this momentum!
+                </p>
+                <div class="cta-buttons">
+                    <a href="video.html" class="btn-secondary">Today's Exercises</a>
+                    <a href="analysis.html" class="btn-primary">View My Progress</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personalized FAQs -->
+        <section class="faq-section">
+            <h2 style="margin-top: 30px;">Questions About Your Recovery?</h2>
+
+            <div class="faq-container">
+                <!-- FAQ 1 - Personalized -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq1" class="faq-toggle">
+                    <label for="faq1" class="faq-question">
+                        <span>How is my range of motion calculated?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>Your Quantiflex sleeve measures knee angle in real-time during exercises. 
+                           Your current ROM of 92° is calculated from your last 3 squat sessions. 
+                           <a href="analysis.html" style="color: #4d82ad;">View detailed breakdown →</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 - Personalized -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq2" class="faq-toggle">
+                    <label for="faq2" class="faq-question">
+                        <span>When should I do my exercises?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Based on your history, you're most consistent when exercising in the morning. 
+                            Your next scheduled session is today at 10:00 AM. <a href="video.html" style="color: #4d82ad;">Start now →</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 - Personalized -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq3" class="faq-toggle">
+                    <label for="faq3" class="faq-question">
+                        <span>How do I contact my clinician?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Your assigned clinician is Dr. Sarah Smith. You can message her directly through your 
+                            <a href="patient-profile.html" style="color: #4d82ad;">profile page</a> or call the clinic at (512) 555-0123.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 - Personalized -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq4" class="faq-toggle">
+                    <label for="faq4" class="faq-question">
+                        <span>What if I feel pain during exercises?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Your pain levels have decreased from 6/10 to 2/10 - that's great progress! 
+                            If you experience sharp pain above 4/10, stop and try the modified version of the exercise. 
+                            <a href="video.html" style="color: #4d82ad;">Watch proper form videos →</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!--- FAQ 5 - Personalized -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq5" class="faq-toggle">
+                    <label for="faq5" class="faq-question">
+                        <span>How is my data being used?</span>
+                        <span class="faq-icon">+</span>
+                    </label>
+                    <div class="faq-answer">
+                        <p>
+                            Your anonymized data helps improve our rehabilitation algorithms. Your personal data 
+                            is encrypted and only shared with your care team. You've opted into research sharing - 
+                            <a href="patient-profile.html#privacy" style="color: #4d82ad;">update preferences</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">
+            <a href="about.html" style="color: #4d82ad; text-decoration: none;">About</a> |
+            <a href="video.html" style="color: #4d82ad; text-decoration: none;">Exercises</a> |
+            <a href="patient-profile.html" style="color: #4d82ad; text-decoration: none;">My Profile</a> |
+            <a href="#" style="color: #4d82ad; text-decoration: none;">Contact Support</a>
+        </p>
+    </footer>
+
+    <script>
+        // GSAP Scroll Animation (KEEPING EXACTLY THE SAME)
+        function animateFrom(elem, direction) {
+            direction = direction || 1;
+            var x = 0, y = direction * 100;
+            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
+            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
+            elem.style.transform = `translate(${x}px, ${y}px)`;
+            elem.style.opacity = "0";
+            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
+                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
+            });
+        }
+
+        function hide(elem) {
+            gsap.set(elem, { autoAlpha: 0 });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // GSAP initialization (KEEPING EXACTLY THE SAME)
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+                hide(elem);
+                ScrollTrigger.create({
+                    trigger: elem,
+                    onEnter: function () { animateFrom(elem) },
+                    onEnterBack: function () { animateFrom(elem, -1) },
+                    onLeave: function () { hide(elem) }
+                });
+            });
+
+            // Load patient data from Google login or localStorage
+            function loadPatientData() {
+                // Try to get from Google login simulation
+                let patientName = "Michael";
+                let patientROM = "92°";
+                let patientSessions = "24";
+                let patientStreak = "12";
+                
+                // Check for Google user data
+                const googleUser = JSON.parse(localStorage.getItem('googleUser'));
+                if (googleUser && googleUser.name) {
+                    patientName = googleUser.givenName || googleUser.name.split(' ')[0];
+                } else {
+                    // Check patient profile
+                    const patientProfile = JSON.parse(localStorage.getItem('patientProfile'));
+                    if (patientProfile && patientProfile.firstName) {
+                        patientName = patientProfile.firstName;
+                    }
+                }
+
+                // Update all instances of patient name
+                const nameElements = document.querySelectorAll('#patientName, #heroPatientName');
+                nameElements.forEach(el => {
+                    if (el) el.textContent = patientName;
+                });
+
+                // Update stats (these would come from real data in production)
+                document.getElementById('currentROM').textContent = patientROM;
+                document.getElementById('sessionsCompleted').textContent = patientSessions;
+                document.getElementById('streakDays').textContent = patientStreak;
+            }
+
+            loadPatientData();
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Clear user data
+                localStorage.removeItem('googleUser');
+                localStorage.removeItem('loggedIn');
+                // Redirect to public home
+                window.location.href = 'home.html';
+            });
+
+            // Video autoplay (KEEPING EXACTLY THE SAME)
+            const video = document.getElementById('bgVideo');
+            if (video) {
+                video.play().catch(e => console.log("Autoplay failed:", e));
+            }
+        });
+    </script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
