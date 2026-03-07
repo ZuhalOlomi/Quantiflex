@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuantiFlex</title>
+    <title>UTBiome Knee Sleeve - Data Analysis</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Modern Dashboard Layout */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -126,16 +125,30 @@
         .imu-badge-thigh { background: rgba(46,204,113,0.15); color: #27ae60; }
         .imu-badge-shank { background: rgba(155,89,182,0.15); color: #8e44ad; }
 
-        .chart-legend {
+        /* Control bar: same width/margin as dashboard-grid */
+        .control-bar {
             display: flex;
-            gap: 16px;
+            justify-content: space-between;
             align-items: center;
-            padding: 0 20px 12px 20px;
+            max-width: 1400px;
+            width: 95%;
+            margin: 0 auto 10px auto;
         }
-        .legend-dot {
-            width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px;
+
+        #sessionTimer {
+            font-size: 1.5em;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
+            color: #ccc;
         }
-        .legend-label { font-size: 0.82em; color: #555; display: flex; align-items: center; }
+
+        /* Full-width ratio chart — same horizontal span as dashboard-grid */
+        .ratio-chart-wrap {
+            max-width: 1400px;
+            width: 95%;
+            margin: 0 auto 20px auto;
+        }
     </style>
 </head>
 
@@ -144,9 +157,10 @@
         <h1>UTBiome Knee Sleeve</h1>
         <nav>
             <ul>
-                <li><a href="patient_home.html">Home</a></li>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="analysis.html" class="active">Analysis</a></li>
-                <li><a href="demographics.html">My Profile</a></li>
+                <li><a href="video.html">Video Demo</a></li>
             </ul>
         </nav>
     </header>
@@ -167,15 +181,18 @@
             <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </section>
 
-        <!-- Top row: EMG chart and IMU chart side by side (equal size) -->
-         <div class="button-group">
-            <button id="startBtn" class="btn-action btn-start">Start</button>
-            <button id="stopBtn" class="btn-action btn-stop" disabled>Stop</button>
-            <span id="statusIndicator" style="font-size: 0.8em; color: #888;">System Idle</span>
+        <!-- Control bar: buttons flush with left chart, timer flush with right chart -->
+        <div class="control-bar">
+            <div class="button-group">
+                <button id="startBtn" class="btn-action btn-start">Start</button>
+                <button id="stopBtn" class="btn-action btn-stop" disabled>Stop</button>
+                <span id="statusIndicator" style="font-size: 0.8em; color: #888;">System Idle</span>
+            </div>
+            <div id="sessionTimer">00:00:00</div>
         </div>
 
+        <!-- Top row: EMG + IMU -->
         <div class="dashboard-grid">
-            <!-- EMG Chart -->
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">EMG Feed</h3>
@@ -185,7 +202,6 @@
                 </div>
             </div>
 
-            <!-- IMU Chart -->
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">
@@ -196,6 +212,40 @@
                 </div>
                 <div style="padding: 20px 20px 0 20px; height: 380px;">
                     <canvas id="imuChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full-width muscle ratio chart
+        <div class="ratio-chart-wrap">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 style="margin:0">Muscle Ratio <span style="font-weight:400; color:#999; font-size:0.85em;">(Muscle 1 ÷ Muscle 2)</span></h3>
+                    <div style="display:flex; gap:16px; align-items:center; font-size:0.78em;">
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(231,76,60,0.25);"></span> Imbalanced</span>
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(241,196,15,0.3);"></span> Borderline</span>
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(39,174,96,0.2);"></span> Healthy (1.25–2.0)</span>
+                    </div>
+                </div>
+                <div style="padding: 20px; height: 220px;">
+                    <canvas id="ratioChart"></canvas>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Full-width ombre ratio chart -->
+        <div class="ratio-chart-wrap" style="margin-top: -10px;">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 style="margin:0">Muscle Ratio<span style="font-weight:400; color:#999; font-size:0.85em;"></span></h3>
+                    <div style="display:flex; gap:16px; align-items:center; font-size:0.78em;">
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(231,76,60,0.25);"></span> Imbalanced</span>
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(241,196,15,0.3);"></span> Borderline</span>
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(39,174,96,0.2);"></span> Healthy (1.25–2.0)</span>
+                    </div>
+                </div>
+                <div style="padding: 20px; height: 220px;">
+                    <canvas id="ratioOmbreChart"></canvas>
                 </div>
             </div>
         </div>
@@ -211,7 +261,6 @@
                     style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download CSV</button>
             </div>
 
-            <!-- IMU live readout card -->
             <div class="analytics-card">
                 <h3 style="margin-top:0">Live IMU Readout</h3>
                 <div class="metric-row">
@@ -261,17 +310,183 @@
             const csvFileInput = document.getElementById('csvFileInput');
             const romCtx = document.getElementById('romChart').getContext('2d');
             const imuCtx = document.getElementById('imuChart').getContext('2d');
+            const ratioOmbreCtx = document.getElementById('ratioOmbreChart').getContext('2d');
 
-            // Live IMU readout elements
             const liveImu1 = document.getElementById('liveImu1');
             const liveImu2 = document.getElementById('liveImu2');
             const liveDelta = document.getElementById('liveDelta');
 
-            let sessionData = []; // stores {time, v1, v2, i1, i2}
+            const sessionTimer = document.getElementById('sessionTimer');
+            let timerInterval = null;
+            let timerSeconds = 0;
+
+            function formatTimer(s) {
+                const h = String(Math.floor(s / 3600)).padStart(2, '0');
+                const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                const sec = String(s % 60).padStart(2, '0');
+                return `${h}:${m}:${sec}`;
+            }
+
+            let sessionData = [];
             let isTracking = false;
             let socket;
             const ESP_IP = "192.168.4.1";
             const FLEX_THRESHOLD = 1500;
+
+            // Health range constants
+            const RATIO_HEALTHY_LOW  = 0.75;
+            const RATIO_HEALTHY_HIGH = 2.0;
+            const RATIO_BORDER_LOW   = 0.25;   // yellow below this → red
+            const RATIO_BORDER_HIGH  = 2.5;   // yellow above this → red
+
+            // ── Health-zone background plugin ─────────────────────────────
+            const healthZonePlugin = {
+                id: 'healthZone',
+                beforeDraw(chart) {
+                    const { ctx, chartArea, scales } = chart;
+                    if (!chartArea) return;
+                    const yScale = scales.y;
+                    const { left, right } = chartArea;
+
+                    function yPx(val) {
+                        return yScale.getPixelForValue(val);
+                    }
+                    const yMax  = yScale.getPixelForValue(yScale.max);
+                    const yMin  = yScale.getPixelForValue(yScale.min);
+
+                    // clamp helper so bands don't overflow chart area
+                    function clamp(v) { return Math.max(yMax, Math.min(yMin, v)); }
+
+                    const zones = [
+                        // [top val, bottom val, color]
+                        [yScale.max,        RATIO_BORDER_HIGH,  'rgba(231,76,60,0.18)'],   // red high
+                        [RATIO_BORDER_HIGH, RATIO_HEALTHY_HIGH, 'rgba(241,196,15,0.22)'],  // yellow high
+                        [RATIO_HEALTHY_HIGH,RATIO_HEALTHY_LOW,  'rgba(39,174,96,0.18)'],   // green healthy
+                        [RATIO_HEALTHY_LOW, RATIO_BORDER_LOW,   'rgba(241,196,15,0.22)'],  // yellow low
+                        [RATIO_BORDER_LOW,  yScale.min,         'rgba(231,76,60,0.18)'],   // red low
+                    ];
+
+                    zones.forEach(([top, bottom, color]) => {
+                        const yTop    = clamp(yPx(top));
+                        const yBottom = clamp(yPx(bottom));
+                        if (yBottom <= yTop) return; // zone off-screen
+                        ctx.save();
+                        ctx.fillStyle = color;
+                        ctx.fillRect(left, yTop, right - left, yBottom - yTop);
+                        ctx.restore();
+                    });
+
+                    // Draw dashed threshold lines
+                    [RATIO_HEALTHY_LOW, RATIO_HEALTHY_HIGH].forEach(val => {
+                        const y = yPx(val);
+                        if (y < yMax || y > yMin) return;
+                        ctx.save();
+                        ctx.setLineDash([6, 4]);
+                        ctx.strokeStyle = 'rgba(39,174,96,0.6)';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(left, y);
+                        ctx.lineTo(right, y);
+                        ctx.stroke();
+                        ctx.restore();
+                    });
+                }
+};
+
+            // ── Colour interpolation for ombré line ──────────────────────
+            function lerpColor(a, b, t) {
+                // a, b = [r,g,b], t = 0..1
+                return [
+                    Math.round(a[0] + (b[0]-a[0])*t),
+                    Math.round(a[1] + (b[1]-a[1])*t),
+                    Math.round(a[2] + (b[2]-a[2])*t)
+                ];
+            }
+
+            const C_RED    = [231, 76,  60];
+            const C_YELLOW = [241, 196, 15];
+            const C_GREEN  = [39,  174, 96];
+
+            function ratioToRgb(v) {
+                if (v === null) return null;
+                // colour stops mapped to ratio value
+                const stops = [
+                    { at: 0,                    col: C_RED    },
+                    { at: RATIO_BORDER_LOW,     col: C_RED    },
+                    { at: RATIO_HEALTHY_LOW,    col: C_YELLOW },
+                    { at: (RATIO_HEALTHY_LOW + RATIO_HEALTHY_HIGH) / 2, col: C_GREEN },
+                    { at: RATIO_HEALTHY_HIGH,   col: C_YELLOW },
+                    { at: RATIO_BORDER_HIGH,    col: C_RED    },
+                    { at: 4,                    col: C_RED    }
+                ];
+                for (let i = 1; i < stops.length; i++) {
+                    if (v <= stops[i].at) {
+                        const t = (v - stops[i-1].at) / (stops[i].at - stops[i-1].at);
+                        const [r,g,b] = lerpColor(stops[i-1].col, stops[i].col, Math.max(0, Math.min(1, t)));
+                        return `rgb(${r},${g},${b})`;
+                    }
+                }
+                return `rgb(${C_RED.join(',')})`;
+            }
+
+            // ── Ombré Ratio Chart ─────────────────────────────────────────
+            const ratioOmbreChart = new Chart(ratioOmbreCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Muscle Ratio (M1/M2)',
+                            data: [],
+                            borderColor: '#27ae60', // fallback, overridden per-segment
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            pointRadius: 0,
+                            fill: false,
+                            borderWidth: 3,
+                            segment: {
+                                borderColor: ctx => {
+                                    const v = (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2;
+                                    return ratioToRgb(v) || 'transparent';
+                                }
+                            },
+                            spanGaps: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => {
+                                    const v = ctx.parsed.y;
+                                    if (v === null) return null;
+                                    let zone = v < RATIO_BORDER_LOW   ? '🔴 Imbalanced (low)'
+                                             : v < RATIO_HEALTHY_LOW  ? '🟡 Borderline (low)'
+                                             : v <= RATIO_HEALTHY_HIGH ? '🟢 Healthy'
+                                             : v <= RATIO_BORDER_HIGH  ? '🟡 Borderline (high)'
+                                             :                           '🔴 Imbalanced (high)';
+                                    return ` Ratio: ${v.toFixed(2)}  ${zone}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 4,
+                            title: { display: true, text: 'M1 / M2' },
+                            ticks: { stepSize: 0.5, callback: v => v.toFixed(1) + 'x' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: { display: false }
+                    }
+                }
+            });
 
             // ── EMG Chart ──────────────────────────────────────────────────
             const romChart = new Chart(romCtx, {
@@ -318,7 +533,6 @@
                     labels: [],
                     datasets: [
                         {
-                            // Thigh angle — thin, transparent, background reference line
                             label: 'IMU 1 — Thigh (°)',
                             data: [],
                             borderColor: 'rgba(46, 204, 113, 0.6)',
@@ -327,10 +541,9 @@
                             pointRadius: 0,
                             fill: false,
                             borderWidth: 1.5,
-                            borderDash: [4, 4]  // Dashed so it's clearly secondary
+                            borderDash: [4, 4]
                         },
                         {
-                            // Shin angle — thin, transparent, background reference line
                             label: 'IMU 2 — Shin (°)',
                             data: [],
                             borderColor: 'rgba(155, 89, 182, 0.6)',
@@ -342,15 +555,14 @@
                             borderDash: [4, 4]
                         },
                         {
-                            // Knee flexion — bold, solid, primary graph element
                             label: 'Knee Flexion (°)',
                             data: [],
-                            borderColor: '#e74c3c',                    // ← fully opaque, stands out
+                            borderColor: '#e74c3c',
                             backgroundColor: 'transparent',
                             tension: 0.4,
                             pointRadius: 0,
                             fill: true,
-                            borderWidth: 3  // Bold
+                            borderWidth: 3
                         }
                     ]
                 },
@@ -364,7 +576,6 @@
                             labels: {
                                 boxWidth: 12,
                                 font: { size: 11 },
-                                // Style knee flexion label differently in legend
                                 generateLabels: (chart) => {
                                     const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                                     labels[2].fontColor = '#e74c3c';
@@ -387,8 +598,7 @@
 
             // ── WebSocket ─────────────────────────────────────────────────
             function initWebSocket() {
-                // Don't stack connection attempts
-                if (socket && (socket.readyState === WebSocket.CONNECTING || 
+                if (socket && (socket.readyState === WebSocket.CONNECTING ||
                             socket.readyState === WebSocket.OPEN)) return;
 
                 socket = new WebSocket(`ws://${ESP_IP}/ws`);
@@ -413,18 +623,16 @@
 
                     const now = new Date().toLocaleTimeString();
                     const kneeFlexion = Math.abs(i1 - i2);
+                    const ratio = (v2 > 0) ? v1 / v2 : null;
 
                     sessionData.push({ time: now, v1, v2, i1, i2 });
 
-                    // EMG chart — unchanged
                     pushToChart(romChart, now, v1, v2);
 
-                    // IMU chart — push all 3 datasets manually (don't use pushToChart, it only handles 2)
                     imuChart.data.labels.push(now);
-                    imuChart.data.datasets[0].data.push(i1);           // Thigh
-                    imuChart.data.datasets[1].data.push(i2);           // Shin
-                    imuChart.data.datasets[2].data.push(kneeFlexion);  // Knee flexion angle
-
+                    imuChart.data.datasets[0].data.push(i1);
+                    imuChart.data.datasets[1].data.push(i2);
+                    imuChart.data.datasets[2].data.push(kneeFlexion);
                     if (imuChart.data.labels.length > 150) {
                         imuChart.data.labels.shift();
                         imuChart.data.datasets[0].data.shift();
@@ -433,7 +641,8 @@
                     }
                     imuChart.update('none');
 
-                    // Live readout
+                    pushRatio(now, ratio);
+
                     liveImu1.textContent  = i1.toFixed(1) + '°';
                     liveImu2.textContent  = i2.toFixed(1) + '°';
                     liveDelta.textContent = kneeFlexion.toFixed(1) + '°';
@@ -444,22 +653,29 @@
                     setTimeout(initWebSocket, 2000);
                 };
 
-                socket.onerror = () => {
-                    socket.close(); // Force onclose to fire so reconnect logic runs cleanly
-                };
+                socket.onerror = () => { socket.close(); };
             }
 
             function pushToChart(chart, label, val1, val2) {
                 chart.data.labels.push(label);
                 chart.data.datasets[0].data.push(val1);
                 chart.data.datasets[1].data.push(val2);
-
                 if (chart.data.labels.length > 150) {
                     chart.data.labels.shift();
                     chart.data.datasets[0].data.shift();
                     chart.data.datasets[1].data.shift();
                 }
                 chart.update('none');
+            }
+
+            function pushRatio(label, ratio) {
+                ratioOmbreChart.data.labels.push(label);
+                ratioOmbreChart.data.datasets[0].data.push(ratio);
+                if (ratioOmbreChart.data.labels.length > 150) {
+                    ratioOmbreChart.data.labels.shift();
+                    ratioOmbreChart.data.datasets[0].data.shift();
+                }
+                ratioOmbreChart.update('none');
             }
 
             function clearChart(chart) {
@@ -496,7 +712,6 @@
                     if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i - 1] <= FLEX_THRESHOLD) flexCount++;
                 }
 
-                // IMU summary
                 const imu1Values = sessionData.map(d => d.i1).filter(v => !isNaN(v));
                 const imu2Values = sessionData.map(d => d.i2).filter(v => !isNaN(v));
                 const peakAngle1 = imu1Values.length ? Math.max(...imu1Values).toFixed(1) : '—';
@@ -560,6 +775,7 @@
                 sessionData = [];
                 clearChart(romChart);
                 clearChart(imuChart);
+                clearChart(ratioOmbreChart);
                 liveImu1.textContent = '—°';
                 liveImu2.textContent = '—°';
                 liveDelta.textContent = '—°';
@@ -569,10 +785,20 @@
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
                 status.textContent = "Recording...";
+                timerSeconds = 0;
+                sessionTimer.textContent = '00:00:00';
+                sessionTimer.style.color = '#e74c3c';
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    sessionTimer.textContent = formatTimer(timerSeconds);
+                }, 1000);
             };
 
             stopBtn.onclick = function () {
-                isTracking = false; // Stop processing incoming data immediately on frontend too
+                isTracking = false;
+                clearInterval(timerInterval);
+                timerInterval = null;
+                sessionTimer.style.color = '#aaa';
                 if (socket && socket.readyState === WebSocket.OPEN) {
                     socket.send("stop");
                 }
@@ -612,21 +838,17 @@
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     const lines = event.target.result.trim().split('\n');
-
-                    // Skip header row if present
                     const startIndex = isNaN(parseInt(lines[0].split(',')[1])) ? 1 : 0;
 
                     sessionData = [];
                     lines.slice(startIndex).forEach(line => {
                         const parts = line.split(',');
                         if (parts.length < 3) return;
-
                         const time = parts[0].trim();
                         const v1 = parseInt(parts[1]);
                         const v2 = parseInt(parts[2]);
                         const i1 = parts.length >= 4 ? parseFloat(parts[3]) : 0;
                         const i2 = parts.length >= 5 ? parseFloat(parts[4]) : 0;
-
                         if (!isNaN(v1) && !isNaN(v2)) {
                             sessionData.push({ time, v1, v2, i1, i2 });
                         }
@@ -637,9 +859,10 @@
                         return;
                     }
 
-                    // Replay data into both charts
                     clearChart(romChart);
                     clearChart(imuChart);
+                    clearChart(ratioOmbreChart);
+
                     sessionData.forEach(row => {
                         pushToChart(romChart, row.time, row.v1, row.v2);
                         const knee = Math.abs(row.i1 - row.i2);
@@ -654,12 +877,12 @@
                             imuChart.data.datasets[2].data.shift();
                         }
                         imuChart.update('none');
+                        const ratio = (row.v2 > 0) ? row.v1 / row.v2 : null;
+                        pushRatio(row.time, ratio);
                     });
 
                     status.textContent = `Loaded: ${file.name}`;
                     runAnalysis(true, file.name);
-
-                    // Reset input so same file can be re-uploaded
                     csvFileInput.value = "";
                 };
 
