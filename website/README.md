@@ -2,73 +2,63 @@
   <img src="UTBIOME-Logo-1.jpg" alt="UTBiome Logo" width="150"/>
 </p>
 
-# UTBiome Knee Sleeve – Rehabilitation Tracking Platform
+# Quantiflex – ACL Rehabilitation Tracking Platform
 
 ## Project Overview
-UTBiome Knee Sleeve is an advanced wearable device and web platform designed to monitor knee biomechanics during rehabilitation and athletic training. The device collects high-resolution motion and load data, processes it through a custom analytics pipeline, and delivers actionable insights to users and clinicians through an intuitive dashboard.
+The **Quantiflex** is a clinically-integrated wearable system designed to quantify recovery following **Anterior Cruciate Ligament (ACL) reconstruction**. Standard rehabilitation currently lacks objective, home-based quantitative tools, leading to a high risk of re-injury. 
 
-The goal of UTBiome is to streamline rehabilitation, improve adherence, and enhance recovery outcomes by integrating real-time data collection, visualization, and analytics in a single platform.
+Our platform bridges this gap by combining **Inertial Measurement Units (IMUs)** and **Surface Electromyography (sEMG)** to provide real-time neuromuscular and kinematic data through a non-invasive, home-based wearable.
 
-## Key Features
-- **Real-time Range of Motion (ROM) Tracking** – Measures flexion and extension during sessions.
-- **Progress Dashboards** – Visualizes performance trends with clear graphs.
-- **Adherence Analytics** – Identifies patients missing exercises and provides feedback.
-- **Motivational Feedback** – Milestones and achievements keep users engaged.
-- **Remote Monitoring** – Clinicians can track recovery without in-person visits.
+---
 
-## Competition
-Several wearable knee monitoring solutions exist, including:
+## Technical Specifications
+### 1. Hardware Subsystem
+- **Microcontrollers:** Dual ESP32-S3-Zero modules.
+- **Kinematics:** Two MPU-6050 IMUs configured as a digital goniometer to measure knee flexion/extension.
+- **Neuromuscular:** Two MyoWare 2.0 sEMG sensors targeting the *vastus medialis* and *biceps femoris*.
+- **Fabric:** Moisture-wicking elastomeric rib knit with 3D printed TPU lateral supports for joint stability.
 
-| Product            | Key Features                        | Limitations                                   |
-|------------------- |----------------------------------- |--------------------------------------------- |
-| XXX             | XXX           | XXX         |
-| XXX       | XXX           | XXX |
-| XXX | XXX | XXX  |
+### 2. Software Architecture
+- **Backend:** Python Flask API (`app.py`) running on **Port 5001**. Handles real-time signal filtering, outlier removal, and metric computation.
+- **Frontend:** Responsive web suite (HTML5/CSS3/JS) using **GSAP** for animations and **Chart.js** for live telemetry visualization.
+- **Authentication:** Integrated **Google OAuth 2.0** with role-based access control (RBAC) for Patients and Clinicians.
 
-**UTBiome differentiates itself by combining:**
-- XXX
-- XXX
-- XXX
-- XXX
+---
 
-*(Specific comparison numbers and metrics will be added here.)*
+## Recovery Metrics & Clinical Targets
+The system monitors the **Limb Symmetry Index (LSI)** to provide objective "Return to Sport" (RTS) milestones:
+- **Kinematic Target:** LSI $\ge$ 0.95 for Range of Motion (ROM).
+- **Neuromuscular Target:** LSI $\le$ 1.10 for Muscle Activation (EMG).
+- **Sampling Rate:** 2 kHz for high-fidelity muscle capture.
+- **Range:** 0° (full extension) to 150° (flexion).
 
-## Our Model’s Advantages / Differentiators
-We aim to highlight measurable advantages over competitors. Metrics to be filled in later:
 
-| Feature            | UTBiome | Competitor A | Competitor B | Notes                          |
-|------------------- |---------|--------------|--------------|--------------------------------|
-| Accuracy (ROM)     | TBD     | TBD          | TBD          | High precision sensor array     |
-| Data Refresh Rate?  | TBD     | TBD          | TBD          | Real-time vs delayed reporting  |
-| Portability        | TBD     | TBD          | TBD          | Fully wearable at home          |
-| Dashboard Insights | TBD     | TBD          | TBD          | User + clinician visualization  |
-| Price Point        | TBD     | TBD          | TBD          | Affordable solution for patients |
 
-## Getting Started
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/YourUsername/UTBiome-Knee-Sleeve.git
-   ```
-2. Open home.html in your browser.
-3. Use login.html to simulate a user session (front-end authentication currently uses localStorage).
-[app link to be added instead of the need to clone the repo
+---
 
-## Folder Structure
+## Competitive Differentiation
+| Feature | UTBiome | Consumer Trackers | Clinical Labs (Vicon) |
+| :--- | :--- | :--- | :--- |
+| **Data Modality** | sEMG + IMU | IMU Only | IR Markers + EMG |
+| **Portability** | High (In-Home) | High | Low (Lab Bound) |
+| **Cost** | < $500 | $100 - $300 | $50,000+ |
+| **Metric Depth** | LSI & Activation | Step Count/ROM | Full Biomechanics |
+
+---
+
+## Project Structure
 ```bash
-UTBiome-Knee-Sleeve
-│
-├── home.html          # Main landing page
-├── login.html         # Login page
-├── analysis.html      # Analysis dashboard
-├── video.html         # Product demo page
-├── about.html         # About the project
-├── style.css          # Global CSS styling
-├── auth.js            # Front-end login/auth management
-├── README.md          # Project documentation
-└── assets/            # Images, charts, and other media
-```
-## Contributors
-Made w/ 🤍 by Team UTBiome – University of Toronto
-
+tnbc-website/
+├── main.html          # Central landing page
+├── login.html         # Google OAuth & Role Toggle gatekeeper
+├── analysis.html      # Patient-facing dashboard (ROM/LSI)
+├── clinician_dashboard.html # Clinician monitoring portal (Live Telemetry)
+├── logout.html        # Secure session termination UI
+├── auth.js            # Unified Auth, Security Guard & Backend sync
+├── style.css          # Global UTBiome design system
+├── backend/
+│   ├── app.py         # Flask API (Port 5001)
+│   └── processor.py   # Signal processing engine
+└── data/              # Subject data and clinical PDFs
 
 

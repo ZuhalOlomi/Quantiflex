@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Recovery Plan | QuantiFlex</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>QuantiFlex</h1>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="clinician_dashboard.html">Dashboard</a></li>
+                <li><a href="assign_recovery.html" class="active">Assign Recovery</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-section">
+            <div class="gs_reveal_fromLeft contact-box" style="opacity: 1; transform: translate(0, 0);">
+                <h2>Assign Recovery Plan</h2>
+                <p style="padding: 0; margin-bottom: 20px; color: #666; text-align: center;">Manage and assign exercise
+                    routines for patient rehabilitation</p>
+
+                <div class="patient-selector" style="margin-bottom: 20px;">
+                    <label for="current-patient">Select Patient</label>
+                    <select id="current-patient"
+                        style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #999; font-family: 'Georgia', serif;">
+                        <option value="p101">John Doe (ACL Recovery)</option>
+                        <option value="p102">Jane Smith (Knee Replacement)</option>
+                    </select>
+                </div>
+
+                <div id="assignment-form"
+                    style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e1e8ed; margin-bottom: 20px;">
+                    <h3 style="color: #4d82ad; margin-bottom: 15px;">New Exercise</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label>Exercise Name</label>
+                        <input type="text" id="ex-name" placeholder="e.g. Quad Sets"
+                            style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label>Sets</label>
+                            <input type="number" id="ex-sets" placeholder="Sets"
+                                style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Reps</label>
+                            <input type="number" id="ex-reps" placeholder="Reps"
+                                style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label>Things to pay attention to</label>
+                        <textarea id="ex-tips" placeholder="e.g. Keep leg straight, squeeze quad"
+                            style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px; height: 80px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label>Image URL (Optional)</label>
+                        <input type="text" id="ex-image" placeholder="Image URL or identifier"
+                            style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
+                    </div>
+                    <button onclick="addExercise()"
+                        style="width: 100%; background: #4d82ad; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-family: 'Georgia', serif;">Add
+                        to Plan</button>
+                </div>
+
+                <div id="current-plan">
+                    <h3 style="margin-bottom: 10px;">Current Plan for <span id="selected-patient-name">Patient</span>
+                    </h3>
+                    <ul id="exercise-list" style="list-style: none; padding: 0;">
+                        <!-- Assigned exercises will appear here -->
+                    </ul>
+                    <button onclick="saveFullPlan()"
+                        style="width: 100%; background: #28a745; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px;">Save
+                        Full Plan to Backend</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
+    <script>
+        let currentExercises = [];
+        const API_BASE_URL = 'http://127.0.0.1:5001';
+
+        document.getElementById('current-patient').addEventListener('change', loadPatientPlan);
+
+        async function loadPatientPlan() {
+            const patientId = document.getElementById('current-patient').value;
+            const patientName = document.getElementById('current-patient').options[document.getElementById('current-patient').selectedIndex].text;
+            document.getElementById('selected-patient-name').textContent = patientName;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assignments/${patientId}`);
+                const data = await response.json();
+                currentExercises = data.exercises || [];
+                renderExercises();
+            } catch (err) {
+                console.error("Error loading plan:", err);
+            }
+        }
+
+        function addExercise() {
+            const name = document.getElementById('ex-name').value;
+            const sets = document.getElementById('ex-sets').value;
+            const reps = document.getElementById('ex-reps').value;
+            const tips = document.getElementById('ex-tips').value;
+            const image = document.getElementById('ex-image').value || 'quad-set-thumb.jpg';
+
+            if (name && sets && reps) {
+                currentExercises.push({ name, sets, reps, tips, image });
+                renderExercises();
+                // Clear fields
+                document.getElementById('ex-name').value = '';
+                document.getElementById('ex-sets').value = '';
+                document.getElementById('ex-reps').value = '';
+                document.getElementById('ex-tips').value = '';
+                document.getElementById('ex-image').value = '';
+            } else {
+                alert("Please fill in Name, Sets, and Reps");
+            }
+        }
+
+        function removeExercise(index) {
+            currentExercises.splice(index, 1);
+            renderExercises();
+        }
+
+        function renderExercises() {
+            const list = document.getElementById('exercise-list');
+            list.innerHTML = '';
+            currentExercises.forEach((ex, index) => {
+                const li = document.createElement('li');
+                li.style.background = 'white';
+                li.style.padding = '10px';
+                li.style.marginBottom = '10px';
+                li.style.borderRadius = '5px';
+                li.style.border = '1px solid #ddd';
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                li.innerHTML = `
+                    <div>
+                        <strong>${ex.name}</strong> - ${ex.sets}x${ex.reps}<br>
+                        <small style="color: #666;">${ex.tips || 'No tips added'}</small>
+                    </div>
+                    <button onclick="removeExercise(${index})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Remove</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        async function saveFullPlan() {
+            const patientId = document.getElementById('current-patient').value;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assignments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ patientId, exercises: currentExercises })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert("Plan saved successfully!");
+                } else {
+                    alert("Error saving plan: " + result.error);
+                }
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("Failed to connect to backend");
+            }
+        }
+
+        // Initial load
+        window.onload = loadPatientPlan;
+    </script>
+</body>
+
+</html>

@@ -15,9 +15,13 @@ CORS(app)
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = str(BASE_DIR / "data")
 SESSIONS_DIR = str(BASE_DIR / "data" / "sessions")
+ASSIGNMENTS_DIR = str(BASE_DIR / "data" / "assignments")
+MESSAGES_DIR = str(BASE_DIR / "data" / "messages")
 SUBJECT_ID = "Subject_2"
 
 os.makedirs(SESSIONS_DIR, exist_ok=True)
+os.makedirs(ASSIGNMENTS_DIR, exist_ok=True)
+os.makedirs(MESSAGES_DIR, exist_ok=True)
 
 # ===============================
 # HISTORICAL DATA ENDPOINT
@@ -146,6 +150,79 @@ def get_sessions():
     except Exception as e:
         print("Get sessions error:", e)
         return jsonify({"sessions": []})
+
+# ===============================
+# ASSIGNMENTS ENDPOINTS
+# ===============================
+@app.route('/api/assignments', methods=['POST'])
+def save_assignment():
+    try:
+        data = request.get_json(silent=True)
+        if not data or 'patientId' not in data:
+            return jsonify({"error": "Invalid payload"}), 400
+
+        patient_id = data['patientId']
+        file_path = os.path.join(ASSIGNMENTS_DIR, f"{patient_id}.json")
+
+        with open(file_path, 'w') as f:
+            json.dump(data, f, indent=4)
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/assignments/<patient_id>', methods=['GET'])
+def get_assignment(patient_id):
+    try:
+        file_path = os.path.join(ASSIGNMENTS_DIR, f"{patient_id}.json")
+        if not os.path.exists(file_path):
+            return jsonify({"exercises": []})
+
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+            return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ===============================
+# CHAT MESSAGES ENDPOINTS
+# ===============================
+@app.route('/api/messages', methods=['POST'])
+def send_message():
+    try:
+        data = request.get_json(silent=True)
+        if not data or 'patientId' not in data:
+            return jsonify({"error": "Invalid payload"}), 400
+
+        patient_id = data['patientId']
+        file_path = os.path.join(MESSAGES_DIR, f"{patient_id}.json")
+
+        messages = []
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                messages = json.load(f)
+
+        messages.append(data)
+
+        with open(file_path, 'w') as f:
+            json.dump(messages, f, indent=4)
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/messages/<patient_id>', methods=['GET'])
+def get_messages(patient_id):
+    try:
+        file_path = os.path.join(MESSAGES_DIR, f"{patient_id}.json")
+        if not os.path.exists(file_path):
+            return jsonify([])
+
+        with open(file_path, 'r') as f:
+            messages = json.load(f)
+            return jsonify(messages)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ===============================
 # START SERVER
