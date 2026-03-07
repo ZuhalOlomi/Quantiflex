@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuantiFlex - Data Analysis</title>
+    <title>QuantiFlex</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -60,19 +60,11 @@
             border: none;
         }
 
-        .btn-start {
-            background: #28a745;
-            color: white;
-        }
+        .btn-start { background: #28a745; color: white; }
+        .btn-stop { background: #dc3545; color: white; }
+        .btn-clear { background: #6c757d; color: white; margin-left: auto; }
 
-        .btn-stop {
-            background: #dc3545;
-            color: white;
-        }
-
-
-        .btn-start:disabled,
-        .btn-stop:disabled {
+        .btn-start:disabled, .btn-stop:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
@@ -93,16 +85,8 @@
             border-bottom: 1px dashed #eee;
         }
 
-        .metric-label {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .metric-value {
-            font-weight: bold;
-            color: #4d82ad;
-            font-size: 1.1em;
-        }
+        .metric-label { color: #666; font-size: 0.9em; }
+        .metric-value { font-weight: bold; color: #4d82ad; font-size: 1.1em; }
 
         .upload-section {
             display: flex;
@@ -123,8 +107,7 @@
             margin-top: 15px;
         }
 
-        .history-table th,
-        .history-table td {
+        .history-table th, .history-table td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid #eee;
@@ -140,16 +123,8 @@
             vertical-align: middle;
             letter-spacing: 0.04em;
         }
-
-        .imu-badge-thigh {
-            background: rgba(46, 204, 113, 0.15);
-            color: #27ae60;
-        }
-
-        .imu-badge-shank {
-            background: rgba(155, 89, 182, 0.15);
-            color: #8e44ad;
-        }
+        .imu-badge-thigh { background: rgba(46,204,113,0.15); color: #27ae60; }
+        .imu-badge-shank { background: rgba(155,89,182,0.15); color: #8e44ad; }
 
         .chart-legend {
             display: flex;
@@ -157,90 +132,19 @@
             align-items: center;
             padding: 0 20px 12px 20px;
         }
-
         .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
+            width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px;
         }
-
-        .legend-label {
-            font-size: 0.82em;
-            color: #555;
-            display: flex;
-            align-items: center;
-        }
+        .legend-label { font-size: 0.82em; color: #555; display: flex; align-items: center; }
     </style>
 </head>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const historyList = document.getElementById('sessionHistory');
-        const calendarPicker = document.getElementById('calendarPicker');
-
-        // 1. Render the table based on LocalStorage
-        window.renderHistory = function (filterDate = null) {
-            const logs = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-
-            // Filter by date if a date is selected in the calendar
-            let displayLogs = filterDate ? logs.filter(l => l.dateString === filterDate) : logs;
-
-            // Empty state
-            if (displayLogs.length === 0) {
-                historyList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:50px; color:#999; font-size: 1.1rem;">No sessions recorded ${filterDate ? 'for this date' : 'yet'}.</td></tr>`;
-                return;
-            }
-
-            // Populate rows
-            historyList.innerHTML = displayLogs.map(l => `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 15px; color: #333;">${l.date}</td>
-                    <td style="padding: 15px; font-weight: bold; color: #4d82ad;">${l.peak}</td>
-                    <td style="padding: 15px; color: #555;">${l.avg}</td>
-                    <td style="padding: 15px; color: #555;">${l.flexCount}</td>
-                    <td style="padding: 15px; color: #555;">${l.duration}s</td>
-                    <td style="padding: 15px;">
-                        <button style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;" onclick="exportCSV('${l.id}')">Download CSV</button>
-                    </td>
-                </tr>
-            `).join('');
-        };
-
-        // 2. Download CSV Logic
-        window.exportCSV = function (id) {
-            const raw = JSON.parse(localStorage.getItem('raw_' + id));
-            if (!raw) {
-                alert("Raw data not found for this session!");
-                return;
-            }
-            let csv = "Time,EMG1,EMG2,IMU1,IMU2\n" + raw.map(r => `${r.time},${r.v1},${r.v2},${r.i1},${r.i2}`).join('\n');
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-            a.download = `UTBiome_Log_${id}.csv`;
-            a.click();
-        };
-
-        // 4. Calendar Event Listeners
-        if (calendarPicker) {
-            calendarPicker.addEventListener('change', (e) => renderHistory(e.target.value));
-        }
-
-        window.resetCalendar = function () {
-            if (calendarPicker) calendarPicker.value = "";
-            renderHistory();
-        };
-
-        // Render immediately on load
-        renderHistory();
-    });
-</script>
 
 <body>
     <header>
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
+
                 <li><a href="patient_home.html">Home</a></li>
                 <li><a href="analysis.html" class="active">Analysis</a></li>
                 <li><a href="demographics.html">My Profile</a></li>
@@ -249,50 +153,10 @@
     </header>
 
     <main>
-
         <section class="analysis-hero">
             <h2>Patient Progress Analytics</h2>
             <p>Comprehensive data visualization for informed clinical decisions</p>
         </section>
-
-
-        <div id="historyTab"
-            style="background: #ffffff; padding: 30px; border-radius: 12px; max-width: 1400px; margin: 40px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e1e8ed; display: block;">
-
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: #2c3e50;">Exercise History</h2>
-            </div>
-
-            <div
-                style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e1e8ed; display: flex; align-items: center;">
-                <label for="calendarPicker" style="font-weight: bold; margin-right: 15px; color: #333;">Filter by
-                    Date:</label>
-                <input type="date" id="calendarPicker"
-                    style="padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1rem; font-family: inherit;">
-                <button onclick="resetCalendar()"
-                    style="background: #e2e8f0; color: #333; border: none; padding: 10px 20px; border-radius: 5px; margin-left: 15px; cursor: pointer; font-weight: bold;">Show
-                    All Sessions</button>
-            </div>
-
-            <div style="background: white; border: 1px solid #e1e8ed; border-radius: 8px; overflow: hidden;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
-                        <tr>
-                            <th style="padding: 15px; color: #475569;">Date & Time</th>
-                            <th style="padding: 15px; color: #475569;">Peak (Ch1/Ch2)</th>
-                            <th style="padding: 15px; color: #475569;">Avg (Ch1/Ch2)</th>
-                            <th style="padding: 15px; color: #475569;">Contractions</th>
-                            <th style="padding: 15px; color: #475569;">Duration</th>
-                            <th style="padding: 15px; color: #475569;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sessionHistory">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
 
         <section class="upload-section">
             <div>
@@ -301,10 +165,11 @@
                 <button onclick="document.getElementById('csvFileInput').click()" class="btn-action"
                     style="background:#555; color:white;">Upload Session CSV</button>
             </div>
+            <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </section>
 
         <!-- Top row: EMG chart and IMU chart side by side (equal size) -->
-        <div class="button-group">
+         <div class="button-group">
             <button id="startBtn" class="btn-action btn-start">Start</button>
             <button id="stopBtn" class="btn-action btn-stop" disabled>Stop</button>
             <span id="statusIndicator" style="font-size: 0.8em; color: #888;">System Idle</span>
@@ -314,7 +179,7 @@
             <!-- EMG Chart -->
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 style="margin:0">Dual Channel EMG Activity</h3>
+                    <h3 style="margin:0">EMG Feed</h3>
                 </div>
                 <div style="padding: 20px; height: 380px;">
                     <canvas id="romChart"></canvas>
@@ -325,7 +190,7 @@
             <div class="chart-card">
                 <div class="chart-header">
                     <h3 style="margin:0">
-                        IMU Orientation — Knee Angle
+                        IMU Feed
                         <span class="imu-badge imu-badge-thigh">Upper</span>
                         <span class="imu-badge imu-badge-shank">Lower</span>
                     </h3>
@@ -344,8 +209,7 @@
                     <p style="color:#999">No active session data.</p>
                 </div>
                 <button id="downloadCsvBtn" class="btn-action"
-                    style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download
-                    CSV</button>
+                    style="width:100%; margin-top:20px; background:#4d82ad; color:white; display:none;">Download CSV</button>
             </div>
 
             <!-- IMU live readout card -->
@@ -384,33 +248,13 @@
                 </table>
             </div>
         </section>
-
-        <section class="history-section" style="max-width:1400px; margin: 0 auto 50px auto; padding: 0 20px;">
-            <h3>Detailed Session Log</h3>
-            <div style="background:white; border-radius:12px; border: 1px solid #e1e8ed; overflow:hidden;">
-                <table class="history-table">
-                    <thead>
-                        <tr style="background:#f8fafc">
-                            <th>Date & Time</th>
-                            <th>Peak (Ch1/Ch2)</th>
-                            <th>Avg (Ch1/Ch2)</th>
-                            <th>Contractions</th>
-                            <th>Duration</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sessionHistory">
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const startBtn = document.getElementById('startBtn');
             const stopBtn = document.getElementById('stopBtn');
+            const clearBtn = document.getElementById('clearHistoryBtn');
             const status = document.getElementById('statusIndicator');
             const analyticsContent = document.getElementById('analyticsContent');
             const downloadBtn = document.getElementById('downloadCsvBtn');
@@ -475,24 +319,39 @@
                     labels: [],
                     datasets: [
                         {
-                            label: 'IMU 1 — Upper (°)',
+                            // Thigh angle — thin, transparent, background reference line
+                            label: 'IMU 1 — Thigh (°)',
                             data: [],
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.08)',
+                            borderColor: 'rgba(46, 204, 113, 0.6)',
+                            backgroundColor: 'transparent',
                             tension: 0.3,
                             pointRadius: 0,
                             fill: false,
-                            borderWidth: 2
+                            borderWidth: 1.5,
+                            borderDash: [4, 4]  // Dashed so it's clearly secondary
                         },
                         {
-                            label: 'IMU 2 — Lower (°)',
+                            // Shin angle — thin, transparent, background reference line
+                            label: 'IMU 2 — Shin (°)',
                             data: [],
-                            borderColor: '#9b59b6',
-                            backgroundColor: 'rgba(155, 89, 182, 0.08)',
+                            borderColor: 'rgba(155, 89, 182, 0.6)',
+                            backgroundColor: 'transparent',
                             tension: 0.3,
                             pointRadius: 0,
                             fill: false,
-                            borderWidth: 2
+                            borderWidth: 1.5,
+                            borderDash: [4, 4]
+                        },
+                        {
+                            // Knee flexion — bold, solid, primary graph element
+                            label: 'Knee Flexion (°)',
+                            data: [],
+                            borderColor: '#e74c3c',                    // ← fully opaque, stands out
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            pointRadius: 0,
+                            fill: true,
+                            borderWidth: 3  // Bold
                         }
                     ]
                 },
@@ -500,11 +359,26 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11 },
+                                // Style knee flexion label differently in legend
+                                generateLabels: (chart) => {
+                                    const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    labels[2].fontColor = '#e74c3c';
+                                    labels[2].text = '⬤ ' + labels[2].text;
+                                    return labels;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             suggestedMin: -10,
-                            suggestedMax: 100,
+                            suggestedMax: 120,
                             title: { display: true, text: 'Degrees (°)' }
                         },
                         x: { display: false }
@@ -515,8 +389,8 @@
             // ── WebSocket ─────────────────────────────────────────────────
             function initWebSocket() {
                 // Don't stack connection attempts
-                if (socket && (socket.readyState === WebSocket.CONNECTING ||
-                    socket.readyState === WebSocket.OPEN)) return;
+                if (socket && (socket.readyState === WebSocket.CONNECTING || 
+                            socket.readyState === WebSocket.OPEN)) return;
 
                 socket = new WebSocket(`ws://${ESP_IP}/ws`);
 
@@ -527,20 +401,43 @@
 
                 socket.onmessage = (event) => {
                     if (!isTracking) return;
+
                     const parts = event.data.split(',');
                     if (parts.length < 4) return;
+
                     const v1 = parseInt(parts[0]);
                     const v2 = parseInt(parts[1]);
                     const i1 = parseFloat(parts[2]);
                     const i2 = parseFloat(parts[3]);
+
                     if (isNaN(v1) || isNaN(v2) || isNaN(i1) || isNaN(i2)) return;
+
                     const now = new Date().toLocaleTimeString();
+                    const kneeFlexion = Math.abs(i1 - i2);
+
                     sessionData.push({ time: now, v1, v2, i1, i2 });
+
+                    // EMG chart — unchanged
                     pushToChart(romChart, now, v1, v2);
-                    pushToChart(imuChart, now, i1, i2);
-                    liveImu1.textContent = i1.toFixed(1) + '°';
-                    liveImu2.textContent = i2.toFixed(1) + '°';
-                    liveDelta.textContent = Math.abs(i1 - i2).toFixed(1) + '°';
+
+                    // IMU chart — push all 3 datasets manually (don't use pushToChart, it only handles 2)
+                    imuChart.data.labels.push(now);
+                    imuChart.data.datasets[0].data.push(i1);           // Thigh
+                    imuChart.data.datasets[1].data.push(i2);           // Shin
+                    imuChart.data.datasets[2].data.push(kneeFlexion);  // Knee flexion angle
+
+                    if (imuChart.data.labels.length > 150) {
+                        imuChart.data.labels.shift();
+                        imuChart.data.datasets[0].data.shift();
+                        imuChart.data.datasets[1].data.shift();
+                        imuChart.data.datasets[2].data.shift();
+                    }
+                    imuChart.update('none');
+
+                    // Live readout
+                    liveImu1.textContent  = i1.toFixed(1) + '°';
+                    liveImu2.textContent  = i2.toFixed(1) + '°';
+                    liveDelta.textContent = kneeFlexion.toFixed(1) + '°';
                 };
 
                 socket.onclose = () => {
@@ -746,7 +643,18 @@
                     clearChart(imuChart);
                     sessionData.forEach(row => {
                         pushToChart(romChart, row.time, row.v1, row.v2);
-                        pushToChart(imuChart, row.time, row.i1, row.i2);
+                        const knee = Math.abs(row.i1 - row.i2);
+                        imuChart.data.labels.push(row.time);
+                        imuChart.data.datasets[0].data.push(row.i1);
+                        imuChart.data.datasets[1].data.push(row.i2);
+                        imuChart.data.datasets[2].data.push(knee);
+                        if (imuChart.data.labels.length > 150) {
+                            imuChart.data.labels.shift();
+                            imuChart.data.datasets[0].data.shift();
+                            imuChart.data.datasets[1].data.shift();
+                            imuChart.data.datasets[2].data.shift();
+                        }
+                        imuChart.update('none');
                     });
 
                     status.textContent = `Loaded: ${file.name}`;
@@ -763,98 +671,6 @@
             initWebSocket();
             renderHistory();
         });
-
-        // --- 1. NEW STORAGE HANDLERS (Add these) ---
-        window.saveSessionToStorage = function (summary, rawData) {
-            let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-            history.unshift(summary);
-            // Keep last 50 sessions
-            localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 50)));
-
-            // Save raw data for the CSV download button
-            localStorage.setItem('raw_' + summary.id, JSON.stringify(rawData));
-
-            renderHistory();
-        };
-
-        window.exportCSV = function (id) {
-            const raw = JSON.parse(localStorage.getItem('raw_' + id));
-            if (!raw) return alert("Raw data not found for this session.");
-
-            let csv = "Time,EMG1,EMG2,IMU_Upper,IMU_Lower\n" +
-                raw.map(r => `${r.time},${r.v1},${r.v2},${r.i1},${r.i2}`).join('\n');
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `UTBiome_${id}.csv`;
-            a.click();
-        };
-
-        // --- 2. REPLACED ANALYSIS LOGIC ---
-        function runAnalysis(isFromUpload = false, fileName = "") {
-            if (sessionData.length === 0) return;
-
-            const v1s = sessionData.map(d => d.v1).filter(v => v < 2800); // Filter glitches
-            const v2s = sessionData.map(d => d.v2).filter(v => v < 2800);
-
-            const now = new Date();
-            const sessionID = isFromUpload ? "UP-" + Date.now() : "LIVE-" + Date.now();
-
-            const summary = {
-                id: sessionID,
-                date: now.toLocaleString(),
-                dateString: now.toISOString().split('T')[0], // For calendar filtering
-                peak: `${Math.max(...v1s)}/${Math.max(...v2s)}`,
-                avg: `${Math.round(v1s.reduce((a, b) => a + b) / v1s.length)}/${Math.round(v2s.reduce((a, b) => a + b) / v2s.length)}`,
-                duration: (sessionData.length * 0.02).toFixed(1),
-                flexCount: v1s.filter((v, i) => v > 1500 && v1s[i - 1] <= 1500).length
-            };
-
-            // Only save to permanent storage if it's a real recording
-            if (!isFromUpload) {
-                saveSessionToStorage(summary, sessionData);
-            }
-
-            // Update UI
-            renderHistory();
-            analyticsContent.innerHTML = `<p style="color:green;">Session Saved: ${summary.peak} Peak</p>`;
-        }
-
-        // --- 3. REPLACED RENDER LOGIC ---
-        function renderHistory(filterDate = null) {
-            const historyList = document.getElementById('sessionHistory');
-            const logs = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-
-            let displayLogs = filterDate ? logs.filter(l => l.dateString === filterDate) : logs;
-
-            if (displayLogs.length === 0) {
-                historyList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#999;">No sessions found.</td></tr>`;
-                return;
-            }
-
-            historyList.innerHTML = displayLogs.map(l => `
-        <tr>
-            <td style="padding:12px;">${l.date}</td>
-            <td style="font-weight:bold; color:#4d82ad;">${l.peak}</td>
-            <td>${l.avg}</td>
-            <td>${l.flexCount}</td>
-            <td>${l.duration}s</td>
-            <td>
-                <button onclick="exportCSV('${l.id}')" style="background:#28a745; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Download</button>
-            </td>
-        </tr>
-    `).join('');
-        }
-
-        // --- 4. CALENDAR TRIGGER ---
-        if (document.getElementById('calendarPicker')) {
-            document.getElementById('calendarPicker').onchange = (e) => renderHistory(e.target.value);
-        }
-
-
-
     </script>
 </body>
 
