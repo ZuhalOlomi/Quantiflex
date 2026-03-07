@@ -64,6 +64,9 @@
             color: white;
             align-self: flex-end;
             margin-left: auto;
+            border-bottom-right-radius: 2px;
+            border: 1px solid #3a6d96;
+            box-shadow: 0 2px 8px rgba(77, 130, 173, 0.3);
         }
 
         #chat-input-area {
@@ -88,6 +91,8 @@
             padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
         }
 
         /* Chat Toggle Button */
@@ -143,8 +148,9 @@
             background: #ffffff;
             color: #333;
             align-self: flex-start;
-            border: 1px solid #e1e8ed;
+            border: 1px solid #cbd5e1;
             border-bottom-left-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .message.clinician {
@@ -153,6 +159,32 @@
             align-self: flex-end;
             margin-left: auto;
             border-bottom-right-radius: 2px;
+            border: 1px solid #3a6d96;
+            box-shadow: 0 2px 8px rgba(77, 130, 173, 0.3);
+        }
+
+        /* Ensure text boxes look distinct */
+        .message {
+            margin-bottom: 15px;
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -165,7 +197,6 @@
                 <li><a href="home.html">Home</a></li>
                 <li><a href="clinician_dashboard.html">Dashboard</a></li>
                 <li><a href="assign_recovery.html" class="active">Assign Recovery</a></li>
-                <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -207,16 +238,16 @@
                             <input type="number" id="ex-reps" placeholder="Reps"
                                 style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
                         </div>
+                        <div style="flex: 1;">
+                            <label>Frequency</label>
+                            <input type="number" id="ex-frequency" placeholder="e.g. 3 times a week"
+                                style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
+                        </div>
                     </div>
                     <div style="margin-bottom: 15px;">
                         <label>Things to pay attention to</label>
                         <textarea id="ex-tips" placeholder="e.g. Keep leg straight, squeeze quad"
                             style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px; height: 80px;"></textarea>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label>Image URL (Optional)</label>
-                        <input type="text" id="ex-image" placeholder="Image URL or identifier"
-                            style="width: 100%; padding: 10px; border: 1px solid #999; border-radius: 5px;">
                     </div>
                     <button onclick="addExercise()"
                         style="width: 100%; background: #4d82ad; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-family: 'Georgia', serif;">Add
@@ -343,18 +374,20 @@
             const name = document.getElementById('ex-name').value;
             const sets = document.getElementById('ex-sets').value;
             const reps = document.getElementById('ex-reps').value;
+            const frequency = document.getElementById('ex-frequency').value;
             const tips = document.getElementById('ex-tips').value;
-            const image = document.getElementById('ex-image').value || 'quad-set-thumb.jpg';
+            // The user removed the image input, so we use a default
+            const image = 'quad-set-thumb.jpg';
 
             if (name && sets && reps) {
-                currentExercises.push({ name, sets, reps, tips, image });
+                currentExercises.push({ name, sets, reps, frequency, tips, image });
                 renderExercises();
                 // Clear fields
                 document.getElementById('ex-name').value = '';
                 document.getElementById('ex-sets').value = '';
                 document.getElementById('ex-reps').value = '';
+                document.getElementById('ex-frequency').value = '';
                 document.getElementById('ex-tips').value = '';
-                document.getElementById('ex-image').value = '';
             } else {
                 alert("Please fill in Name, Sets, and Reps");
             }
@@ -383,6 +416,7 @@
                         <div class="exercise-meta">
                             <span>Sets: ${ex.sets}</span>
                             <span>Reps: ${ex.reps}</span>
+                            ${ex.frequency ? `<span>Freq: ${ex.frequency}</span>` : ''}
                         </div>
                         <div class="exercise-tips">
                             <strong>Tip:</strong> ${ex.tips || 'Follow the instructions provided by your clinician.'}
