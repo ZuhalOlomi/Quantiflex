@@ -60,7 +60,7 @@
         }
 
         .btn-start { background: #28a745; color: white; }
-        .btn-stop { background: #dc3545; color: white; }
+        .btn-stop  { background: #dc3545; color: white; }
         .btn-clear { background: #6c757d; color: white; margin-left: auto; }
 
         .btn-start:disabled, .btn-stop:disabled {
@@ -112,6 +112,9 @@
             border-bottom: 1px solid #eee;
         }
 
+        .history-table tr:hover { background: #f8fafc; cursor: pointer; }
+        .history-table tr.selected-row { background: #e8f4fd; }
+
         .imu-badge {
             display: inline-block;
             font-size: 0.72em;
@@ -125,7 +128,6 @@
         .imu-badge-thigh { background: rgba(46,204,113,0.15); color: #27ae60; }
         .imu-badge-shank { background: rgba(155,89,182,0.15); color: #8e44ad; }
 
-        /* Control bar: same width/margin as dashboard-grid */
         .control-bar {
             display: flex;
             justify-content: space-between;
@@ -143,11 +145,145 @@
             color: #ccc;
         }
 
-        /* Full-width ratio chart — same horizontal span as dashboard-grid */
         .ratio-chart-wrap {
             max-width: 1400px;
             width: 95%;
             margin: 0 auto 20px auto;
+        }
+
+        /* ── Trends section ── */
+        .trends-section {
+            max-width: 1400px;
+            width: 95%;
+            margin: 0 auto 40px auto;
+        }
+
+        .trends-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .trends-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .trends-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .trend-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+        }
+
+        .trend-card-header {
+            padding: 14px 18px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trend-card-header h4 {
+            margin: 0;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .trend-card-body {
+            padding: 16px;
+            height: 220px;
+        }
+
+        .trend-stat-row {
+            display: flex;
+            gap: 12px;
+            padding: 12px 18px;
+            background: #fafbfc;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .trend-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .trend-stat-label {
+            font-size: 0.72em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .trend-stat-value {
+            font-size: 1.05em;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .trend-badge {
+            font-size: 0.75em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .trend-up   { background: rgba(39,174,96,0.12);  color: #27ae60; }
+        .trend-down { background: rgba(231,76,60,0.12);  color: #e74c3c; }
+        .trend-flat { background: rgba(149,165,166,0.15); color: #7f8c8d; }
+
+        .storage-bar-wrap {
+            margin: 0 auto 10px auto;
+            max-width: 1400px;
+            width: 95%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78em;
+            color: #aaa;
+        }
+
+        .storage-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .storage-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: #4d82ad;
+            transition: width 0.4s;
+        }
+
+        .session-replay-btn {
+            font-size: 0.75em;
+            padding: 3px 10px;
+            border-radius: 5px;
+            border: 1px solid #4d82ad;
+            background: white;
+            color: #4d82ad;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .session-replay-btn:hover { background: #4d82ad; color: white; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid, .trends-grid { grid-template-columns: 1fr; }
+            .dashboard-bottom { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -181,7 +317,7 @@
             <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </section>
 
-        <!-- Control bar: buttons flush with left chart, timer flush with right chart -->
+        <!-- Control bar -->
         <div class="control-bar">
             <div class="button-group">
                 <button id="startBtn" class="btn-action btn-start">Start</button>
@@ -216,32 +352,15 @@
             </div>
         </div>
 
-        <!-- Full-width muscle ratio chart
-        <div class="ratio-chart-wrap">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 style="margin:0">Muscle Ratio <span style="font-weight:400; color:#999; font-size:0.85em;">(Muscle 1 ÷ Muscle 2)</span></h3>
-                    <div style="display:flex; gap:16px; align-items:center; font-size:0.78em;">
-                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(231,76,60,0.25);"></span> Imbalanced</span>
-                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(241,196,15,0.3);"></span> Borderline</span>
-                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(39,174,96,0.2);"></span> Healthy (1.25–2.0)</span>
-                    </div>
-                </div>
-                <div style="padding: 20px; height: 220px;">
-                    <canvas id="ratioChart"></canvas>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Full-width ombre ratio chart -->
+        <!-- Muscle ratio chart -->
         <div class="ratio-chart-wrap" style="margin-top: -10px;">
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 style="margin:0">Muscle Ratio<span style="font-weight:400; color:#999; font-size:0.85em;"></span></h3>
+                    <h3 style="margin:0">Muscle Ratio</h3>
                     <div style="display:flex; gap:16px; align-items:center; font-size:0.78em;">
                         <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(231,76,60,0.25);"></span> Imbalanced</span>
                         <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(241,196,15,0.3);"></span> Borderline</span>
-                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(39,174,96,0.2);"></span> Healthy (1.25–2.0)</span>
+                        <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:rgba(39,174,96,0.2);"></span> Healthy (0.75–2.0)</span>
                     </div>
                 </div>
                 <div style="padding: 20px; height: 220px;">
@@ -250,7 +369,7 @@
             </div>
         </div>
 
-        <!-- Bottom row: Session analytics -->
+        <!-- Bottom row: Session analytics + Live IMU -->
         <div class="dashboard-bottom">
             <div class="analytics-card" id="analyticsCard">
                 <h3 style="margin-top:0">Session Results</h3>
@@ -279,8 +398,130 @@
             </div>
         </div>
 
+        <!-- ── TRENDS SECTION ── -->
+        <div class="trends-section">
+            <div class="trends-header">
+                <h3>📈 Session Trends</h3>
+                <span id="trendSessionCount" style="font-size:0.82em; color:#aaa;"></span>
+            </div>
+
+            <div class="trends-grid">
+
+                <!-- Knee Flexion Trend -->
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Leg Mobility — Avg Knee Flexion per Session</h4>
+                        <span id="flexTrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="trend-card-body">
+                        <canvas id="flexTrendChart"></canvas>
+                    </div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Best Session</div>
+                            <div class="trend-stat-value" id="flexBest" style="color:#e74c3c;">—°</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Latest</div>
+                            <div class="trend-stat-value" id="flexLatest" style="color:#e74c3c;">—°</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Avg (all)</div>
+                            <div class="trend-stat-value" id="flexAvgAll" style="color:#e74c3c;">—°</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peak Knee Flexion Trend -->
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Leg Mobility — Peak Knee Flexion per Session</h4>
+                        <span id="peakFlexTrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="trend-card-body">
+                        <canvas id="peakFlexTrendChart"></canvas>
+                    </div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Best Session</div>
+                            <div class="trend-stat-value" id="peakFlexBest" style="color:#e74c3c;">—°</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Latest</div>
+                            <div class="trend-stat-value" id="peakFlexLatest" style="color:#e74c3c;">—°</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Sessions recorded</div>
+                            <div class="trend-stat-value" id="peakFlexCount" style="color:#e74c3c;">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muscle Intensity Ch1 Trend -->
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Muscle Intensity — Channel 1 (Avg per Session)</h4>
+                        <span id="emg1TrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="trend-card-body">
+                        <canvas id="emg1TrendChart"></canvas>
+                    </div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Peak ever</div>
+                            <div class="trend-stat-value" id="emg1PeakEver" style="color:#4d82ad;">—</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Latest avg</div>
+                            <div class="trend-stat-value" id="emg1Latest" style="color:#4d82ad;">—</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Contractions (latest)</div>
+                            <div class="trend-stat-value" id="emg1Contractions" style="color:#4d82ad;">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muscle Intensity Ch2 Trend -->
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Muscle Intensity — Channel 2 (Avg per Session)</h4>
+                        <span id="emg2TrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="trend-card-body">
+                        <canvas id="emg2TrendChart"></canvas>
+                    </div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Peak ever</div>
+                            <div class="trend-stat-value" id="emg2PeakEver" style="color:#e67e22;">—</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Latest avg</div>
+                            <div class="trend-stat-value" id="emg2Latest" style="color:#e67e22;">—</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-label">Contractions (latest)</div>
+                            <div class="trend-stat-value" id="emg2Contractions" style="color:#e67e22;">—</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Storage usage bar -->
+        <div class="storage-bar-wrap">
+            <span>Storage:</span>
+            <div class="storage-bar-bg">
+                <div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div>
+            </div>
+            <span id="storageLabel">0 KB used</span>
+        </div>
+
+        <!-- Session history table -->
         <section class="history-section" style="max-width:1400px; margin: 0 auto 50px auto; padding: 0 20px;">
-            <h3>Patient Performance History</h3>
+            <h3>Patient Performance History <span style="font-weight:400; color:#aaa; font-size:0.8em;">(click row to replay session)</span></h3>
             <div style="background:white; border-radius:12px; border: 1px solid #e1e8ed; overflow:hidden;">
                 <table class="history-table">
                     <thead>
@@ -289,7 +530,10 @@
                             <th>Peak (Ch1/Ch2)</th>
                             <th>Avg (Ch1/Ch2)</th>
                             <th>Contractions</th>
+                            <th>Avg Knee Flex</th>
+                            <th>Peak Knee Flex</th>
                             <th>Duration</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="sessionHistory"></tbody>
@@ -300,44 +544,46 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const startBtn = document.getElementById('startBtn');
-            const stopBtn = document.getElementById('stopBtn');
-            const clearBtn = document.getElementById('clearHistoryBtn');
-            const status = document.getElementById('statusIndicator');
-            const analyticsContent = document.getElementById('analyticsContent');
-            const downloadBtn = document.getElementById('downloadCsvBtn');
-            const historyList = document.getElementById('sessionHistory');
-            const csvFileInput = document.getElementById('csvFileInput');
-            const romCtx = document.getElementById('romChart').getContext('2d');
-            const imuCtx = document.getElementById('imuChart').getContext('2d');
-            const ratioOmbreCtx = document.getElementById('ratioOmbreChart').getContext('2d');
+            const startBtn        = document.getElementById('startBtn');
+            const stopBtn         = document.getElementById('stopBtn');
+            const clearBtn        = document.getElementById('clearHistoryBtn');
+            const status          = document.getElementById('statusIndicator');
+            const analyticsContent= document.getElementById('analyticsContent');
+            const downloadBtn     = document.getElementById('downloadCsvBtn');
+            const historyList     = document.getElementById('sessionHistory');
+            const csvFileInput    = document.getElementById('csvFileInput');
+            const romCtx          = document.getElementById('romChart').getContext('2d');
+            const imuCtx          = document.getElementById('imuChart').getContext('2d');
+            const ratioOmbreCtx   = document.getElementById('ratioOmbreChart').getContext('2d');
+            const liveImu1        = document.getElementById('liveImu1');
+            const liveImu2        = document.getElementById('liveImu2');
+            const liveDelta       = document.getElementById('liveDelta');
+            const sessionTimer    = document.getElementById('sessionTimer');
 
-            const liveImu1 = document.getElementById('liveImu1');
-            const liveImu2 = document.getElementById('liveImu2');
-            const liveDelta = document.getElementById('liveDelta');
-
-            const sessionTimer = document.getElementById('sessionTimer');
             let timerInterval = null;
-            let timerSeconds = 0;
+            let timerSeconds  = 0;
 
             function formatTimer(s) {
-                const h = String(Math.floor(s / 3600)).padStart(2, '0');
-                const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                const h   = String(Math.floor(s / 3600)).padStart(2, '0');
+                const m   = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
                 const sec = String(s % 60).padStart(2, '0');
                 return `${h}:${m}:${sec}`;
             }
 
-            let sessionData = [];
-            let isTracking = false;
+            let sessionData  = [];
+            let isTracking   = false;
             let socket;
-            const ESP_IP = "192.168.4.1";
+            const ESP_IP         = "192.168.4.1";
             const FLEX_THRESHOLD = 1500;
+            const HISTORY_KEY    = 'utbiome_history';
+            const MAX_SESSIONS   = 15;
+            const DOWNSAMPLE_N   = 10; // keep every Nth point (50Hz → 5Hz)
 
-            // Health range constants
+            // ── Health range constants ────────────────────────────────────
             const RATIO_HEALTHY_LOW  = 0.75;
             const RATIO_HEALTHY_HIGH = 2.0;
-            const RATIO_BORDER_LOW   = 0.25;   // yellow below this → red
-            const RATIO_BORDER_HIGH  = 2.5;   // yellow above this → red
+            const RATIO_BORDER_LOW   = 0.25;
+            const RATIO_BORDER_HIGH  = 2.5;
 
             // ── Health-zone background plugin ─────────────────────────────
             const healthZonePlugin = {
@@ -347,36 +593,26 @@
                     if (!chartArea) return;
                     const yScale = scales.y;
                     const { left, right } = chartArea;
-
-                    function yPx(val) {
-                        return yScale.getPixelForValue(val);
-                    }
-                    const yMax  = yScale.getPixelForValue(yScale.max);
-                    const yMin  = yScale.getPixelForValue(yScale.min);
-
-                    // clamp helper so bands don't overflow chart area
+                    const yMax = yScale.getPixelForValue(yScale.max);
+                    const yMin = yScale.getPixelForValue(yScale.min);
+                    function yPx(v) { return yScale.getPixelForValue(v); }
                     function clamp(v) { return Math.max(yMax, Math.min(yMin, v)); }
-
                     const zones = [
-                        // [top val, bottom val, color]
-                        [yScale.max,        RATIO_BORDER_HIGH,  'rgba(231,76,60,0.18)'],   // red high
-                        [RATIO_BORDER_HIGH, RATIO_HEALTHY_HIGH, 'rgba(241,196,15,0.22)'],  // yellow high
-                        [RATIO_HEALTHY_HIGH,RATIO_HEALTHY_LOW,  'rgba(39,174,96,0.18)'],   // green healthy
-                        [RATIO_HEALTHY_LOW, RATIO_BORDER_LOW,   'rgba(241,196,15,0.22)'],  // yellow low
-                        [RATIO_BORDER_LOW,  yScale.min,         'rgba(231,76,60,0.18)'],   // red low
+                        [yScale.max,        RATIO_BORDER_HIGH,  'rgba(231,76,60,0.18)'],
+                        [RATIO_BORDER_HIGH, RATIO_HEALTHY_HIGH, 'rgba(241,196,15,0.22)'],
+                        [RATIO_HEALTHY_HIGH,RATIO_HEALTHY_LOW,  'rgba(39,174,96,0.18)'],
+                        [RATIO_HEALTHY_LOW, RATIO_BORDER_LOW,   'rgba(241,196,15,0.22)'],
+                        [RATIO_BORDER_LOW,  yScale.min,         'rgba(231,76,60,0.18)'],
                     ];
-
                     zones.forEach(([top, bottom, color]) => {
                         const yTop    = clamp(yPx(top));
                         const yBottom = clamp(yPx(bottom));
-                        if (yBottom <= yTop) return; // zone off-screen
+                        if (yBottom <= yTop) return;
                         ctx.save();
                         ctx.fillStyle = color;
                         ctx.fillRect(left, yTop, right - left, yBottom - yTop);
                         ctx.restore();
                     });
-
-                    // Draw dashed threshold lines
                     [RATIO_HEALTHY_LOW, RATIO_HEALTHY_HIGH].forEach(val => {
                         const y = yPx(val);
                         if (y < yMax || y > yMin) return;
@@ -385,31 +621,26 @@
                         ctx.strokeStyle = 'rgba(39,174,96,0.6)';
                         ctx.lineWidth = 1.5;
                         ctx.beginPath();
-                        ctx.moveTo(left, y);
-                        ctx.lineTo(right, y);
-                        ctx.stroke();
-                        ctx.restore();
+                        ctx.moveTo(left, y); ctx.lineTo(right, y);
+                        ctx.stroke(); ctx.restore();
                     });
                 }
-};
+            };
 
-            // ── Colour interpolation for ombré line ──────────────────────
+            // ── Colour interpolation ──────────────────────────────────────
             function lerpColor(a, b, t) {
-                // a, b = [r,g,b], t = 0..1
                 return [
                     Math.round(a[0] + (b[0]-a[0])*t),
                     Math.round(a[1] + (b[1]-a[1])*t),
                     Math.round(a[2] + (b[2]-a[2])*t)
                 ];
             }
-
             const C_RED    = [231, 76,  60];
             const C_YELLOW = [241, 196, 15];
             const C_GREEN  = [39,  174, 96];
 
             function ratioToRgb(v) {
                 if (v === null) return null;
-                // colour stops mapped to ratio value
                 const stops = [
                     { at: 0,                    col: C_RED    },
                     { at: RATIO_BORDER_LOW,     col: C_RED    },
@@ -434,30 +665,26 @@
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [
-                        {
-                            label: 'Muscle Ratio (M1/M2)',
-                            data: [],
-                            borderColor: '#27ae60', // fallback, overridden per-segment
-                            backgroundColor: 'transparent',
-                            tension: 0.4,
-                            pointRadius: 0,
-                            fill: false,
-                            borderWidth: 3,
-                            segment: {
-                                borderColor: ctx => {
-                                    const v = (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2;
-                                    return ratioToRgb(v) || 'transparent';
-                                }
-                            },
-                            spanGaps: false
-                        }
-                    ]
+                    datasets: [{
+                        label: 'Muscle Ratio (M1/M2)',
+                        data: [],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'transparent',
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: false,
+                        borderWidth: 3,
+                        segment: {
+                            borderColor: ctx => {
+                                const v = (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2;
+                                return ratioToRgb(v) || 'transparent';
+                            }
+                        },
+                        spanGaps: false
+                    }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
+                    responsive: true, maintainAspectRatio: false, animation: false,
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -476,48 +703,26 @@
                         }
                     },
                     scales: {
-                        y: {
-                            min: 0,
-                            max: 4,
-                            title: { display: true, text: 'M1 / M2' },
-                            ticks: { stepSize: 0.5, callback: v => v.toFixed(1) + 'x' },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
-                        },
+                        y: { min: 0, max: 4, title: { display: true, text: 'M1 / M2' },
+                             ticks: { stepSize: 0.5, callback: v => v.toFixed(1) + 'x' },
+                             grid: { color: 'rgba(0,0,0,0.05)' } },
                         x: { display: false }
                     }
                 }
             });
 
-            // ── EMG Chart ──────────────────────────────────────────────────
+            // ── EMG Chart ─────────────────────────────────────────────────
             const romChart = new Chart(romCtx, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [
-                        {
-                            label: 'Muscle 1 (GPIO 2)',
-                            data: [],
-                            borderColor: '#4d82ad',
-                            backgroundColor: 'rgba(77, 130, 173, 0.1)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: true
-                        },
-                        {
-                            label: 'Muscle 2 (GPIO 3)',
-                            data: [],
-                            borderColor: '#e67e22',
-                            backgroundColor: 'rgba(230, 126, 34, 0.1)',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: true
-                        }
+                        { label: 'Muscle 1', data: [], borderColor: '#4d82ad', backgroundColor: 'rgba(77,130,173,0.1)', tension: 0.3, pointRadius: 0, fill: true },
+                        { label: 'Muscle 2', data: [], borderColor: '#e67e22', backgroundColor: 'rgba(230,126,34,0.1)',  tension: 0.3, pointRadius: 0, fill: true }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
+                    responsive: true, maintainAspectRatio: false, animation: false,
                     plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
                     scales: {
                         y: { beginAtZero: true, max: 4095, title: { display: true, text: 'Amplitude' } },
@@ -526,59 +731,26 @@
                 }
             });
 
-            // ── IMU Chart ──────────────────────────────────────────────────
+            // ── IMU Chart ─────────────────────────────────────────────────
             const imuChart = new Chart(imuCtx, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [
-                        {
-                            label: 'IMU 1 — Thigh (°)',
-                            data: [],
-                            borderColor: 'rgba(46, 204, 113, 0.6)',
-                            backgroundColor: 'transparent',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: false,
-                            borderWidth: 1.5,
-                            borderDash: [4, 4]
-                        },
-                        {
-                            label: 'IMU 2 — Shin (°)',
-                            data: [],
-                            borderColor: 'rgba(155, 89, 182, 0.6)',
-                            backgroundColor: 'transparent',
-                            tension: 0.3,
-                            pointRadius: 0,
-                            fill: false,
-                            borderWidth: 1.5,
-                            borderDash: [4, 4]
-                        },
-                        {
-                            label: 'Knee Flexion (°)',
-                            data: [],
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'transparent',
-                            tension: 0.4,
-                            pointRadius: 0,
-                            fill: true,
-                            borderWidth: 3
-                        }
+                        { label: 'IMU 1 — Thigh (°)', data: [], borderColor: 'rgba(46,204,113,0.6)', backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 1.5, borderDash: [4,4] },
+                        { label: 'IMU 2 — Shin (°)',  data: [], borderColor: 'rgba(155,89,182,0.6)',  backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 1.5, borderDash: [4,4] },
+                        { label: 'Knee Flexion (°)',  data: [], borderColor: '#e74c3c', backgroundColor: 'transparent', tension: 0.4, pointRadius: 0, fill: true, borderWidth: 3 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
+                    responsive: true, maintainAspectRatio: false, animation: false,
                     plugins: {
                         legend: {
                             position: 'top',
                             labels: {
-                                boxWidth: 12,
-                                font: { size: 11 },
+                                boxWidth: 12, font: { size: 11 },
                                 generateLabels: (chart) => {
                                     const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                                    labels[2].fontColor = '#e74c3c';
                                     labels[2].text = '⬤ ' + labels[2].text;
                                     return labels;
                                 }
@@ -586,47 +758,177 @@
                         }
                     },
                     scales: {
-                        y: {
-                            suggestedMin: -10,
-                            suggestedMax: 120,
-                            title: { display: true, text: 'Degrees (°)' }
-                        },
+                        y: { suggestedMin: -10, suggestedMax: 120, title: { display: true, text: 'Degrees (°)' } },
                         x: { display: false }
                     }
                 }
             });
 
+            // ── Trend chart factory ───────────────────────────────────────
+            function makeTrendChart(ctxId, color, yLabel, yMin = undefined) {
+                return new Chart(document.getElementById(ctxId).getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            borderColor: color,
+                            backgroundColor: color.replace(')', ', 0.08)').replace('rgb', 'rgba'),
+                            tension: 0.35,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: color,
+                            fill: true,
+                            borderWidth: 2.5
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+                        plugins: { legend: { display: false }, tooltip: {
+                            callbacks: { label: ctx => ` ${ctx.parsed.y.toFixed(1)} ${yLabel}` }
+                        }},
+                        scales: {
+                            y: {
+                                beginAtZero: yMin === undefined,
+                                min: yMin,
+                                title: { display: true, text: yLabel },
+                                grid: { color: 'rgba(0,0,0,0.04)' }
+                            },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 30 } }
+                        }
+                    }
+                });
+            }
+
+            const flexTrendChart     = makeTrendChart('flexTrendChart',     '#e74c3c', '°', 0);
+            const peakFlexTrendChart = makeTrendChart('peakFlexTrendChart', '#c0392b', '°', 0);
+            const emg1TrendChart     = makeTrendChart('emg1TrendChart',     '#4d82ad', 'ADC', 0);
+            const emg2TrendChart     = makeTrendChart('emg2TrendChart',     '#e67e22', 'ADC', 0);
+
+            // ── Trend badge helper ────────────────────────────────────────
+            function trendBadge(values, elId, suffix = '') {
+                const el = document.getElementById(elId);
+                if (!el || values.length < 2) { if (el) { el.textContent = '—'; el.className = 'trend-badge trend-flat'; } return; }
+                const last = values[values.length - 1];
+                const prev = values[values.length - 2];
+                const pct  = prev === 0 ? 0 : ((last - prev) / prev * 100);
+                if (Math.abs(pct) < 2) {
+                    el.textContent = '→ Stable';
+                    el.className = 'trend-badge trend-flat';
+                } else if (pct > 0) {
+                    el.textContent = `↑ +${pct.toFixed(1)}%`;
+                    el.className = 'trend-badge trend-up';
+                } else {
+                    el.textContent = `↓ ${pct.toFixed(1)}%`;
+                    el.className = 'trend-badge trend-down';
+                }
+            }
+
+            // ── Update all trend charts from history ──────────────────────
+            function updateTrendCharts() {
+                const history = loadHistory();
+                // Trends shown oldest → newest
+                const ordered = [...history].reverse();
+
+                const labels       = ordered.map((s, i) => `S${i+1}`);
+                const avgFlex      = ordered.map(s => parseFloat(s.avgDelta)  || 0);
+                const peakFlex     = ordered.map(s => parseFloat(s.peakKnee)  || 0);
+                const avgEmg1      = ordered.map(s => { const p = (s.avg||'').split('/'); return parseInt(p[0]) || 0; });
+                const avgEmg2      = ordered.map(s => { const p = (s.avg||'').split('/'); return parseInt(p[1]) || 0; });
+
+                function fillChart(chart, lbs, data) {
+                    chart.data.labels = lbs;
+                    chart.data.datasets[0].data = data;
+                    chart.update();
+                }
+
+                fillChart(flexTrendChart,     labels, avgFlex);
+                fillChart(peakFlexTrendChart, labels, peakFlex);
+                fillChart(emg1TrendChart,     labels, avgEmg1);
+                fillChart(emg2TrendChart,     labels, avgEmg2);
+
+                // Badges
+                trendBadge(avgFlex,  'flexTrendBadge');
+                trendBadge(peakFlex, 'peakFlexTrendBadge');
+                trendBadge(avgEmg1,  'emg1TrendBadge');
+                trendBadge(avgEmg2,  'emg2TrendBadge');
+
+                // Stat callouts
+                document.getElementById('trendSessionCount').textContent =
+                    history.length > 0 ? `${history.length} session${history.length > 1 ? 's' : ''} recorded` : '';
+
+                if (avgFlex.length) {
+                    document.getElementById('flexBest').textContent    = Math.max(...avgFlex).toFixed(1) + '°';
+                    document.getElementById('flexLatest').textContent  = avgFlex[avgFlex.length-1].toFixed(1) + '°';
+                    document.getElementById('flexAvgAll').textContent  = (avgFlex.reduce((a,b)=>a+b,0)/avgFlex.length).toFixed(1) + '°';
+                }
+                if (peakFlex.length) {
+                    document.getElementById('peakFlexBest').textContent   = Math.max(...peakFlex).toFixed(1) + '°';
+                    document.getElementById('peakFlexLatest').textContent = peakFlex[peakFlex.length-1].toFixed(1) + '°';
+                    document.getElementById('peakFlexCount').textContent  = peakFlex.length;
+                }
+                if (avgEmg1.length) {
+                    const latest = history[0]; // most recent
+                    document.getElementById('emg1PeakEver').textContent   = Math.max(...ordered.map(s => { const p=(s.peak||'').split('/'); return parseInt(p[0])||0; })).toString();
+                    document.getElementById('emg1Latest').textContent     = avgEmg1[avgEmg1.length-1].toString();
+                    document.getElementById('emg1Contractions').textContent = latest ? (latest.flexCount || '—') : '—';
+                    document.getElementById('emg2PeakEver').textContent   = Math.max(...ordered.map(s => { const p=(s.peak||'').split('/'); return parseInt(p[1])||0; })).toString();
+                    document.getElementById('emg2Latest').textContent     = avgEmg2[avgEmg2.length-1].toString();
+                    document.getElementById('emg2Contractions').textContent = latest ? (latest.flexCount || '—') : '—';
+                }
+
+                updateStorageBar();
+            }
+
+            // ── Storage bar ───────────────────────────────────────────────
+            function updateStorageBar() {
+                try {
+                    const raw  = localStorage.getItem(HISTORY_KEY) || '[]';
+                    const kb   = (new Blob([raw]).size / 1024).toFixed(1);
+                    const pct  = Math.min((kb / 5120) * 100, 100);
+                    document.getElementById('storageBarFill').style.width = pct + '%';
+                    document.getElementById('storageLabel').textContent   = `${kb} KB / ~5 MB`;
+                    document.getElementById('storageBarFill').style.background =
+                        pct > 80 ? '#e74c3c' : pct > 60 ? '#f39c12' : '#4d82ad';
+                } catch(e) {}
+            }
+
+            // ── History helpers ───────────────────────────────────────────
+            function loadHistory() {
+                try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+                catch(e) { return []; }
+            }
+
+            function saveHistory(history) {
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            }
+
             // ── WebSocket ─────────────────────────────────────────────────
             function initWebSocket() {
                 if (socket && (socket.readyState === WebSocket.CONNECTING ||
-                            socket.readyState === WebSocket.OPEN)) return;
+                               socket.readyState === WebSocket.OPEN)) return;
 
                 socket = new WebSocket(`ws://${ESP_IP}/ws`);
 
                 socket.onopen = () => {
-                    console.log("WebSocket Connected");
                     status.textContent = "Connected";
                 };
 
                 socket.onmessage = (event) => {
                     if (!isTracking) return;
-
                     const parts = event.data.split(',');
                     if (parts.length < 4) return;
-
                     const v1 = parseInt(parts[0]);
                     const v2 = parseInt(parts[1]);
                     const i1 = parseFloat(parts[2]);
                     const i2 = parseFloat(parts[3]);
-
                     if (isNaN(v1) || isNaN(v2) || isNaN(i1) || isNaN(i2)) return;
 
-                    const now = new Date().toLocaleTimeString();
+                    const now         = new Date().toLocaleTimeString();
                     const kneeFlexion = Math.abs(i1 - i2);
-                    const ratio = (v2 > 0) ? v1 / v2 : null;
+                    const ratio       = (v2 > 0) ? v1 / v2 : null;
 
                     sessionData.push({ time: now, v1, v2, i1, i2 });
-
                     pushToChart(romChart, now, v1, v2);
 
                     imuChart.data.labels.push(now);
@@ -635,12 +937,9 @@
                     imuChart.data.datasets[2].data.push(kneeFlexion);
                     if (imuChart.data.labels.length > 150) {
                         imuChart.data.labels.shift();
-                        imuChart.data.datasets[0].data.shift();
-                        imuChart.data.datasets[1].data.shift();
-                        imuChart.data.datasets[2].data.shift();
+                        imuChart.data.datasets.forEach(d => d.data.shift());
                     }
                     imuChart.update('none');
-
                     pushRatio(now, ratio);
 
                     liveImu1.textContent  = i1.toFixed(1) + '°';
@@ -686,54 +985,72 @@
 
             // ── Analysis ──────────────────────────────────────────────────
             function filterGlitches(values) {
-                const GLITCH_THRESHOLD = 2800;
-                return values.filter(v => v < GLITCH_THRESHOLD);
+                return values.filter(v => v < 2800);
             }
 
             function runAnalysis(isFromUpload = false, fileName = "") {
                 if (sessionData.length === 0) return;
 
-                let ch1Values = filterGlitches(sessionData.map(d => d.v1));
-                let ch2Values = filterGlitches(sessionData.map(d => d.v2));
+                const ch1Values = filterGlitches(sessionData.map(d => d.v1));
+                const ch2Values = filterGlitches(sessionData.map(d => d.v2));
 
                 if (ch1Values.length === 0 || ch2Values.length === 0) {
                     analyticsContent.innerHTML = `<p style="color:red;">No valid data after filtering glitches</p>`;
                     return;
                 }
 
-                const peak1 = Math.max(...ch1Values);
-                const peak2 = Math.max(...ch2Values);
-                const avg1 = Math.round(ch1Values.reduce((a, b) => a + b) / ch1Values.length);
-                const avg2 = Math.round(ch2Values.reduce((a, b) => a + b) / ch2Values.length);
+                const peak1    = Math.max(...ch1Values);
+                const peak2    = Math.max(...ch2Values);
+                const avg1     = Math.round(ch1Values.reduce((a,b) => a+b) / ch1Values.length);
+                const avg2     = Math.round(ch2Values.reduce((a,b) => a+b) / ch2Values.length);
                 const duration = (sessionData.length * 0.02).toFixed(1);
 
                 let flexCount = 0;
                 for (let i = 1; i < ch1Values.length; i++) {
-                    if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i - 1] <= FLEX_THRESHOLD) flexCount++;
+                    if (ch1Values[i] > FLEX_THRESHOLD && ch1Values[i-1] <= FLEX_THRESHOLD) flexCount++;
                 }
 
                 const imu1Values = sessionData.map(d => d.i1).filter(v => !isNaN(v));
                 const imu2Values = sessionData.map(d => d.i2).filter(v => !isNaN(v));
+                const kneeValues = sessionData.map(d => Math.abs(d.i1 - d.i2));
+
                 const peakAngle1 = imu1Values.length ? Math.max(...imu1Values).toFixed(1) : '—';
                 const peakAngle2 = imu2Values.length ? Math.max(...imu2Values).toFixed(1) : '—';
-                const avgDelta = imu1Values.length
-                    ? (sessionData.reduce((acc, d) => acc + Math.abs(d.i1 - d.i2), 0) / sessionData.length).toFixed(1)
+                const avgDelta   = kneeValues.length
+                    ? (kneeValues.reduce((a,b) => a+b, 0) / kneeValues.length).toFixed(1)
                     : '—';
+                const peakKnee   = kneeValues.length ? Math.max(...kneeValues).toFixed(1) : '—';
+
+                // ── Downsample for storage (every Nth point) ──────────────
+                const downsampled = sessionData
+                    .filter((_, i) => i % DOWNSAMPLE_N === 0)
+                    .map(d => ({
+                        t:  d.time,
+                        v1: d.v1,
+                        v2: d.v2,
+                        i1: parseFloat(d.i1.toFixed(1)),
+                        i2: parseFloat(d.i2.toFixed(1))
+                    }));
 
                 const sessionID = isFromUpload ? fileName : `live-${Date.now()}`;
                 const summary = {
-                    id: sessionID,
-                    date: new Date().toLocaleString(),
-                    peak: `${peak1}/${peak2}`,
-                    avg: `${avg1}/${avg2}`,
+                    id:        sessionID,
+                    date:      new Date().toLocaleString(),
+                    peak:      `${peak1}/${peak2}`,
+                    avg:       `${avg1}/${avg2}`,
                     duration,
-                    flexCount
+                    flexCount,
+                    peakAngle1,
+                    peakAngle2,
+                    avgDelta,
+                    peakKnee,
+                    samples:   downsampled
                 };
 
-                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
+                let history = loadHistory();
                 if (!history.some(item => item.id === sessionID)) {
                     history.unshift(summary);
-                    localStorage.setItem('utbiome_history', JSON.stringify(history.slice(0, 20)));
+                    saveHistory(history.slice(0, MAX_SESSIONS));
                 }
 
                 analyticsContent.innerHTML = `
@@ -746,23 +1063,131 @@
                     <div class="metric-row"><span class="metric-label">Peak Thigh Angle</span><span class="metric-value" style="color:#27ae60;">${peakAngle1}°</span></div>
                     <div class="metric-row"><span class="metric-label">Peak Shank Angle</span><span class="metric-value" style="color:#8e44ad;">${peakAngle2}°</span></div>
                     <div class="metric-row"><span class="metric-label">Avg Knee Flexion (Δ)</span><span class="metric-value" style="color:#e67e22;">${avgDelta}°</span></div>
+                    <div class="metric-row"><span class="metric-label">Peak Knee Flexion</span><span class="metric-value" style="color:#e74c3c;">${peakKnee}°</span></div>
                 `;
 
                 downloadBtn.style.display = isFromUpload ? "none" : "block";
                 renderHistory();
+                updateTrendCharts();
             }
 
+            // ── Replay a stored session onto the live charts ──────────────
+            function replaySession(session) {
+                if (!session.samples || session.samples.length === 0) return;
+
+                // Clear charts and results
+                clearChart(romChart);
+                clearChart(imuChart);
+                clearChart(ratioOmbreChart);
+                liveImu1.textContent  = '—°';
+                liveImu2.textContent  = '—°';
+                liveDelta.textContent = '—°';
+                analyticsContent.innerHTML = `<p style="color:#4d82ad">⏵ Replaying: ${session.date}...</p>`;
+                downloadBtn.style.display = 'none';
+
+                // Disable start/stop during replay
+                startBtn.disabled = true;
+                stopBtn.disabled  = true;
+
+                // Scroll to charts
+                document.querySelector('.dashboard-grid').scrollIntoView({ behavior: 'smooth' });
+
+                // Rebuild sessionData from samples for final analysis
+                sessionData = session.samples.map(s => ({
+                    time: s.t, v1: s.v1, v2: s.v2, i1: s.i1, i2: s.i2
+                }));
+
+                let i = 0;
+                // Samples are at 5Hz (downsampled from 50Hz), so 200ms per point feels natural
+                const REPLAY_INTERVAL_MS = 10;
+
+                const replayInterval = setInterval(() => {
+                    if (i >= sessionData.length) {
+                        clearInterval(replayInterval);
+
+                        // Re-enable buttons
+                        startBtn.disabled = false;
+
+                        // Show final summary
+                        analyticsContent.innerHTML = `
+                            <p style="margin:0 0 8px 0; color:#4d82ad; font-size:0.85em;">📂 Replayed: ${session.date}</p>
+                            <p style="margin:0 0 10px 0; font-size:0.8em; color:#aaa; text-transform:uppercase; letter-spacing:0.05em;">EMG</p>
+                            <div class="metric-row"><span class="metric-label">Peak (Ch1/Ch2)</span><span class="metric-value">${session.peak}</span></div>
+                            <div class="metric-row"><span class="metric-label">Avg (Ch1/Ch2)</span><span class="metric-value">${session.avg}</span></div>
+                            <div class="metric-row"><span class="metric-label">Contractions</span><span class="metric-value">${session.flexCount}</span></div>
+                            <div class="metric-row"><span class="metric-label">Duration</span><span class="metric-value">${session.duration}s</span></div>
+                            <p style="margin:14px 0 10px 0; font-size:0.8em; color:#aaa; text-transform:uppercase; letter-spacing:0.05em;">IMU</p>
+                            <div class="metric-row"><span class="metric-label">Avg Knee Flexion</span><span class="metric-value" style="color:#e67e22;">${session.avgDelta || '—'}°</span></div>
+                            <div class="metric-row"><span class="metric-label">Peak Knee Flexion</span><span class="metric-value" style="color:#e74c3c;">${session.peakKnee || '—'}°</span></div>
+                        `;
+                        return;
+                    }
+
+                    const row         = sessionData[i];
+                    const knee        = Math.abs(row.i1 - row.i2);
+                    const ratio       = row.v2 > 0 ? row.v1 / row.v2 : null;
+
+                    // Push to EMG chart
+                    pushToChart(romChart, row.time, row.v1, row.v2);
+
+                    // Push to IMU chart
+                    imuChart.data.labels.push(row.time);
+                    imuChart.data.datasets[0].data.push(row.i1);
+                    imuChart.data.datasets[1].data.push(row.i2);
+                    imuChart.data.datasets[2].data.push(knee);
+                    if (imuChart.data.labels.length > 150) {
+                        imuChart.data.labels.shift();
+                        imuChart.data.datasets.forEach(d => d.data.shift());
+                    }
+                    imuChart.update('none');
+
+                    // Push to ratio chart
+                    pushRatio(row.time, ratio);
+
+                    // Update live readout
+                    liveImu1.textContent  = row.i1.toFixed(1) + '°';
+                    liveImu2.textContent  = row.i2.toFixed(1) + '°';
+                    liveDelta.textContent = knee.toFixed(1) + '°';
+
+                    i++;
+                }, REPLAY_INTERVAL_MS);
+            }
+            // ── Render history table ──────────────────────────────────────
             function renderHistory() {
-                let history = JSON.parse(localStorage.getItem('utbiome_history') || "[]");
-                historyList.innerHTML = history.map(s => `
-                    <tr>
+                const history = loadHistory();
+                historyList.innerHTML = history.map((s, idx) => `
+                    <tr data-idx="${idx}" class="${idx === 0 ? 'selected-row' : ''}">
                         <td>${s.date}</td>
                         <td style="font-weight:bold; color:#4d82ad;">${s.peak}</td>
                         <td>${s.avg}</td>
                         <td>${s.flexCount}</td>
+                        <td style="color:#e67e22;">${s.avgDelta ? s.avgDelta+'°' : '—'}</td>
+                        <td style="color:#e74c3c;">${s.peakKnee ? s.peakKnee+'°' : '—'}</td>
                         <td>${s.duration}s</td>
+                        <td><button class="session-replay-btn" data-idx="${idx}">Replay</button></td>
                     </tr>
                 `).join('');
+
+                // Row click / replay button
+                historyList.querySelectorAll('tr').forEach(row => {
+                    row.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('session-replay-btn')) return;
+                        const idx = parseInt(row.dataset.idx);
+                        historyList.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+                        row.classList.add('selected-row');
+                        replaySession(history[idx]);
+                    });
+                });
+
+                historyList.querySelectorAll('.session-replay-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.dataset.idx);
+                        historyList.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+                        btn.closest('tr').classList.add('selected-row');
+                        replaySession(history[idx]);
+                    });
+                });
             }
 
             // ── Controls ──────────────────────────────────────────────────
@@ -776,18 +1201,18 @@
                 clearChart(romChart);
                 clearChart(imuChart);
                 clearChart(ratioOmbreChart);
-                liveImu1.textContent = '—°';
-                liveImu2.textContent = '—°';
+                liveImu1.textContent  = '—°';
+                liveImu2.textContent  = '—°';
                 liveDelta.textContent = '—°';
                 analyticsContent.innerHTML = `<p style="color:#4d82ad">Recording...</p>`;
                 socket.send("start");
                 isTracking = true;
                 startBtn.disabled = true;
-                stopBtn.disabled = false;
+                stopBtn.disabled  = false;
                 status.textContent = "Recording...";
                 timerSeconds = 0;
-                sessionTimer.textContent = '00:00:00';
-                sessionTimer.style.color = '#e74c3c';
+                sessionTimer.textContent   = '00:00:00';
+                sessionTimer.style.color   = '#e74c3c';
                 timerInterval = setInterval(() => {
                     timerSeconds++;
                     sessionTimer.textContent = formatTimer(timerSeconds);
@@ -799,32 +1224,28 @@
                 clearInterval(timerInterval);
                 timerInterval = null;
                 sessionTimer.style.color = '#aaa';
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.send("stop");
-                }
+                if (socket && socket.readyState === WebSocket.OPEN) socket.send("stop");
                 startBtn.disabled = false;
-                stopBtn.disabled = true;
+                stopBtn.disabled  = true;
                 status.textContent = "Hardware Idle";
                 runAnalysis();
             };
 
             clearBtn.onclick = function () {
-                if (confirm("Delete all session history?")) {
-                    localStorage.removeItem('utbiome_history');
+                if (confirm("Delete all session history? This cannot be undone.")) {
+                    localStorage.removeItem(HISTORY_KEY);
                     renderHistory();
+                    updateTrendCharts();
                     analyticsContent.innerHTML = `<p style="color:#999">History cleared.</p>`;
                 }
             };
 
             downloadBtn.onclick = function () {
-                const GLITCH_THRESHOLD = 2800;
-                const filteredData = sessionData.filter(row => row.v1 < GLITCH_THRESHOLD && row.v2 < GLITCH_THRESHOLD);
-                let csvContent = "data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n";
-                filteredData.forEach(row => {
-                    csvContent += `${row.time},${row.v1},${row.v2},${row.i1},${row.i2}\n`;
-                });
+                const filtered = sessionData.filter(row => row.v1 < 2800 && row.v2 < 2800);
+                let csv = "data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n";
+                filtered.forEach(row => { csv += `${row.time},${row.v1},${row.v2},${row.i1},${row.i2}\n`; });
                 const link = document.createElement("a");
-                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("href", encodeURI(csv));
                 link.setAttribute("download", `UTBiome_Session_${Date.now()}.csv`);
                 document.body.appendChild(link);
                 link.click();
@@ -834,66 +1255,55 @@
             csvFileInput.onchange = function (e) {
                 const file = e.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
                 reader.onload = function (event) {
-                    const lines = event.target.result.trim().split('\n');
+                    const lines      = event.target.result.trim().split('\n');
                     const startIndex = isNaN(parseInt(lines[0].split(',')[1])) ? 1 : 0;
-
                     sessionData = [];
                     lines.slice(startIndex).forEach(line => {
                         const parts = line.split(',');
                         if (parts.length < 3) return;
                         const time = parts[0].trim();
-                        const v1 = parseInt(parts[1]);
-                        const v2 = parseInt(parts[2]);
-                        const i1 = parts.length >= 4 ? parseFloat(parts[3]) : 0;
-                        const i2 = parts.length >= 5 ? parseFloat(parts[4]) : 0;
-                        if (!isNaN(v1) && !isNaN(v2)) {
-                            sessionData.push({ time, v1, v2, i1, i2 });
-                        }
+                        const v1   = parseInt(parts[1]);
+                        const v2   = parseInt(parts[2]);
+                        const i1   = parts.length >= 4 ? parseFloat(parts[3]) : 0;
+                        const i2   = parts.length >= 5 ? parseFloat(parts[4]) : 0;
+                        if (!isNaN(v1) && !isNaN(v2)) sessionData.push({ time, v1, v2, i1, i2 });
                     });
-
                     if (sessionData.length === 0) {
                         analyticsContent.innerHTML = `<p style="color:red;">No valid rows found in CSV.</p>`;
                         return;
                     }
-
                     clearChart(romChart);
                     clearChart(imuChart);
                     clearChart(ratioOmbreChart);
-
                     sessionData.forEach(row => {
                         pushToChart(romChart, row.time, row.v1, row.v2);
-                        const knee = Math.abs(row.i1 - row.i2);
+                        const knee  = Math.abs(row.i1 - row.i2);
+                        const ratio = row.v2 > 0 ? row.v1 / row.v2 : null;
                         imuChart.data.labels.push(row.time);
                         imuChart.data.datasets[0].data.push(row.i1);
                         imuChart.data.datasets[1].data.push(row.i2);
                         imuChart.data.datasets[2].data.push(knee);
                         if (imuChart.data.labels.length > 150) {
                             imuChart.data.labels.shift();
-                            imuChart.data.datasets[0].data.shift();
-                            imuChart.data.datasets[1].data.shift();
-                            imuChart.data.datasets[2].data.shift();
+                            imuChart.data.datasets.forEach(d => d.data.shift());
                         }
-                        imuChart.update('none');
-                        const ratio = (row.v2 > 0) ? row.v1 / row.v2 : null;
                         pushRatio(row.time, ratio);
                     });
-
+                    imuChart.update('none');
                     status.textContent = `Loaded: ${file.name}`;
                     runAnalysis(true, file.name);
                     csvFileInput.value = "";
                 };
-
                 reader.readAsText(file);
             };
 
             // ── Init ──────────────────────────────────────────────────────
             initWebSocket();
             renderHistory();
+            updateTrendCharts();
         });
     </script>
 </body>
-
 </html>
