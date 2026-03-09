@@ -181,6 +181,35 @@
             <button id="clearHistoryBtn" class="btn-action btn-clear">Clear All History</button>
         </section>
 
+        <!-- Connection bar -->
+        <div style="
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 1400px;
+            width: 95%;
+            margin: 10px auto 8px auto;
+            border-radius: 10px;
+            font-size: 0.9em;
+        ">
+            <span style="color:#aaa;">Device address:</span>
+            <input id="deviceAddressInput" type="text"
+                placeholder="utbiome.local or 192.168.4.1"
+                style="background:#2a2a4a; border:1px solid #444; color:white;
+                    padding:6px 12px; border-radius:6px; font-family:monospace; width:220px;"
+            />
+            <button id="connectBtn" class="btn-action" style="background:#4d82ad; color:white;">Connect</button>
+            <span id="connectionDot" style="width:10px; height:10px; border-radius:50%;
+                background:#dc3545; display:inline-block;"></span>
+            <span id="connectionLabel" style="color:#aaa;">Disconnected</span>
+            <span style="margin-left:auto; color:#555; font-size:0.8em;">
+                💡 Connect to <strong style="color:#aaa">UTBiome_Knee</strong> WiFi first
+            </span>
+        </div>
+
         <!-- Control bar: buttons flush with left chart, timer flush with right chart -->
         <div class="control-bar">
             <div class="button-group">
@@ -330,7 +359,7 @@
             let sessionData = [];
             let isTracking = false;
             let socket;
-            const ESP_IP = "192.168.4.1";
+            const STORAGE_KEY = 'utbiome_device_address';
             const FLEX_THRESHOLD = 1500;
 
             // Health range constants
@@ -597,15 +626,34 @@
             });
 
             // ── WebSocket ─────────────────────────────────────────────────
-            function initWebSocket() {
+            const deviceInput  = document.getElementById('deviceAddressInput');
+            const connectBtn   = document.getElementById('connectBtn');
+            const connDot      = document.getElementById('connectionDot');
+            const connLabel    = document.getElementById('connectionLabel');
+
+            deviceInput.value  = localStorage.getItem(STORAGE_KEY) || '192.168.4.1';
+
+            function setConnectionState(state) {
+                const colors = { disconnected:'#dc3545', connecting:'#f39c12', connected:'#28a745' };
+                const labels = { disconnected:'Disconnected', connecting:'Connecting…', connected:'Connected' };
+                connDot.style.background = colors[state];
+                connLabel.textContent    = labels[state];
+                connLabel.style.color    = state === 'connected' ? '#28a745' : '#aaa';
+            }
+
+            function initWebSocket(address) {
                 if (socket && (socket.readyState === WebSocket.CONNECTING ||
                             socket.readyState === WebSocket.OPEN)) return;
 
-                socket = new WebSocket(`ws://${ESP_IP}/ws`);
+                const addr = address || localStorage.getItem(STORAGE_KEY) || '192.168.4.1';
+                setConnectionState('connecting');
+                socket = new WebSocket(`ws://${addr}/ws`);
 
                 socket.onopen = () => {
                     console.log("WebSocket Connected");
                     status.textContent = "Connected";
+                    setConnectionState('connected');
+                    localStorage.setItem(STORAGE_KEY, addr);
                 };
 
                 socket.onmessage = (event) => {
@@ -650,7 +698,8 @@
 
                 socket.onclose = () => {
                     status.textContent = "Reconnecting...";
-                    setTimeout(initWebSocket, 2000);
+                    setConnectionState('disconnected');
+                    setTimeout(() => initWebSocket(localStorage.getItem(STORAGE_KEY) || '192.168.4.1'), 3000);
                 };
 
                 socket.onerror = () => { socket.close(); };
@@ -888,6 +937,19 @@
 
                 reader.readAsText(file);
             };
+
+            connectBtn.onclick = () => {
+                const addr = deviceInput.value.trim();
+                if (!addr) return;
+                localStorage.setItem(STORAGE_KEY, addr);
+                if (socket) socket.close();
+                socket = null;
+                initWebSocket(addr);
+            };
+
+            deviceInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') connectBtn.click();
+            });
 
             // ── Init ──────────────────────────────────────────────────────
             initWebSocket();
