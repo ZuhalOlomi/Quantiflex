@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuantiFlex - Patient Dashboard</title>
+    <title>QuantiFlex - Clinician Portal</title>
     
     <script>
         (function() {
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
-            if (!isLoggedIn || userRole !== "patient") {
+            if (!isLoggedIn || userRole !== "clinician") {
                 window.location.replace("login.html");
             }
         })();
@@ -21,6 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     
     <style>
+        /* Matches Patient Page Aesthetic */
         .welcome-banner {
             background: #2c3e50;
             color: white;
@@ -37,7 +38,7 @@
         }
 
         .welcome-banner h2 { margin: 0; font-size: 1.9rem; font-family: "Georgia", serif; }
-        #userNameDisplay { color: #4d82ad; font-weight: bold; }
+        #clinicianNameDisplay { color: #4d82ad; font-weight: bold; }
 
         .typing-container {
             margin-top: 8px;
@@ -57,10 +58,13 @@
             transition: all 0.3s;
             text-decoration: none;
             font-weight: 500;
+            border: none;
+            cursor: pointer;
         }
 
         .logout-btn:hover { background: #e74c3c; }
 
+        /* Video Hero Styles - Exact match to Patient UI */
         .hero {
             position: relative;
             display: flex;
@@ -95,7 +99,7 @@
             color: white; 
             text-align: center; 
             padding: 20px; 
-            max-width: 800px;
+            max-width: 850px;
         }
 
         .hero-text h2 { 
@@ -114,7 +118,7 @@
             font-weight: 400;
         }
 
-        .hero-text p { color: white; margin-bottom: 15px; letter-spacing: 1px; }
+        .hero-text p { color: white; margin-bottom: 25px; letter-spacing: 1px; line-height: 1.6; }
 
     </style>
 </head>
@@ -122,12 +126,13 @@
 <body>
     <header>
         <div class="nav-container">
-            <h1 class="logo">QuantiFlex</h1>
+            <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.8;">PRO</span></h1>
             <nav>
                 <ul>
-                    <li><a href="patient_home.html" class="active">Dashboard</a></li>
-                    <li><a href="patient_analysis.html">My Analysis</a></li>
-                    <li><a href="demographics.html">My Profile</a></li>
+                    <li><a href="clinician_dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="patient_list.html">Patient Queue</a></li>
+                    <li><a href="analysis.html">Clinical Analytics</a></li>
+                    <li><a href="clinician_profile.html">My Profile</a></li>
                 </ul>
             </nav>
         </div>
@@ -136,7 +141,7 @@
     <main>
         <section class="welcome-banner gs_reveal">
             <div>
-                <h2>Welcome back, <span id="userNameDisplay">Patient</span>!</h2>
+                <h2>Clinical Portal: Dr. <span id="clinicianNameDisplay">Clinician</span></h2>
                 <div class="typing-container">
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
@@ -150,11 +155,14 @@
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
-                <h2>Streamline Knee Rehabilitation</h2>
-                <h3>Track Progress Visually</h3>
-                <p style="text-align: center;"">Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
-                <div class="cta-buttons" style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-                    <a href="patient_analysis.html" class="btn-primary">Start Session</a>
+                <h2>Precision Oversight</h2>
+                <h3>Real-Time Biomechanical Telemetry</h3>
+                <p>
+                    Monitor patient recovery trajectories with high-fidelity telemetry. 
+                    Review automated ROM analytics and provide targeted interventions for outliers.
+                </p>
+                <div class="cta-buttons" style="display: flex; justify-content: center; gap: 15px;">
+                    <a href="patient_list.html" class="btn-primary">View Patient Queue</a>
                 </div>
             </div>
         </section>
@@ -164,32 +172,17 @@
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
 
-            // 1. DYNAMIC NAME INJECTION (Updated to pull from demographics object)
-            function loadPatientName() {
-                const savedProfile = localStorage.getItem('patientProfile');
-                const nameDisplay = document.getElementById('userNameDisplay');
-                
-                if (savedProfile) {
-                    try {
-                        const profile = JSON.parse(savedProfile);
-                        if (profile.firstName) {
-                            nameDisplay.textContent = profile.firstName;
-                        }
-                    } catch (e) {
-                        console.error('Error loading name:', e);
-                    }
-                }
-            }
-            loadPatientName();
+            // 1. DYNAMIC NAME INJECTION
+            const fullName = localStorage.getItem('userName') || "Clinician"; 
+            document.getElementById('clinicianNameDisplay').textContent = fullName.split(' ')[0];
 
-            // 2. PATIENT TYPEWRITER
+            // 2. CLINICAL TYPEWRITER
             const typingText = document.getElementById('typing-text');
             const phrases = [
-                "Consistency is key to recovery!",
-                "Ready for today's session?",
-                "Your progress is impressive!",
-                "Keep up the great work!",
-                "Every rep counts towards healing!"
+                "All telemetry feeds synchronized successfully.",
+                "Monitoring active rehabilitation profiles.",
+                "HIPAA-compliant data encryption verified.",
+                "Latest patient ROM analytics updated."
             ];
 
             let pIdx = 0, cIdx = 0, deleting = false;
@@ -202,7 +195,13 @@
             }
             type();
 
-            // 3. VIDEO LOOP (4 SECONDS)
+            // 3. LOGOUT LOGIC
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.clear();
+                window.location.replace('login.html');
+            });
+
+            // 4. VIDEO LOOP (4 SECONDS)
             const video = document.getElementById('bgVideo');
             if (video) {
                 video.addEventListener('timeupdate', function () {
@@ -210,7 +209,7 @@
                 });
             }
 
-            // 4. GSAP REVEALS
+            // 5. GSAP REVEALS
             gsap.utils.toArray(".gs_reveal").forEach(elem => {
                 gsap.fromTo(elem, { autoAlpha: 0, y: 30 }, {
                     duration: 1, y: 0, autoAlpha: 1, ease: "power2.out",

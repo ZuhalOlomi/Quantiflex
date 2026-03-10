@@ -204,7 +204,7 @@
         .avatar-circle {
             width: 120px;
             height: 120px;
-            background: linear-gradient(135deg, #4d82ad, #2c3e50);
+            background: #4d82ad;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -213,7 +213,6 @@
             color: white;
             font-size: 48px;
             font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .patient-name {
@@ -295,12 +294,6 @@
                 align-items: flex-start;
             }
         }
-
-        /* Loading State */
-        .loading {
-            opacity: 0.5;
-            pointer-events: none;
-        }
     </style>
 </head>
 
@@ -322,18 +315,15 @@
                 <h2>My Profile</h2>
                 <div class="profile-status">
                     <span class="save-status" id="saveStatus">
-                        ✓ Profile saved successfully
+                        ✓ Profile saved successfully!
                     </span>
                 </div>
             </div>
 
             <div class="profile-grid">
-                <!-- Profile Form Section -->
                 <div class="profile-form-container">
-                    <h3>Edit Patient Information</h3>
                     
                     <form id="patientForm">
-                        <!-- Personal Information Section -->
                         <div class="form-section">
                             <h3>Personal Information</h3>
                             
@@ -398,7 +388,6 @@
                             </div>
                         </div>
 
-                        <!-- Contact Information Section -->
                         <div class="form-section">
                             <h3>Contact Information</h3>
                             
@@ -424,7 +413,6 @@
                             </div>
                         </div>
 
-                        <!-- Medical Information Section -->
                         <div class="form-section">
                             <h3>Medical Information</h3>
                             
@@ -486,12 +474,11 @@
                     </form>
                 </div>
 
-                <!-- Profile Display Section -->
                 <div class="profile-display-container">
                     <div class="patient-avatar">
-                        <div class="avatar-circle" id="avatarInitials">JD</div>
-                        <h3 class="patient-name" id="displayName">John Doe</h3>
-                        <p class="patient-id" id="displayPatientId">Patient ID: P-2024-0001</p>
+                        <div class="avatar-circle" id="avatarInitials">--</div>
+                        <h3 class="patient-name" id="displayName">New Patient</h3>
+                        <p class="patient-id" id="displayPatientId">Patient ID: Not Assigned</p>
                     </div>
 
                     <div class="info-card">
@@ -499,23 +486,23 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Date of Birth</div>
-                                <div class="info-value" id="displayDOB">Not specified</div>
+                                <div class="info-value" id="displayDOB">--</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Gender</div>
-                                <div class="info-value" id="displayGender">Not specified</div>
+                                <div class="info-value" id="displayGender" style="text-transform: capitalize;">--</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Blood Type</div>
-                                <div class="info-value" id="displayBloodType">Not specified</div>
+                                <div class="info-value" id="displayBloodType">--</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Height / Weight</div>
-                                <div class="info-value" id="displayHeightWeight">Not specified</div>
+                                <div class="info-value" id="displayHeightWeight">--</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Occupation</div>
-                                <div class="info-value" id="displayOccupation">Not specified</div>
+                                <div class="info-value" id="displayOccupation">--</div>
                             </div>
                         </div>
                     </div>
@@ -524,19 +511,19 @@
                         <h4>Contact Information</h4>
                         <div class="info-item">
                             <div class="info-label">Email</div>
-                            <div class="info-value" id="displayEmail">Not specified</div>
+                            <div class="info-value" id="displayEmail">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Phone</div>
-                            <div class="info-value" id="displayPhone">Not specified</div>
+                            <div class="info-value" id="displayPhone">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Emergency Contact</div>
-                            <div class="info-value" id="displayEmergency">Not specified</div>
+                            <div class="info-value" id="displayEmergency">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Address</div>
-                            <div class="info-value" id="displayAddress">Not specified</div>
+                            <div class="info-value" id="displayAddress">--</div>
                         </div>
                     </div>
 
@@ -544,23 +531,23 @@
                         <h4>Medical Information</h4>
                         <div class="info-item">
                             <div class="info-label">Primary Condition</div>
-                            <div class="info-value" id="displayCondition">Not specified</div>
+                            <div class="info-value" id="displayCondition">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Pre-existing Conditions</div>
-                            <div class="info-value" id="displayPreExisting">None specified</div>
+                            <div class="info-value" id="displayPreExisting">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Allergies</div>
-                            <div class="info-value" id="displayAllergies">None specified</div>
+                            <div class="info-value" id="displayAllergies">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Medications</div>
-                            <div class="info-value" id="displayMedications">None specified</div>
+                            <div class="info-value" id="displayMedications">--</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Additional Notes</div>
-                            <div class="info-value" id="displayNotes">None</div>
+                            <div class="info-value" id="displayNotes">--</div>
                         </div>
                     </div>
                 </div>
@@ -574,12 +561,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get form elements
             const patientForm = document.getElementById('patientForm');
             const saveStatus = document.getElementById('saveStatus');
             const clearFormBtn = document.getElementById('clearFormBtn');
 
-            // Load saved data on page load
+            // Load saved data on page load, leave blank if none exists
             loadPatientData();
 
             // Form submit handler
@@ -592,11 +578,13 @@
             clearFormBtn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to clear all form data?')) {
                     patientForm.reset();
-                    updateDisplayFromForm();
+                    // Optional: remove from localStorage as well
+                    localStorage.removeItem('patientProfile');
+                    clearDisplay();
                 }
             });
 
-            // Auto-update display as user types (optional - can be removed if too distracting)
+            // Real-time update display
             const formInputs = patientForm.querySelectorAll('input, select, textarea');
             formInputs.forEach(input => {
                 input.addEventListener('input', function() {
@@ -607,9 +595,7 @@
                 });
             });
 
-            // Function to save patient data
             function savePatientData() {
-                // Collect form data
                 const formData = {
                     firstName: document.getElementById('firstName').value,
                     lastName: document.getElementById('lastName').value,
@@ -630,27 +616,20 @@
                     conditions: []
                 };
 
-                // Get checked conditions
                 document.querySelectorAll('input[name="conditions"]:checked').forEach(checkbox => {
                     formData.conditions.push(checkbox.value);
                 });
 
                 // Save to localStorage
                 localStorage.setItem('patientProfile', JSON.stringify(formData));
-
-                // Update display
-                updateDisplayFromFormData(formData);
-
+                
                 // Show save status
                 saveStatus.classList.add('show');
                 setTimeout(() => {
                     saveStatus.classList.remove('show');
                 }, 3000);
-
-                console.log('Profile saved successfully!');
             }
 
-            // Function to load patient data
             function loadPatientData() {
                 const savedData = localStorage.getItem('patientProfile');
                 
@@ -658,7 +637,6 @@
                     try {
                         const formData = JSON.parse(savedData);
                         
-                        // Populate form fields
                         document.getElementById('firstName').value = formData.firstName || '';
                         document.getElementById('lastName').value = formData.lastName || '';
                         document.getElementById('dob').value = formData.dob || '';
@@ -676,72 +654,21 @@
                         document.getElementById('medications').value = formData.medications || '';
                         document.getElementById('notes').value = formData.notes || '';
 
-                        // Populate checkboxes
                         document.querySelectorAll('input[name="conditions"]').forEach(checkbox => {
                             checkbox.checked = formData.conditions && formData.conditions.includes(checkbox.value);
                         });
 
-                        // Update display
                         updateDisplayFromFormData(formData);
-                        
                     } catch (e) {
                         console.error('Error loading saved data:', e);
+                        clearDisplay();
                     }
                 } else {
-                    // Set default sample data
-                    setDefaultSampleData();
+                    // Blank state for new users
+                    clearDisplay();
                 }
             }
 
-            // Function to set default sample data
-            function setDefaultSampleData() {
-                const sampleData = {
-                    firstName: 'John',
-                    lastName: 'Doe',
-                    dob: '1985-05-15',
-                    gender: 'male',
-                    bloodType: 'O+',
-                    height: '178',
-                    weight: '75.5',
-                    occupation: 'Teacher',
-                    email: 'john.doe@email.com',
-                    phone: '(555) 123-4567',
-                    emergencyContact: '(555) 987-6543',
-                    address: '123 Main St, Austin, TX 78701',
-                    primaryCondition: 'ACL Reconstruction - Right Knee',
-                    allergies: 'Penicillin',
-                    medications: 'Ibuprofen 200mg as needed',
-                    notes: 'Patient is responsive to treatment. Showing good progress.',
-                    conditions: ['arthritis']
-                };
-
-                // Populate form with sample data
-                document.getElementById('firstName').value = sampleData.firstName;
-                document.getElementById('lastName').value = sampleData.lastName;
-                document.getElementById('dob').value = sampleData.dob;
-                document.getElementById('gender').value = sampleData.gender;
-                document.getElementById('bloodType').value = sampleData.bloodType;
-                document.getElementById('height').value = sampleData.height;
-                document.getElementById('weight').value = sampleData.weight;
-                document.getElementById('occupation').value = sampleData.occupation;
-                document.getElementById('email').value = sampleData.email;
-                document.getElementById('phone').value = sampleData.phone;
-                document.getElementById('emergencyContact').value = sampleData.emergencyContact;
-                document.getElementById('address').value = sampleData.address;
-                document.getElementById('primaryCondition').value = sampleData.primaryCondition;
-                document.getElementById('allergies').value = sampleData.allergies;
-                document.getElementById('medications').value = sampleData.medications;
-                document.getElementById('notes').value = sampleData.notes;
-
-                // Set checkboxes
-                document.querySelectorAll('input[name="conditions"]').forEach(checkbox => {
-                    checkbox.checked = sampleData.conditions.includes(checkbox.value);
-                });
-
-                updateDisplayFromFormData(sampleData);
-            }
-
-            // Function to update display from form data
             function updateDisplayFromForm() {
                 const formData = {
                     firstName: document.getElementById('firstName').value,
@@ -760,107 +687,67 @@
                     allergies: document.getElementById('allergies').value,
                     medications: document.getElementById('medications').value,
                     notes: document.getElementById('notes').value,
-                    conditions: []
+                    conditions: Array.from(document.querySelectorAll('input[name="conditions"]:checked')).map(cb => cb.value)
                 };
-
-                document.querySelectorAll('input[name="conditions"]:checked').forEach(checkbox => {
-                    formData.conditions.push(checkbox.value);
-                });
-
                 updateDisplayFromFormData(formData);
             }
 
-            // Function to update display from form data object
             function updateDisplayFromFormData(data) {
-                // Update name and avatar
-                const firstName = data.firstName || '';
-                const lastName = data.lastName || '';
-                const fullName = firstName + ' ' + lastName;
-                document.getElementById('displayName').textContent = fullName.trim() || 'Not specified';
+                // Update Name & Initials
+                const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim();
+                document.getElementById('displayName').textContent = fullName || 'New Patient';
                 
-                // Set avatar initials
-                const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'JD';
+                let initials = '--';
+                if (data.firstName && data.lastName) {
+                    initials = (data.firstName[0] + data.lastName[0]).toUpperCase();
+                } else if (data.firstName) {
+                    initials = data.firstName[0].toUpperCase();
+                }
                 document.getElementById('avatarInitials').textContent = initials;
-
-                // Generate patient ID (in a real app, this would be consistent)
-                if (firstName || lastName) {
-                    const timestamp = new Date().getFullYear();
-                    document.getElementById('displayPatientId').textContent = `Patient ID: P-${timestamp}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-                }
-
-                // Format and display DOB
-                if (data.dob) {
-                    const dobDate = new Date(data.dob);
-                    const formattedDOB = dobDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                    document.getElementById('displayDOB').textContent = formattedDOB;
-                } else {
-                    document.getElementById('displayDOB').textContent = 'Not specified';
-                }
-
-                // Display gender
-                const genderMap = {
-                    'male': 'Male',
-                    'female': 'Female',
-                    'other': 'Other',
-                    'prefer-not': 'Prefer not to say'
-                };
-                document.getElementById('displayGender').textContent = data.gender ? genderMap[data.gender] || data.gender : 'Not specified';
-
-                // Display blood type
-                document.getElementById('displayBloodType').textContent = data.bloodType || 'Not specified';
-
-                // Display height and weight
-                let heightWeight = [];
-                if (data.height) heightWeight.push(`${data.height} cm`);
-                if (data.weight) heightWeight.push(`${data.weight} kg`);
-                document.getElementById('displayHeightWeight').textContent = heightWeight.length ? heightWeight.join(' / ') : 'Not specified';
-
-                // Display occupation
-                document.getElementById('displayOccupation').textContent = data.occupation || 'Not specified';
-
-                // Display contact info
-                document.getElementById('displayEmail').textContent = data.email || 'Not specified';
-                document.getElementById('displayPhone').textContent = data.phone || 'Not specified';
-                document.getElementById('displayEmergency').textContent = data.emergencyContact || 'Not specified';
-                document.getElementById('displayAddress').textContent = data.address || 'Not specified';
-
-                // Display medical info
-                document.getElementById('displayCondition').textContent = data.primaryCondition || 'Not specified';
                 
-                // Display pre-existing conditions as tags
-                const conditionsContainer = document.getElementById('displayPreExisting');
+                // Only show assigned ID if they have a name saved
+                document.getElementById('displayPatientId').textContent = fullName ? `Patient ID: P-${Math.floor(Math.random() * 9000) + 1000}` : 'Patient ID: Not Assigned';
+
+                // Update Info Cards
+                document.getElementById('displayDOB').textContent = data.dob || '--';
+                document.getElementById('displayGender').textContent = data.gender || '--';
+                document.getElementById('displayBloodType').textContent = data.bloodType || '--';
+                
+                const hw = [];
+                if (data.height) hw.push(`${data.height} cm`);
+                if (data.weight) hw.push(`${data.weight} kg`);
+                document.getElementById('displayHeightWeight').textContent = hw.length > 0 ? hw.join(' / ') : '--';
+                
+                document.getElementById('displayOccupation').textContent = data.occupation || '--';
+                document.getElementById('displayEmail').textContent = data.email || '--';
+                document.getElementById('displayPhone').textContent = data.phone || '--';
+                document.getElementById('displayEmergency').textContent = data.emergencyContact || '--';
+                document.getElementById('displayAddress').textContent = data.address || '--';
+                document.getElementById('displayCondition').textContent = data.primaryCondition || '--';
+                document.getElementById('displayAllergies').textContent = data.allergies || '--';
+                document.getElementById('displayMedications').textContent = data.medications || '--';
+                document.getElementById('displayNotes').textContent = data.notes || '--';
+
+                // Update Conditions Tags
+                const preExistingDiv = document.getElementById('displayPreExisting');
                 if (data.conditions && data.conditions.length > 0) {
-                    const conditionLabels = {
-                        'diabetes': 'Diabetes',
-                        'hypertension': 'Hypertension',
-                        'asthma': 'Asthma',
-                        'arthritis': 'Arthritis',
-                        'osteoporosis': 'Osteoporosis',
-                        'other': 'Other'
-                    };
-                    
-                    let conditionsHtml = '';
-                    data.conditions.forEach(condition => {
-                        const label = conditionLabels[condition] || condition;
-                        conditionsHtml += `<span class="condition-tag">${label}</span>`;
-                    });
-                    conditionsContainer.innerHTML = conditionsHtml;
+                    preExistingDiv.innerHTML = data.conditions.map(c => 
+                        `<span class="condition-tag">${c.charAt(0).toUpperCase() + c.slice(1)}</span>`
+                    ).join('');
                 } else {
-                    conditionsContainer.innerHTML = 'None specified';
+                    preExistingDiv.textContent = '--';
                 }
+            }
 
-                // Display allergies
-                document.getElementById('displayAllergies').textContent = data.allergies || 'None specified';
+            function clearDisplay() {
+                document.getElementById('displayName').textContent = 'New Patient';
+                document.getElementById('avatarInitials').textContent = '--';
+                document.getElementById('displayPatientId').textContent = 'Patient ID: Not Assigned';
                 
-                // Display medications
-                document.getElementById('displayMedications').textContent = data.medications || 'None specified';
-                
-                // Display notes
-                document.getElementById('displayNotes').textContent = data.notes || 'None';
+                const elements = ['displayDOB', 'displayGender', 'displayBloodType', 'displayHeightWeight', 'displayOccupation', 'displayEmail', 'displayPhone', 'displayEmergency', 'displayAddress', 'displayCondition', 'displayPreExisting', 'displayAllergies', 'displayMedications', 'displayNotes'];
+                elements.forEach(id => {
+                    document.getElementById(id).textContent = '--';
+                });
             }
         });
     </script>
