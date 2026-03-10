@@ -577,7 +577,7 @@
             const FLEX_THRESHOLD = 1500;
             const HISTORY_KEY    = 'utbiome_history';
             const MAX_SESSIONS   = 15;
-            const DOWNSAMPLE_N   = 10; // keep every Nth point (50Hz → 5Hz)
+            const DOWNSAMPLE_N   = 2; // keep every Nth point (50Hz → 5Hz)
 
             // ── Health range constants ────────────────────────────────────
             const RATIO_HEALTHY_LOW  = 0.75;
@@ -1099,7 +1099,7 @@
 
                 let i = 0;
                 // Samples are at 5Hz (downsampled from 50Hz), so 200ms per point feels natural
-                const REPLAY_INTERVAL_MS = 10;
+                const REPLAY_INTERVAL_MS = 5;
 
                 const replayInterval = setInterval(() => {
                     if (i >= sessionData.length) {
