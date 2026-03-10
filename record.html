@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +8,11 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .page-wrap { max-width: 1400px; width: 95%; margin: 0 auto; }
+        .page-wrap {
+            max-width: 1400px;
+            width: 95%;
+            margin: 0 auto;
+        }
 
         /* ── Control panel ── */
         .control-panel {
@@ -19,6 +24,7 @@
             margin: 18px 0 20px 0;
             overflow: hidden;
         }
+
         .control-group {
             display: flex;
             align-items: center;
@@ -26,13 +32,16 @@
             padding: 14px 22px;
             flex-shrink: 0;
         }
-        .control-group + .control-group {
+
+        .control-group+.control-group {
             border-left: 1.5px solid #e1e8ed;
         }
+
         .control-group-grow {
             flex: 1;
             justify-content: flex-end;
         }
+
         .control-label {
             font-size: 0.7em;
             font-weight: 700;
@@ -59,12 +68,43 @@
             white-space: nowrap;
             line-height: 1;
         }
-        .btn-start   { background: #22c55e; color: white; border-color: #22c55e; }
-        .btn-stop    { background: #ef4444; color: white; border-color: #ef4444; }
-        .btn-ghost   { background: white; color: #475569; border-color: #e1e8ed; }
-        .btn-primary { background: #4d82ad; color: white; border-color: #4d82ad; }
-        .btn:disabled { background: #f1f5f9; color: #cbd5e1; border-color: #e1e8ed; cursor: not-allowed; pointer-events: none; }
-        .btn:hover:not(:disabled) { opacity: 0.82; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+        .btn-start {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .btn-ghost {
+            background: white;
+            color: #475569;
+            border-color: #e1e8ed;
+        }
+
+        .btn-primary {
+            background: #4d82ad;
+            color: white;
+            border-color: #4d82ad;
+        }
+
+        .btn:disabled {
+            background: #f1f5f9;
+            color: #cbd5e1;
+            border-color: #e1e8ed;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            opacity: 0.82;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
 
         #sessionTimer {
             font-size: 1.25em;
@@ -74,6 +114,7 @@
             letter-spacing: 0.04em;
             min-width: 84px;
         }
+
         #statusIndicator {
             font-size: 0.76em;
             color: #94a3b8;
@@ -86,13 +127,15 @@
             gap: 18px;
             margin-bottom: 18px;
         }
+
         .chart-card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
             border: 1px solid #e1e8ed;
             overflow: hidden;
         }
+
         .chart-header {
             padding: 13px 18px;
             background: #f8fafc;
@@ -105,19 +148,60 @@
             justify-content: space-between;
             gap: 8px;
         }
-        .chart-header-left { display: flex; align-items: center; gap: 8px; }
-        .imu-badge {
-            font-size: 0.7em; font-weight: 700;
-            padding: 2px 8px; border-radius: 20px;
-        }
-        .imu-badge-thigh { background: rgba(46,204,113,0.15); color: #27ae60; }
-        .imu-badge-shank { background: rgba(155,89,182,0.15); color: #8e44ad; }
-        .chart-body       { padding: 16px; height: 280px; }
-        .chart-body-ratio { padding: 16px; height: 180px; }
 
-        .ratio-legend { display: flex; gap: 12px; font-size: 0.74em; color: #777; }
-        .ratio-legend span { display: flex; align-items: center; gap: 4px; }
-        .ratio-legend i { display:inline-block;width:11px;height:3px;border-radius:2px;flex-shrink:0; }
+        .chart-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .imu-badge {
+            font-size: 0.7em;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .imu-badge-thigh {
+            background: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+        }
+
+        .imu-badge-shank {
+            background: rgba(155, 89, 182, 0.15);
+            color: #8e44ad;
+        }
+
+        .chart-body {
+            padding: 16px;
+            height: 280px;
+        }
+
+        .chart-body-ratio {
+            padding: 16px;
+            height: 180px;
+        }
+
+        .ratio-legend {
+            display: flex;
+            gap: 12px;
+            font-size: 0.74em;
+            color: #777;
+        }
+
+        .ratio-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ratio-legend i {
+            display: inline-block;
+            width: 11px;
+            height: 3px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
 
         .bottom-row {
             display: grid;
@@ -125,14 +209,23 @@
             gap: 18px;
             margin-bottom: 30px;
         }
-        .summary-card, .live-card {
+
+        .summary-card,
+        .live-card {
             background: white;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
             border: 1px solid #e1e8ed;
         }
-        .card-title { margin: 0 0 14px 0; font-size: 0.95em; font-weight: 700; color: #333; }
+
+        .card-title {
+            margin: 0 0 14px 0;
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #333;
+        }
+
         .metric-row {
             display: flex;
             justify-content: space-between;
@@ -140,9 +233,19 @@
             border-bottom: 1px dashed #eee;
             font-size: 0.88em;
         }
-        .metric-row:last-child { border-bottom: none; }
-        .metric-label { color: #777; }
-        .metric-value { font-weight: 700; color: #4d82ad; }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #777;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            color: #4d82ad;
+        }
 
         .live-val {
             display: flex;
@@ -151,9 +254,20 @@
             padding: 9px 0;
             border-bottom: 1px dashed #eee;
         }
-        .live-val:last-child { border-bottom: none; }
-        .live-label { font-size: 0.83em; color: #777; }
-        .live-num   { font-size: 1.25em; font-weight: 700; }
+
+        .live-val:last-child {
+            border-bottom: none;
+        }
+
+        .live-label {
+            font-size: 0.83em;
+            color: #777;
+        }
+
+        .live-num {
+            font-size: 1.25em;
+            font-weight: 700;
+        }
 
         .btn-full-analysis {
             display: block;
@@ -172,7 +286,11 @@
             text-decoration: none;
             transition: background 0.2s;
         }
-        .btn-full-analysis:hover { background: #3a6a92; }
+
+        .btn-full-analysis:hover {
+            background: #3a6a92;
+        }
+
         .exercise-select {
             padding: 8px 12px;
             border-radius: 7px;
@@ -184,63 +302,130 @@
             background: white;
             cursor: pointer;
         }
-        .exercise-select:focus { outline: 2px solid #4d82ad; border-color: #4d82ad; }
 
-        .empty-state { color: #bbb; font-size: 0.86em; padding: 8px 0; }
+        .exercise-select:focus {
+            outline: 2px solid #4d82ad;
+            border-color: #4d82ad;
+        }
+
+        .empty-state {
+            color: #bbb;
+            font-size: 0.86em;
+            padding: 8px 0;
+        }
 
         /* ── Emoji picker (NEW) ── */
-        .emoji-wrap { position: relative; flex-shrink: 0; }
+        .emoji-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
         .emoji-trigger {
-            height: 36px; min-width: 44px; padding: 0 6px;
-            border: 1px solid #ddd; border-radius: 7px;
-            background: white; font-size: 1.2em; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            height: 36px;
+            min-width: 44px;
+            padding: 0 6px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            background: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: border-color 0.15s;
         }
-        .emoji-trigger:hover { border-color: #4d82ad; }
+
+        .emoji-trigger:hover {
+            border-color: #4d82ad;
+        }
+
         .emoji-palette {
-            display: none; position: absolute;
-            bottom: calc(100% + 6px); left: 0;
-            background: white; border: 1.5px solid #e1e8ed;
-            border-radius: 10px; padding: 10px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.13);
-            z-index: 9999; width: 252px;
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 0;
+            background: white;
+            border: 1.5px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13);
+            z-index: 9999;
+            width: 252px;
         }
-        .emoji-palette.open { display: block; }
+
+        .emoji-palette.open {
+            display: block;
+        }
+
         .emoji-search {
-            width: 100%; box-sizing: border-box;
-            padding: 6px 8px; margin-bottom: 8px;
-            border: 1px solid #e1e8ed; border-radius: 6px;
-            font-family: inherit; font-size: 0.82em;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 6px 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.82em;
         }
-        .emoji-search:focus { outline: 2px solid #4d82ad; border-color: #4d82ad; }
+
+        .emoji-search:focus {
+            outline: 2px solid #4d82ad;
+            border-color: #4d82ad;
+        }
+
         .emoji-grid {
-            display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 3px;
         }
+
         .emoji-opt {
-            font-size: 1.25em; padding: 4px 2px; text-align: center;
-            border: none; background: none; border-radius: 5px;
-            cursor: pointer; line-height: 1.3; transition: background 0.1s;
+            font-size: 1.25em;
+            padding: 4px 2px;
+            text-align: center;
+            border: none;
+            background: none;
+            border-radius: 5px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: background 0.1s;
         }
-        .emoji-opt:hover    { background: #f0f4ff; }
-        .emoji-opt.selected { background: #dbeafe; outline: 2px solid #4d82ad; }
+
+        .emoji-opt:hover {
+            background: #f0f4ff;
+        }
+
+        .emoji-opt.selected {
+            background: #dbeafe;
+            outline: 2px solid #4d82ad;
+        }
 
         @media (max-width: 860px) {
-            .charts-top, .bottom-row { grid-template-columns: 1fr; }
-            .ratio-legend { flex-wrap: wrap; }
+
+            .charts-top,
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+
+            .ratio-legend {
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>UTBiome Knee Sleeve</h1>
-        <nav><ul>
-            <li><a href="home.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="record.html" class="active">Record</a></li>
-            <li><a href="analysis.html">Analysis</a></li>
-            <li><a href="video.html">Video Demo</a></li>
-        </ul></nav>
+        <h1>QuantiFlex</h1>
+        <nav>
+            <ul>
+                <li><a href="clinician_home.html">Dashboard</a></li>
+                <li><a href="patient_list.html">Patient Queue</a></li>
+                <li><a href="record.html" class="active">Record Session</a></li>
+                <li><a href="analysis.html">Clinical Analytics</a></li>
+                <li><a href="clinician_profile.html">My Profile</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
@@ -255,7 +440,7 @@
                 <!-- Record -->
                 <div class="control-group">
                     <button id="startBtn" class="btn btn-start">▶ Start</button>
-                    <button id="stopBtn"  class="btn btn-stop" disabled>■ Stop</button>
+                    <button id="stopBtn" class="btn btn-stop" disabled>■ Stop</button>
                     <div id="sessionTimer">00:00:00</div>
                     <span id="statusIndicator">System Idle</span>
                 </div>
@@ -270,14 +455,17 @@
                 <!-- Import / Navigate -->
                 <div class="control-group control-group-grow">
                     <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
-                    <button class="btn btn-ghost" onclick="document.getElementById('csvFileInput').click()">↑ Upload CSV</button>
+                    <button class="btn btn-ghost" onclick="document.getElementById('csvFileInput').click()">↑ Upload
+                        CSV</button>
                     <a href="analysis.html" class="btn btn-primary">Analytics →</a>
                 </div>
             </div>
 
             <div class="charts-top">
                 <div class="chart-card">
-                    <div class="chart-header"><div class="chart-header-left">EMG Feed</div></div>
+                    <div class="chart-header">
+                        <div class="chart-header-left">EMG Feed</div>
+                    </div>
                     <div class="chart-body"><canvas id="emgChart"></canvas></div>
                 </div>
                 <div class="chart-card">
@@ -311,10 +499,12 @@
                         <p class="empty-state">Start a recording or upload a CSV to see results.</p>
                     </div>
                     <div style="display:flex; gap:10px; margin-top:16px;">
-                        <button id="downloadCsvBtn" class="btn-full-analysis" style="display:none; flex:1; background:#555;">
+                        <button id="downloadCsvBtn" class="btn-full-analysis"
+                            style="display:none; flex:1; background:#555;">
                             ↓ Download CSV
                         </button>
-                        <a id="analysisLink" href="analysis.html" class="btn-full-analysis" style="display:none; flex:1;">
+                        <a id="analysisLink" href="analysis.html" class="btn-full-analysis"
+                            style="display:none; flex:1;">
                             View Full Analysis →
                         </a>
                     </div>
@@ -352,362 +542,393 @@
     </main>
 
     <!-- Exercise manager modal -->
-    <div id="exerciseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;">
-        <div style="background:white;border-radius:14px;padding:28px;width:380px;max-width:95vw;box-shadow:0 8px 40px rgba(0,0,0,0.18);">
+    <div id="exerciseModal"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;">
+        <div
+            style="background:white;border-radius:14px;padding:28px;width:380px;max-width:95vw;box-shadow:0 8px 40px rgba(0,0,0,0.18);">
             <h3 style="margin:0 0 4px;font-size:1em;color:#333;">Manage Exercises</h3>
-            <p style="margin:0 0 14px;font-size:0.78em;color:#aaa;">Pick an emoji, then type a name to add a custom exercise.</p>
-            <ul id="exerciseList" style="list-style:none;padding:0;margin:0 0 16px;max-height:260px;overflow-y:auto;"></ul>
+            <p style="margin:0 0 14px;font-size:0.78em;color:#aaa;">Pick an emoji, then type a name to add a custom
+                exercise.</p>
+            <ul id="exerciseList" style="list-style:none;padding:0;margin:0 0 16px;max-height:260px;overflow-y:auto;">
+            </ul>
             <div style="display:flex;gap:8px;align-items:center;">
                 <!-- EMOJI PICKER (NEW) -->
                 <div class="emoji-wrap" id="emojiWrap">
                     <button class="emoji-trigger" id="emojiTrigger" type="button" title="Choose emoji">🏃</button>
                     <div class="emoji-palette" id="emojiPalette">
-                        <input class="emoji-search" id="emojiSearch" type="text" placeholder="Search…" autocomplete="off" />
+                        <input class="emoji-search" id="emojiSearch" type="text" placeholder="Search…"
+                            autocomplete="off" />
                         <div class="emoji-grid" id="emojiGrid"></div>
                     </div>
                 </div>
-                <input id="newExerciseInput" type="text" placeholder="New exercise name…" style="flex:1;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-family:inherit;font-size:0.9em;" maxlength="40" />
-                <button id="addExerciseBtn" class="btn" style="background:#4d82ad;color:white;padding:8px 14px;">Add</button>
+                <input id="newExerciseInput" type="text" placeholder="New exercise name…"
+                    style="flex:1;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-family:inherit;font-size:0.9em;"
+                    maxlength="40" />
+                <button id="addExerciseBtn" class="btn"
+                    style="background:#4d82ad;color:white;padding:8px 14px;">Add</button>
             </div>
-            <button id="closeExerciseModal" class="btn" style="width:100%;margin-top:12px;background:#f0f0f0;color:#555;">Done</button>
+            <button id="closeExerciseModal" class="btn"
+                style="width:100%;margin-top:12px;background:#f0f0f0;color:#555;">Done</button>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const startBtn     = document.getElementById('startBtn');
-        const stopBtn      = document.getElementById('stopBtn');
-        const status       = document.getElementById('statusIndicator');
-        const timerEl      = document.getElementById('sessionTimer');
-        const summaryDiv   = document.getElementById('summaryContent');
-        const analysisLink = document.getElementById('analysisLink');
-        const downloadCsvBtn = document.getElementById('downloadCsvBtn');
-        const csvFileInput = document.getElementById('csvFileInput');
-        const liveImu1     = document.getElementById('liveImu1');
-        const liveImu2     = document.getElementById('liveImu2');
-        const liveDelta    = document.getElementById('liveDelta');
-        const liveEmg1     = document.getElementById('liveEmg1');
-        const liveEmg2     = document.getElementById('liveEmg2');
-        const liveRatio    = document.getElementById('liveRatio');
+        document.addEventListener('DOMContentLoaded', function () {
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const status = document.getElementById('statusIndicator');
+            const timerEl = document.getElementById('sessionTimer');
+            const summaryDiv = document.getElementById('summaryContent');
+            const analysisLink = document.getElementById('analysisLink');
+            const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+            const csvFileInput = document.getElementById('csvFileInput');
+            const liveImu1 = document.getElementById('liveImu1');
+            const liveImu2 = document.getElementById('liveImu2');
+            const liveDelta = document.getElementById('liveDelta');
+            const liveEmg1 = document.getElementById('liveEmg1');
+            const liveEmg2 = document.getElementById('liveEmg2');
+            const liveRatio = document.getElementById('liveRatio');
 
-        const ESP_IP         = '192.168.4.1';
-        const FLEX_THRESHOLD = 1500;
-        const HISTORY_KEY    = 'utbiome_history';
-        const MAX_SESSIONS   = 15;
-        const DOWNSAMPLE_N   = 2;
-        const WINDOW         = 150;
+            const ESP_IP = '192.168.4.1';
+            const FLEX_THRESHOLD = 1500;
+            const HISTORY_KEY = 'utbiome_history';
+            const MAX_SESSIONS = 15;
+            const DOWNSAMPLE_N = 2;
+            const WINDOW = 150;
 
-        // ── Exercise management ───────────────────────────────────────────
-        const EXERCISES_KEY = 'utbiome_exercises';
-        const DEFAULT_EXERCISES = [
-            {id:'idle',     label:'🧘 Idle / Rest',    deletable:false},
-            {id:'squats',   label:'🏋️ Squats',         deletable:false},
-            {id:'leg_press',label:'🦵 Leg Press',       deletable:false},
-            {id:'leg_extension',label:'📐 Leg Extension',deletable:false},
-            {id:'walking',  label:'🚶 Walking',         deletable:false},
-        ];
+            // ── Exercise management ───────────────────────────────────────────
+            const EXERCISES_KEY = 'utbiome_exercises';
+            const DEFAULT_EXERCISES = [
+                { id: 'idle', label: '🧘 Idle / Rest', deletable: false },
+                { id: 'squats', label: '🏋️ Squats', deletable: false },
+                { id: 'leg_press', label: '🦵 Leg Press', deletable: false },
+                { id: 'leg_extension', label: '📐 Leg Extension', deletable: false },
+                { id: 'walking', label: '🚶 Walking', deletable: false },
+            ];
 
-        function loadExercises() {
-            try {
-                const saved = JSON.parse(localStorage.getItem(EXERCISES_KEY) || 'null');
-                if (saved && saved.length) return saved;
-            } catch(e) {}
-            return DEFAULT_EXERCISES.map(e=>({...e}));
-        }
+            function loadExercises() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(EXERCISES_KEY) || 'null');
+                    if (saved && saved.length) return saved;
+                } catch (e) { }
+                return DEFAULT_EXERCISES.map(e => ({ ...e }));
+            }
 
-        function saveExercises(list) {
-            localStorage.setItem(EXERCISES_KEY, JSON.stringify(list));
-        }
+            function saveExercises(list) {
+                localStorage.setItem(EXERCISES_KEY, JSON.stringify(list));
+            }
 
-        function populateSelect(selectEl, exercises, currentVal) {
-            const prev = currentVal || selectEl.value;
-            selectEl.innerHTML = '';
-            exercises.forEach(ex => {
-                const opt = document.createElement('option');
-                opt.value = ex.id;
-                opt.textContent = ex.label;
-                selectEl.appendChild(opt);
-            });
-            if (prev && [...selectEl.options].some(o => o.value === prev)) selectEl.value = prev;
-        }
+            function populateSelect(selectEl, exercises, currentVal) {
+                const prev = currentVal || selectEl.value;
+                selectEl.innerHTML = '';
+                exercises.forEach(ex => {
+                    const opt = document.createElement('option');
+                    opt.value = ex.id;
+                    opt.textContent = ex.label;
+                    selectEl.appendChild(opt);
+                });
+                if (prev && [...selectEl.options].some(o => o.value === prev)) selectEl.value = prev;
+            }
 
-        const exerciseSelect = document.getElementById('exerciseTag');
-        populateSelect(exerciseSelect, loadExercises());
+            const exerciseSelect = document.getElementById('exerciseTag');
+            populateSelect(exerciseSelect, loadExercises());
 
-        // Modal
-        const modal          = document.getElementById('exerciseModal');
-        const exerciseList   = document.getElementById('exerciseList');
-        const newInput       = document.getElementById('newExerciseInput');
-        const addBtn         = document.getElementById('addExerciseBtn');
-        const closeBtn       = document.getElementById('closeExerciseModal');
-        const manageBtn      = document.getElementById('manageExercisesBtn');
+            // Modal
+            const modal = document.getElementById('exerciseModal');
+            const exerciseList = document.getElementById('exerciseList');
+            const newInput = document.getElementById('newExerciseInput');
+            const addBtn = document.getElementById('addExerciseBtn');
+            const closeBtn = document.getElementById('closeExerciseModal');
+            const manageBtn = document.getElementById('manageExercisesBtn');
 
-        function renderModalList() {
-            const exercises = loadExercises();
-            exerciseList.innerHTML = exercises.map((ex, i) => `
+            function renderModalList() {
+                const exercises = loadExercises();
+                exerciseList.innerHTML = exercises.map((ex, i) => `
                 <li style="display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed #eee;">
                     <span style="font-size:0.9em;">${ex.label}</span>
                     ${ex.deletable !== false ? `<button data-i="${i}" class="del-ex-btn" style="background:none;border:none;cursor:pointer;color:#e74c3c;font-size:1em;padding:2px 6px;" title="Delete">✕</button>` : '<span style="font-size:0.75em;color:#bbb;">default</span>'}
                 </li>`).join('');
-            exerciseList.querySelectorAll('.del-ex-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const list = loadExercises();
-                    list.splice(parseInt(btn.dataset.i), 1);
-                    saveExercises(list);
-                    populateSelect(exerciseSelect, list);
-                    renderModalList();
-                };
-            });
-        }
+                exerciseList.querySelectorAll('.del-ex-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const list = loadExercises();
+                        list.splice(parseInt(btn.dataset.i), 1);
+                        saveExercises(list);
+                        populateSelect(exerciseSelect, list);
+                        renderModalList();
+                    };
+                });
+            }
 
-        manageBtn.onclick = () => { renderModalList(); modal.style.display = 'flex'; newInput.focus(); };
-        closeBtn.onclick  = () => { modal.style.display = 'none'; };
-        modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+            manageBtn.onclick = () => { renderModalList(); modal.style.display = 'flex'; newInput.focus(); };
+            closeBtn.onclick = () => { modal.style.display = 'none'; };
+            modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
 
-        // ── Emoji picker (NEW) ────────────────────────────────────────────
-        const EMOJIS = [
-            {e:'🏃',k:'run jog'},{e:'🚶',k:'walk'},{e:'🏋️',k:'weights squat gym'},
-            {e:'🦵',k:'leg press'},{e:'📐',k:'extension angle'},{e:'🧘',k:'rest idle yoga'},
-            {e:'🚴',k:'bike cycle'},{e:'🤸',k:'stretch gymnastics'},{e:'⛹️',k:'jump basketball'},
-            {e:'🏊',k:'swim'},{e:'🧗',k:'climb'},{e:'🥊',k:'box punch'},
-            {e:'💪',k:'strength muscle'},{e:'🦴',k:'bone rehab'},{e:'🩹',k:'injury recovery'},
-            {e:'❄️',k:'ice cold'},{e:'🔥',k:'intense burn'},{e:'⚡',k:'speed power'},
-            {e:'🎯',k:'target goal'},{e:'🔁',k:'repeat sets'},{e:'↕️',k:'up down flex'},
-            {e:'⚽',k:'football soccer'},{e:'🏀',k:'basketball'},{e:'🎾',k:'tennis'},
-            {e:'🏐',k:'volleyball'},{e:'🤾',k:'handball'},{e:'🏌️',k:'golf swing'},
-            {e:'🛹',k:'skateboard'},{e:'🎿',k:'ski'},{e:'🏂',k:'snowboard'},
-            {e:'🥋',k:'martial arts karate'},{e:'🛌',k:'rest sleep'},
-            {e:'🧊',k:'ice cryo'},{e:'☀️',k:'warm up'},{e:'🌙',k:'cool down night'},
-            {e:'1️⃣',k:'one first'},{e:'2️⃣',k:'two second'},{e:'3️⃣',k:'three third'},
-            {e:'🏅',k:'medal achievement'},{e:'🩺',k:'doctor checkup'},
-        ];
+            // ── Emoji picker (NEW) ────────────────────────────────────────────
+            const EMOJIS = [
+                { e: '🏃', k: 'run jog' }, { e: '🚶', k: 'walk' }, { e: '🏋️', k: 'weights squat gym' },
+                { e: '🦵', k: 'leg press' }, { e: '📐', k: 'extension angle' }, { e: '🧘', k: 'rest idle yoga' },
+                { e: '🚴', k: 'bike cycle' }, { e: '🤸', k: 'stretch gymnastics' }, { e: '⛹️', k: 'jump basketball' },
+                { e: '🏊', k: 'swim' }, { e: '🧗', k: 'climb' }, { e: '🥊', k: 'box punch' },
+                { e: '💪', k: 'strength muscle' }, { e: '🦴', k: 'bone rehab' }, { e: '🩹', k: 'injury recovery' },
+                { e: '❄️', k: 'ice cold' }, { e: '🔥', k: 'intense burn' }, { e: '⚡', k: 'speed power' },
+                { e: '🎯', k: 'target goal' }, { e: '🔁', k: 'repeat sets' }, { e: '↕️', k: 'up down flex' },
+                { e: '⚽', k: 'football soccer' }, { e: '🏀', k: 'basketball' }, { e: '🎾', k: 'tennis' },
+                { e: '🏐', k: 'volleyball' }, { e: '🤾', k: 'handball' }, { e: '🏌️', k: 'golf swing' },
+                { e: '🛹', k: 'skateboard' }, { e: '🎿', k: 'ski' }, { e: '🏂', k: 'snowboard' },
+                { e: '🥋', k: 'martial arts karate' }, { e: '🛌', k: 'rest sleep' },
+                { e: '🧊', k: 'ice cryo' }, { e: '☀️', k: 'warm up' }, { e: '🌙', k: 'cool down night' },
+                { e: '1️⃣', k: 'one first' }, { e: '2️⃣', k: 'two second' }, { e: '3️⃣', k: 'three third' },
+                { e: '🏅', k: 'medal achievement' }, { e: '🩺', k: 'doctor checkup' },
+            ];
 
-        let pickedEmoji = '🏃';
+            let pickedEmoji = '🏃';
 
-        const emojiTrigger = document.getElementById('emojiTrigger');
-        const emojiPalette = document.getElementById('emojiPalette');
-        const emojiSearch  = document.getElementById('emojiSearch');
-        const emojiGrid    = document.getElementById('emojiGrid');
+            const emojiTrigger = document.getElementById('emojiTrigger');
+            const emojiPalette = document.getElementById('emojiPalette');
+            const emojiSearch = document.getElementById('emojiSearch');
+            const emojiGrid = document.getElementById('emojiGrid');
 
-        function renderEmojiGrid(q = '') {
-            const lq = q.toLowerCase();
-            const list = lq ? EMOJIS.filter(x => x.e.includes(lq) || x.k.includes(lq)) : EMOJIS;
-            emojiGrid.innerHTML = list.map(x =>
-                `<button class="emoji-opt${x.e === pickedEmoji ? ' selected' : ''}" data-e="${x.e}" type="button">${x.e}</button>`
-            ).join('');
-            emojiGrid.querySelectorAll('.emoji-opt').forEach(b => {
-                b.onclick = (ev) => {
-                    ev.stopPropagation();
-                    pickedEmoji = b.dataset.e;
-                    emojiTrigger.textContent = pickedEmoji;
-                    emojiPalette.classList.remove('open');
-                    renderEmojiGrid(emojiSearch.value);
-                };
-            });
-        }
+            function renderEmojiGrid(q = '') {
+                const lq = q.toLowerCase();
+                const list = lq ? EMOJIS.filter(x => x.e.includes(lq) || x.k.includes(lq)) : EMOJIS;
+                emojiGrid.innerHTML = list.map(x =>
+                    `<button class="emoji-opt${x.e === pickedEmoji ? ' selected' : ''}" data-e="${x.e}" type="button">${x.e}</button>`
+                ).join('');
+                emojiGrid.querySelectorAll('.emoji-opt').forEach(b => {
+                    b.onclick = (ev) => {
+                        ev.stopPropagation();
+                        pickedEmoji = b.dataset.e;
+                        emojiTrigger.textContent = pickedEmoji;
+                        emojiPalette.classList.remove('open');
+                        renderEmojiGrid(emojiSearch.value);
+                    };
+                });
+            }
 
-        emojiTrigger.onclick = (ev) => {
-            ev.stopPropagation();
-            const opening = !emojiPalette.classList.contains('open');
-            emojiPalette.classList.toggle('open');
-            if (opening) { emojiSearch.value = ''; renderEmojiGrid(); emojiSearch.focus(); }
-        };
-        emojiSearch.oninput = () => renderEmojiGrid(emojiSearch.value);
-        emojiSearch.onclick = (ev) => ev.stopPropagation();
-        document.addEventListener('click', () => emojiPalette.classList.remove('open'));
+            emojiTrigger.onclick = (ev) => {
+                ev.stopPropagation();
+                const opening = !emojiPalette.classList.contains('open');
+                emojiPalette.classList.toggle('open');
+                if (opening) { emojiSearch.value = ''; renderEmojiGrid(); emojiSearch.focus(); }
+            };
+            emojiSearch.oninput = () => renderEmojiGrid(emojiSearch.value);
+            emojiSearch.onclick = (ev) => ev.stopPropagation();
+            document.addEventListener('click', () => emojiPalette.classList.remove('open'));
 
-        renderEmojiGrid();
-        // ─────────────────────────────────────────────────────────────────
-
-        function addExercise() {
-            const name = newInput.value.trim();
-            if (!name) return;
-            const list = loadExercises();
-            const id = 'custom_' + Date.now();
-            list.push({ id, label: `${pickedEmoji} ${name}`, deletable: true });
-            saveExercises(list);
-            populateSelect(exerciseSelect, list, id);
-            newInput.value = '';
-            pickedEmoji = '🏃';
-            emojiTrigger.textContent = pickedEmoji;
             renderEmojiGrid();
-            renderModalList();
-        }
+            // ─────────────────────────────────────────────────────────────────
 
-        addBtn.onclick = addExercise;
-        newInput.onkeydown = (e) => { if (e.key === 'Enter') addExercise(); };
+            function addExercise() {
+                const name = newInput.value.trim();
+                if (!name) return;
+                const list = loadExercises();
+                const id = 'custom_' + Date.now();
+                list.push({ id, label: `${pickedEmoji} ${name}`, deletable: true });
+                saveExercises(list);
+                populateSelect(exerciseSelect, list, id);
+                newInput.value = '';
+                pickedEmoji = '🏃';
+                emojiTrigger.textContent = pickedEmoji;
+                renderEmojiGrid();
+                renderModalList();
+            }
 
-        let socket, isTracking = false;
-        let sessionData = [];
-        let timerInterval = null, timerSeconds = 0;
+            addBtn.onclick = addExercise;
+            newInput.onkeydown = (e) => { if (e.key === 'Enter') addExercise(); };
 
-        function formatTimer(s) {
-            return [Math.floor(s/3600), Math.floor((s%3600)/60), s%60]
-                .map(n => String(n).padStart(2,'0')).join(':');
-        }
+            let socket, isTracking = false;
+            let sessionData = [];
+            let timerInterval = null, timerSeconds = 0;
 
-        // ── Ratio colour helpers ──────────────────────────────────────────
-        const RATIO_HEALTHY_LOW  = 0.75;
-        const RATIO_HEALTHY_HIGH = 2.0;
-        const RATIO_BORDER_LOW   = 0.25;
-        const RATIO_BORDER_HIGH  = 2.5;
+            function formatTimer(s) {
+                return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60]
+                    .map(n => String(n).padStart(2, '0')).join(':');
+            }
 
-        function lerpColor(a,b,t){return[0,1,2].map(i=>Math.round(a[i]+(b[i]-a[i])*t));}
-        const CR=[231,76,60],CY=[241,196,15],CG=[39,174,96];
-        function ratioToRgb(v){
-            if(v===null)return null;
-            const stops=[{at:0,col:CR},{at:RATIO_BORDER_LOW,col:CR},{at:RATIO_HEALTHY_LOW,col:CY},
-                         {at:(RATIO_HEALTHY_LOW+RATIO_HEALTHY_HIGH)/2,col:CG},{at:RATIO_HEALTHY_HIGH,col:CY},
-                         {at:RATIO_BORDER_HIGH,col:CR},{at:4,col:CR}];
-            for(let i=1;i<stops.length;i++){
-                if(v<=stops[i].at){
-                    const t=(v-stops[i-1].at)/(stops[i].at-stops[i-1].at);
-                    const[r,g,b]=lerpColor(stops[i-1].col,stops[i].col,Math.max(0,Math.min(1,t)));
-                    return `rgb(${r},${g},${b})`;
+            // ── Ratio colour helpers ──────────────────────────────────────────
+            const RATIO_HEALTHY_LOW = 0.75;
+            const RATIO_HEALTHY_HIGH = 2.0;
+            const RATIO_BORDER_LOW = 0.25;
+            const RATIO_BORDER_HIGH = 2.5;
+
+            function lerpColor(a, b, t) { return [0, 1, 2].map(i => Math.round(a[i] + (b[i] - a[i]) * t)); }
+            const CR = [231, 76, 60], CY = [241, 196, 15], CG = [39, 174, 96];
+            function ratioToRgb(v) {
+                if (v === null) return null;
+                const stops = [{ at: 0, col: CR }, { at: RATIO_BORDER_LOW, col: CR }, { at: RATIO_HEALTHY_LOW, col: CY },
+                { at: (RATIO_HEALTHY_LOW + RATIO_HEALTHY_HIGH) / 2, col: CG }, { at: RATIO_HEALTHY_HIGH, col: CY },
+                { at: RATIO_BORDER_HIGH, col: CR }, { at: 4, col: CR }];
+                for (let i = 1; i < stops.length; i++) {
+                    if (v <= stops[i].at) {
+                        const t = (v - stops[i - 1].at) / (stops[i].at - stops[i - 1].at);
+                        const [r, g, b] = lerpColor(stops[i - 1].col, stops[i].col, Math.max(0, Math.min(1, t)));
+                        return `rgb(${r},${g},${b})`;
+                    }
                 }
+                return `rgb(${CR.join(',')})`;
             }
-            return `rgb(${CR.join(',')})`;
-        }
 
-        // ── Charts (no fills, no background colors) ───────────────────────
-        const emgChart = new Chart(document.getElementById('emgChart').getContext('2d'),{
-            type:'line',
-            data:{labels:[],datasets:[
-                {label:'Ch1',data:[],borderColor:'#4d82ad',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false},
-                {label:'Ch2',data:[],borderColor:'#e67e22',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false}
-            ]},
-            options:{responsive:true,maintainAspectRatio:false,animation:false,
-                plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}},
-                scales:{y:{beginAtZero:true,max:4095,title:{display:true,text:'Amplitude'}},x:{display:false}}}
-        });
+            // ── Charts (no fills, no background colors) ───────────────────────
+            const emgChart = new Chart(document.getElementById('emgChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [
+                        { label: 'Ch1', data: [], borderColor: '#4d82ad', backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false },
+                        { label: 'Ch2', data: [], borderColor: '#e67e22', backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 11 } } } },
+                    scales: { y: { beginAtZero: true, max: 4095, title: { display: true, text: 'Amplitude' } }, x: { display: false } }
+                }
+            });
 
-        const imuChart = new Chart(document.getElementById('imuChart').getContext('2d'),{
-            type:'line',
-            data:{labels:[],datasets:[
-                {label:'Thigh (°)',data:[],borderColor:'rgba(46,204,113,0.8)',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,4]},
-                {label:'Shin (°)', data:[],borderColor:'rgba(155,89,182,0.8)',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,4]},
-                {label:'Knee Flex (°)',data:[],borderColor:'#e74c3c',backgroundColor:'transparent',tension:0.4,pointRadius:0,fill:false,borderWidth:2.5}
-            ]},
-            options:{responsive:true,maintainAspectRatio:false,animation:false,
-                plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}},
-                scales:{y:{suggestedMin:-10,suggestedMax:120,title:{display:true,text:'Degrees (°)'}},x:{display:false}}}
-        });
+            const imuChart = new Chart(document.getElementById('imuChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [
+                        { label: 'Thigh (°)', data: [], borderColor: 'rgba(46,204,113,0.8)', backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 1.5, borderDash: [4, 4] },
+                        { label: 'Shin (°)', data: [], borderColor: 'rgba(155,89,182,0.8)', backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, fill: false, borderWidth: 1.5, borderDash: [4, 4] },
+                        { label: 'Knee Flex (°)', data: [], borderColor: '#e74c3c', backgroundColor: 'transparent', tension: 0.4, pointRadius: 0, fill: false, borderWidth: 2.5 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 11 } } } },
+                    scales: { y: { suggestedMin: -10, suggestedMax: 120, title: { display: true, text: 'Degrees (°)' } }, x: { display: false } }
+                }
+            });
 
-        const ratioChart = new Chart(document.getElementById('ratioChart').getContext('2d'),{
-            type:'line',
-            data:{labels:[],datasets:[{
-                label:'M1/M2',data:[],borderColor:'#27ae60',backgroundColor:'transparent',
-                tension:0.4,pointRadius:0,fill:false,borderWidth:2.5,
-                segment:{borderColor:ctx=>{const v=(ctx.p0.parsed.y+ctx.p1.parsed.y)/2;return ratioToRgb(v)||'transparent';}},
-                spanGaps:false
-            }]},
-            options:{responsive:true,maintainAspectRatio:false,animation:false,
-                plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{
-                    const v=ctx.parsed.y;if(v===null)return null;
-                    const z=v<RATIO_BORDER_LOW?'🔴 Imbalanced (low)':v<RATIO_HEALTHY_LOW?'🟡 Borderline (low)':v<=RATIO_HEALTHY_HIGH?'🟢 Healthy':v<=RATIO_BORDER_HIGH?'🟡 Borderline (high)':'🔴 Imbalanced (high)';
-                    return ` Ratio: ${v.toFixed(2)}  ${z}`;
-                }}}},
-                scales:{y:{min:0,max:4,title:{display:true,text:'M1/M2'},
-                    ticks:{stepSize:0.5,callback:v=>v.toFixed(1)+'x'},grid:{color:'rgba(0,0,0,0.04)'}},
-                    x:{display:false}}}
-        });
+            const ratioChart = new Chart(document.getElementById('ratioChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [{
+                        label: 'M1/M2', data: [], borderColor: '#27ae60', backgroundColor: 'transparent',
+                        tension: 0.4, pointRadius: 0, fill: false, borderWidth: 2.5,
+                        segment: { borderColor: ctx => { const v = (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2; return ratioToRgb(v) || 'transparent'; } },
+                        spanGaps: false
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: false,
+                    plugins: {
+                        legend: { display: false }, tooltip: {
+                            callbacks: {
+                                label: ctx => {
+                                    const v = ctx.parsed.y; if (v === null) return null;
+                                    const z = v < RATIO_BORDER_LOW ? '🔴 Imbalanced (low)' : v < RATIO_HEALTHY_LOW ? '🟡 Borderline (low)' : v <= RATIO_HEALTHY_HIGH ? '🟢 Healthy' : v <= RATIO_BORDER_HIGH ? '🟡 Borderline (high)' : '🔴 Imbalanced (high)';
+                                    return ` Ratio: ${v.toFixed(2)}  ${z}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0, max: 4, title: { display: true, text: 'M1/M2' },
+                            ticks: { stepSize: 0.5, callback: v => v.toFixed(1) + 'x' }, grid: { color: 'rgba(0,0,0,0.04)' }
+                        },
+                        x: { display: false }
+                    }
+                }
+            });
 
-        // ── Chart helpers ─────────────────────────────────────────────────
-        function pushWindow(chart, label, ...vals) {
-            chart.data.labels.push(label);
-            vals.forEach((v,i) => chart.data.datasets[i].data.push(v));
-            if (chart.data.labels.length > WINDOW) {
-                chart.data.labels.shift();
-                chart.data.datasets.forEach(d => d.data.shift());
+            // ── Chart helpers ─────────────────────────────────────────────────
+            function pushWindow(chart, label, ...vals) {
+                chart.data.labels.push(label);
+                vals.forEach((v, i) => chart.data.datasets[i].data.push(v));
+                if (chart.data.labels.length > WINDOW) {
+                    chart.data.labels.shift();
+                    chart.data.datasets.forEach(d => d.data.shift());
+                }
+                chart.update('none');
             }
-            chart.update('none');
-        }
 
-        function clearChart(chart) {
-            chart.data.labels.length = 0;
-            chart.data.datasets.forEach(d => { d.data.length = 0; });
-            chart.update('none');
-        }
+            function clearChart(chart) {
+                chart.data.labels.length = 0;
+                chart.data.datasets.forEach(d => { d.data.length = 0; });
+                chart.update('none');
+            }
 
-        function clearAll() {
-            clearChart(emgChart);
-            clearChart(imuChart);
-            clearChart(ratioChart);
-        }
+            function clearAll() {
+                clearChart(emgChart);
+                clearChart(imuChart);
+                clearChart(ratioChart);
+            }
 
-        // ── WebSocket ─────────────────────────────────────────────────────
-        function initWS() {
-            if (socket && socket.readyState <= 1) return;
-            socket = new WebSocket(`ws://${ESP_IP}/ws`);
-            socket.onopen  = () => { status.textContent = 'Connected'; };
-            socket.onclose = () => { status.textContent = 'Reconnecting...'; setTimeout(initWS, 2000); };
-            socket.onerror = () => socket.close();
-            socket.onmessage = (e) => {
-                if (!isTracking) return;
-                const p = e.data.split(',');
-                if (p.length < 4) return;
-                const v1=parseInt(p[0]), v2=parseInt(p[1]);
-                const i1=parseFloat(p[2]), i2=parseFloat(p[3]);
-                if ([v1,v2,i1,i2].some(isNaN)) return;
-                const now   = new Date().toLocaleTimeString();
-                const knee  = Math.abs(i1-i2);
-                const ratio = v2>0 ? v1/v2 : null;
-                sessionData.push({time:now,v1,v2,i1,i2});
-                pushWindow(emgChart,   now, v1, v2);
-                pushWindow(imuChart,   now, i1, i2, knee);
-                pushWindow(ratioChart, now, ratio);
-                liveImu1.textContent  = i1.toFixed(1)+'°';
-                liveImu2.textContent  = i2.toFixed(1)+'°';
-                liveDelta.textContent = knee.toFixed(1)+'°';
-                liveEmg1.textContent  = v1;
-                liveEmg2.textContent  = v2;
-                const ratioLabel = ratio !== null ? ratio.toFixed(2)+'x' : '—';
-                liveRatio.textContent = ratioLabel;
-                liveRatio.style.color = ratio!==null ? (ratioToRgb(ratio)||'#555') : '#bbb';
-            };
-        }
+            // ── WebSocket ─────────────────────────────────────────────────────
+            function initWS() {
+                if (socket && socket.readyState <= 1) return;
+                socket = new WebSocket(`ws://${ESP_IP}/ws`);
+                socket.onopen = () => { status.textContent = 'Connected'; };
+                socket.onclose = () => { status.textContent = 'Reconnecting...'; setTimeout(initWS, 2000); };
+                socket.onerror = () => socket.close();
+                socket.onmessage = (e) => {
+                    if (!isTracking) return;
+                    const p = e.data.split(',');
+                    if (p.length < 4) return;
+                    const v1 = parseInt(p[0]), v2 = parseInt(p[1]);
+                    const i1 = parseFloat(p[2]), i2 = parseFloat(p[3]);
+                    if ([v1, v2, i1, i2].some(isNaN)) return;
+                    const now = new Date().toLocaleTimeString();
+                    const knee = Math.abs(i1 - i2);
+                    const ratio = v2 > 0 ? v1 / v2 : null;
+                    sessionData.push({ time: now, v1, v2, i1, i2 });
+                    pushWindow(emgChart, now, v1, v2);
+                    pushWindow(imuChart, now, i1, i2, knee);
+                    pushWindow(ratioChart, now, ratio);
+                    liveImu1.textContent = i1.toFixed(1) + '°';
+                    liveImu2.textContent = i2.toFixed(1) + '°';
+                    liveDelta.textContent = knee.toFixed(1) + '°';
+                    liveEmg1.textContent = v1;
+                    liveEmg2.textContent = v2;
+                    const ratioLabel = ratio !== null ? ratio.toFixed(2) + 'x' : '—';
+                    liveRatio.textContent = ratioLabel;
+                    liveRatio.style.color = ratio !== null ? (ratioToRgb(ratio) || '#555') : '#bbb';
+                };
+            }
 
-        // ── Save & summarise ──────────────────────────────────────────────
-        function saveAndSummarise(data) {
-            if (!data || !data.length) return;
-            const ch1 = data.map(d=>d.v1).filter(v=>v<2800);
-            const ch2 = data.map(d=>d.v2).filter(v=>v<2800);
-            if (!ch1.length || !ch2.length) return;
+            // ── Save & summarise ──────────────────────────────────────────────
+            function saveAndSummarise(data) {
+                if (!data || !data.length) return;
+                const ch1 = data.map(d => d.v1).filter(v => v < 2800);
+                const ch2 = data.map(d => d.v2).filter(v => v < 2800);
+                if (!ch1.length || !ch2.length) return;
 
-            const peak1=Math.max(...ch1), peak2=Math.max(...ch2);
-            const avg1=Math.round(ch1.reduce((a,b)=>a+b)/ch1.length);
-            const avg2=Math.round(ch2.reduce((a,b)=>a+b)/ch2.length);
-            const dur=(data.length*0.02).toFixed(1);
-            let flexCount=0;
-            for(let i=1;i<ch1.length;i++) if(ch1[i]>FLEX_THRESHOLD&&ch1[i-1]<=FLEX_THRESHOLD) flexCount++;
-            const kneeVals=data.map(d=>Math.abs(d.i1-d.i2));
-            const avgDelta=(kneeVals.reduce((a,b)=>a+b,0)/kneeVals.length).toFixed(1);
-            const peakKnee=Math.max(...kneeVals).toFixed(1);
+                const peak1 = Math.max(...ch1), peak2 = Math.max(...ch2);
+                const avg1 = Math.round(ch1.reduce((a, b) => a + b) / ch1.length);
+                const avg2 = Math.round(ch2.reduce((a, b) => a + b) / ch2.length);
+                const dur = (data.length * 0.02).toFixed(1);
+                let flexCount = 0;
+                for (let i = 1; i < ch1.length; i++) if (ch1[i] > FLEX_THRESHOLD && ch1[i - 1] <= FLEX_THRESHOLD) flexCount++;
+                const kneeVals = data.map(d => Math.abs(d.i1 - d.i2));
+                const avgDelta = (kneeVals.reduce((a, b) => a + b, 0) / kneeVals.length).toFixed(1);
+                const peakKnee = Math.max(...kneeVals).toFixed(1);
 
-            const exerciseTag = document.getElementById('exerciseTag');
-            const tag = exerciseTag ? exerciseTag.value : 'idle';
-            const exEntry = loadExercises().find(e => e.id === tag);
-            const tagLabel = exEntry ? exEntry.label : tag;
+                const exerciseTag = document.getElementById('exerciseTag');
+                const tag = exerciseTag ? exerciseTag.value : 'idle';
+                const exEntry = loadExercises().find(e => e.id === tag);
+                const tagLabel = exEntry ? exEntry.label : tag;
 
-            const downsampled=data.filter((_,i)=>i%DOWNSAMPLE_N===0)
-                .map(d=>({t:d.time,v1:d.v1,v2:d.v2,i1:parseFloat(d.i1.toFixed(1)),i2:parseFloat(d.i2.toFixed(1))}));
+                const downsampled = data.filter((_, i) => i % DOWNSAMPLE_N === 0)
+                    .map(d => ({ t: d.time, v1: d.v1, v2: d.v2, i1: parseFloat(d.i1.toFixed(1)), i2: parseFloat(d.i2.toFixed(1)) }));
 
-            const sess={
-                id:`live-${Date.now()}`,
-                date:new Date().toLocaleString(),
-                exercise: tag,
-                peak:`${peak1}/${peak2}`, avg:`${avg1}/${avg2}`,
-                duration:dur, flexCount,
-                peakAngle1:Math.max(...data.map(d=>d.i1)).toFixed(1),
-                peakAngle2:Math.max(...data.map(d=>d.i2)).toFixed(1),
-                avgDelta, peakKnee, samples:downsampled
-            };
-            let history=[];
-            try{history=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');}catch(e){}
-            history.unshift(sess);
-            localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,MAX_SESSIONS)));
+                const sess = {
+                    id: `live-${Date.now()}`,
+                    date: new Date().toLocaleString(),
+                    exercise: tag,
+                    peak: `${peak1}/${peak2}`, avg: `${avg1}/${avg2}`,
+                    duration: dur, flexCount,
+                    peakAngle1: Math.max(...data.map(d => d.i1)).toFixed(1),
+                    peakAngle2: Math.max(...data.map(d => d.i2)).toFixed(1),
+                    avgDelta, peakKnee, samples: downsampled
+                };
+                let history = [];
+                try { history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) { }
+                history.unshift(sess);
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_SESSIONS)));
 
-            summaryDiv.innerHTML=`
+                summaryDiv.innerHTML = `
                 <div class="metric-row"><span class="metric-label">Exercise</span><span class="metric-value" style="color:#555">${tagLabel}</span></div>
                 <div class="metric-row"><span class="metric-label">Peak EMG (Ch1/Ch2)</span><span class="metric-value">${peak1} / ${peak2}</span></div>
                 <div class="metric-row"><span class="metric-label">Avg EMG (Ch1/Ch2)</span><span class="metric-value">${avg1} / ${avg2}</span></div>
@@ -716,103 +937,104 @@
                 <div class="metric-row"><span class="metric-label">Avg Knee Flexion</span><span class="metric-value" style="color:#e67e22">${avgDelta}°</span></div>
                 <div class="metric-row"><span class="metric-label">Peak Knee Flexion</span><span class="metric-value" style="color:#e74c3c">${peakKnee}°</span></div>
             `;
-            analysisLink.style.display='block';
-            downloadCsvBtn.style.display='block';
-            downloadCsvBtn.onclick = () => {
-                const filtered = data.filter(r => r.v1 < 2800 && r.v2 < 2800);
-                let csv = 'data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n';
-                filtered.forEach(r => { csv += `${r.time},${r.v1},${r.v2},${r.i1},${r.i2}\n`; });
-                const exEntry = loadExercises().find(e => e.id === tag);
-                const exSlug = (exEntry ? exEntry.label.replace(/[^\w]+/g,'_').replace(/^_+|_+$/g,'') : 'session').toLowerCase();
-                const dateSlug = new Date().toISOString().slice(0,10);
-                const defaultName = `${exSlug}-${dateSlug}-quantiflex`;
-                const name = prompt('Name this file:', defaultName);
-                if (name === null) return; // cancelled
-                const filename = (name.trim() || defaultName).replace(/\.csv$/i,'') + '.csv';
-                const link = document.createElement('a');
-                link.setAttribute('href', encodeURI(csv));
-                link.setAttribute('download', filename);
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            };
-        }
-
-        // ── CSV Upload ────────────────────────────────────────────────────
-        csvFileInput.onchange = function(e) {
-            const file=e.target.files[0]; if(!file) return;
-            const reader=new FileReader();
-            reader.onload=function(ev){
-                const lines=ev.target.result.trim().split('\n');
-                const si=isNaN(parseInt(lines[0].split(',')[1]))?1:0;
-                const data=[];
-                lines.slice(si).forEach(line=>{
-                    const p=line.split(','); if(p.length<3) return;
-                    const v1=parseInt(p[1]), v2=parseInt(p[2]);
-                    const i1=p.length>=4?parseFloat(p[3]):0, i2=p.length>=5?parseFloat(p[4]):0;
-                    if(!isNaN(v1)&&!isNaN(v2)) data.push({time:p[0].trim(),v1,v2,i1,i2});
-                });
-                if(!data.length){alert('No valid rows found in CSV.');return;}
-
-                sessionData=data;
-                clearAll();
-                data.forEach(row=>{
-                    const knee=Math.abs(row.i1-row.i2);
-                    const ratio=row.v2>0?row.v1/row.v2:null;
-                    pushWindow(emgChart,   row.time, row.v1, row.v2);
-                    pushWindow(imuChart,   row.time, row.i1, row.i2, knee);
-                    pushWindow(ratioChart, row.time, ratio);
-                });
-
-                const last=data[data.length-1];
-                const knee=Math.abs(last.i1-last.i2);
-                const ratio=last.v2>0?last.v1/last.v2:null;
-                liveImu1.textContent  = last.i1.toFixed(1)+'°';
-                liveImu2.textContent  = last.i2.toFixed(1)+'°';
-                liveDelta.textContent = knee.toFixed(1)+'°';
-                liveEmg1.textContent  = last.v1;
-                liveEmg2.textContent  = last.v2;
-                liveRatio.textContent = ratio!==null?ratio.toFixed(2)+'x':'—';
-                liveRatio.style.color = ratio!==null?(ratioToRgb(ratio)||'#555'):'#bbb';
-
-                status.textContent=`Loaded: ${file.name}`;
-                saveAndSummarise(data);
-                csvFileInput.value='';
-            };
-            reader.readAsText(file);
-        };
-
-        // ── Button handlers ───────────────────────────────────────────────
-        startBtn.onclick = () => {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                status.textContent='Not connected — retrying...';
-                initWS(); return;
+                analysisLink.style.display = 'block';
+                downloadCsvBtn.style.display = 'block';
+                downloadCsvBtn.onclick = () => {
+                    const filtered = data.filter(r => r.v1 < 2800 && r.v2 < 2800);
+                    let csv = 'data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n';
+                    filtered.forEach(r => { csv += `${r.time},${r.v1},${r.v2},${r.i1},${r.i2}\n`; });
+                    const exEntry = loadExercises().find(e => e.id === tag);
+                    const exSlug = (exEntry ? exEntry.label.replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '') : 'session').toLowerCase();
+                    const dateSlug = new Date().toISOString().slice(0, 10);
+                    const defaultName = `${exSlug}-${dateSlug}-quantiflex`;
+                    const name = prompt('Name this file:', defaultName);
+                    if (name === null) return; // cancelled
+                    const filename = (name.trim() || defaultName).replace(/\.csv$/i, '') + '.csv';
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodeURI(csv));
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                };
             }
-            sessionData=[];
-            clearAll();
-            liveImu1.textContent=liveImu2.textContent=liveDelta.textContent='—°';
-            liveEmg1.textContent=liveEmg2.textContent='—';
-            liveRatio.textContent='—'; liveRatio.style.color='#bbb';
-            summaryDiv.innerHTML='<p class="empty-state">Recording in progress...</p>';
-            analysisLink.style.display='none';
-            socket.send('start');
-            isTracking=true;
-            startBtn.disabled=true; stopBtn.disabled=false;
-            status.textContent='Recording...';
-            timerSeconds=0; timerEl.textContent='00:00:00'; timerEl.style.color='#e74c3c';
-            timerInterval=setInterval(()=>{timerSeconds++;timerEl.textContent=formatTimer(timerSeconds);},1000);
-        };
 
-        stopBtn.onclick = () => {
-            isTracking=false;
-            clearInterval(timerInterval);
-            timerEl.style.color='#aaa';
-            if(socket&&socket.readyState===WebSocket.OPEN) socket.send('stop');
-            startBtn.disabled=false; stopBtn.disabled=true;
-            status.textContent='Hardware Idle';
-            saveAndSummarise(sessionData);
-        };
+            // ── CSV Upload ────────────────────────────────────────────────────
+            csvFileInput.onchange = function (e) {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const lines = ev.target.result.trim().split('\n');
+                    const si = isNaN(parseInt(lines[0].split(',')[1])) ? 1 : 0;
+                    const data = [];
+                    lines.slice(si).forEach(line => {
+                        const p = line.split(','); if (p.length < 3) return;
+                        const v1 = parseInt(p[1]), v2 = parseInt(p[2]);
+                        const i1 = p.length >= 4 ? parseFloat(p[3]) : 0, i2 = p.length >= 5 ? parseFloat(p[4]) : 0;
+                        if (!isNaN(v1) && !isNaN(v2)) data.push({ time: p[0].trim(), v1, v2, i1, i2 });
+                    });
+                    if (!data.length) { alert('No valid rows found in CSV.'); return; }
 
-        initWS();
-    });
+                    sessionData = data;
+                    clearAll();
+                    data.forEach(row => {
+                        const knee = Math.abs(row.i1 - row.i2);
+                        const ratio = row.v2 > 0 ? row.v1 / row.v2 : null;
+                        pushWindow(emgChart, row.time, row.v1, row.v2);
+                        pushWindow(imuChart, row.time, row.i1, row.i2, knee);
+                        pushWindow(ratioChart, row.time, ratio);
+                    });
+
+                    const last = data[data.length - 1];
+                    const knee = Math.abs(last.i1 - last.i2);
+                    const ratio = last.v2 > 0 ? last.v1 / last.v2 : null;
+                    liveImu1.textContent = last.i1.toFixed(1) + '°';
+                    liveImu2.textContent = last.i2.toFixed(1) + '°';
+                    liveDelta.textContent = knee.toFixed(1) + '°';
+                    liveEmg1.textContent = last.v1;
+                    liveEmg2.textContent = last.v2;
+                    liveRatio.textContent = ratio !== null ? ratio.toFixed(2) + 'x' : '—';
+                    liveRatio.style.color = ratio !== null ? (ratioToRgb(ratio) || '#555') : '#bbb';
+
+                    status.textContent = `Loaded: ${file.name}`;
+                    saveAndSummarise(data);
+                    csvFileInput.value = '';
+                };
+                reader.readAsText(file);
+            };
+
+            // ── Button handlers ───────────────────────────────────────────────
+            startBtn.onclick = () => {
+                if (!socket || socket.readyState !== WebSocket.OPEN) {
+                    status.textContent = 'Not connected — retrying...';
+                    initWS(); return;
+                }
+                sessionData = [];
+                clearAll();
+                liveImu1.textContent = liveImu2.textContent = liveDelta.textContent = '—°';
+                liveEmg1.textContent = liveEmg2.textContent = '—';
+                liveRatio.textContent = '—'; liveRatio.style.color = '#bbb';
+                summaryDiv.innerHTML = '<p class="empty-state">Recording in progress...</p>';
+                analysisLink.style.display = 'none';
+                socket.send('start');
+                isTracking = true;
+                startBtn.disabled = true; stopBtn.disabled = false;
+                status.textContent = 'Recording...';
+                timerSeconds = 0; timerEl.textContent = '00:00:00'; timerEl.style.color = '#e74c3c';
+                timerInterval = setInterval(() => { timerSeconds++; timerEl.textContent = formatTimer(timerSeconds); }, 1000);
+            };
+
+            stopBtn.onclick = () => {
+                isTracking = false;
+                clearInterval(timerInterval);
+                timerEl.style.color = '#aaa';
+                if (socket && socket.readyState === WebSocket.OPEN) socket.send('stop');
+                startBtn.disabled = false; stopBtn.disabled = true;
+                status.textContent = 'Hardware Idle';
+                saveAndSummarise(sessionData);
+            };
+
+            initWS();
+        });
     </script>
 </body>
+
 </html>
