@@ -9,23 +9,19 @@ const char* ssid     = "UTBiome_Knee";
 const char* password = "password123";
 const int   IMU_PORT = 9000;
 
-// ── Pins ──────────────────────────────────────────────────────────────────────
 #define SDA_PIN 4
 #define SCL_PIN 5
 const int emg1Pin = 7;
 const int emg2Pin = 8;
 const int MPU     = 0x68;
 
-// ── State ─────────────────────────────────────────────────────────────────────
 volatile bool trackingActive = false;
 
-// ── Thigh IMU (local) ─────────────────────────────────────────────────────────
 const float CF_ALPHA  = 0.98;
 float thighAngle      = 0.0;
 float gyroOffset      = 0.0;
 unsigned long lastIMUTime = 0;
 
-// ── Shin IMU (from slave) ─────────────────────────────────────────────────────
 float shinAngle       = 0.0;
 float shinAnglePrev   = 0.0;
 float shinAngleInterp = 0.0;
@@ -33,34 +29,30 @@ unsigned long lastShinReceived = 0;
 unsigned long lastShinInterval = 20;
 String slaveBuffer = "";
 
-// ── Timing ────────────────────────────────────────────────────────────────────
 unsigned long lastSendTime    = 0;
 unsigned long lastCleanupTime = 0;
-const unsigned long SEND_INTERVAL_MS    = 20;   // 50Hz
+const unsigned long SEND_INTERVAL_MS    = 20;
 const unsigned long CLEANUP_INTERVAL_MS = 500;
 
-// ── Servers ───────────────────────────────────────────────────────────────────
 AsyncWebServer webServer(80);
 AsyncWebSocket ws("/ws");
 WiFiServer imuTcpServer(IMU_PORT);
 WiFiClient slaveClient;
 
-// ── LED feedback ──────────────────────────────────────────────────────────────
 void updateHardwareFeedback() {
   if (trackingActive) {
-    neopixelWrite(RGB_BUILTIN, 0, 64, 0);  // Green = recording
+    neopixelWrite(RGB_BUILTIN, 0, 64, 0);
   } else {
-    neopixelWrite(RGB_BUILTIN, 64, 0, 0);  // Red = idle
+    neopixelWrite(RGB_BUILTIN, 64, 0, 0);
   }
 }
 
-// ── IMU helpers ───────────────────────────────────────────────────────────────
 float getAccelAngle() {
   Wire.beginTransmission(MPU);
   Wire.write(0x3B);
   Wire.endTransmission(false);
   Wire.requestFrom(MPU, 6, true);
-  int16_t ax = (Wire.read() << 8) | Wire.read();  // Must clock out
+  int16_t ax = (Wire.read() << 8) | Wire.read();
   int16_t ay = (Wire.read() << 8) | Wire.read();
   int16_t az = (Wire.read() << 8) | Wire.read();
   return atan2((float)ay, (float)az) * 180.0 / PI;
@@ -88,7 +80,7 @@ void calibrate() {
   }
   gyroOffset      = sum / 200.0;
   thighAngle      = getAccelAngle();
-  shinAngleInterp = thighAngle;  // Sensible default until slave connects
+  shinAngleInterp = thighAngle;
   lastIMUTime     = millis();
   Serial.printf("[CAL] Offset: %.4f | Start angle: %.2f\n", gyroOffset, thighAngle);
 }
@@ -101,18 +93,18 @@ void updateThighAngle() {
 
   float gyro  = getGyroRate();
   float accel = getAccelAngle();
-  if (abs(gyro) < 0.3) gyro = 0;  // Dead-zone
+  if (abs(gyro) < 0.3) gyro = 0;
 
   thighAngle = CF_ALPHA * (thighAngle + gyro * dt)
              + (1.0 - CF_ALPHA) * accel;
 }
 
-// ── Slave TCP — non-blocking ──────────────────────────────────────────────────
 void pollSlave() {
   if (!slaveClient || !slaveClient.connected()) {
-    slaveClient = imuTcpServer.available();
-    if (slaveClient) {
-      slaveBuffer     = "";
+    WiFiClient newClient = imuTcpServer.available();
+    if (newClient) {
+      slaveClient = newClient;
+      slaveBuffer = "";
       shinAngleInterp = shinAngle;
       Serial.println("[TCP] Shin IMU connected");
     }
@@ -132,18 +124,18 @@ void pollSlave() {
             lastShinInterval = constrain(now - lastShinReceived, 5, 200);
           }
           lastShinReceived = now;
-          shinAnglePrev    = shinAngleInterp;  // FROM current interpolated position
-          shinAngle        = val;              // TO new target
+          shinAnglePrev    = shinAngleInterp;
+          shinAngle        = val;
+          Serial.printf("[TCP] Received: %.2f\n", val);
         }
       }
       slaveBuffer = "";
     } else {
       if (slaveBuffer.length() < 20) slaveBuffer += c;
-      else slaveBuffer = "";  // Overflow guard
+      else slaveBuffer = "";
     }
   }
 
-  // Interpolate shin smoothly between received packets
   if (lastShinReceived > 0 && lastShinInterval > 0) {
     unsigned long elapsed = millis() - lastShinReceived;
     float alpha = constrain((float)elapsed / (float)lastShinInterval, 0.0f, 1.0f);
@@ -151,7 +143,6 @@ void pollSlave() {
   }
 }
 
-// ── WebSocket event handler ───────────────────────────────────────────────────
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
                AwsEventType type, void *arg, uint8_t *data, size_t len) {
 
@@ -190,16 +181,15 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
 void setup() {
   setCpuFrequencyMhz(240);
   Serial.begin(115200);
+  delay(3000);
 
-  // EMG pins
   pinMode(emg1Pin, INPUT);
   pinMode(emg2Pin, INPUT);
 
-  // IMU
   Wire.begin(SDA_PIN, SCL_PIN);
   Wire.beginTransmission(MPU);
   Wire.write(0x6B);
-  Wire.write(0x00);  // Wake MPU6050
+  Wire.write(0x00);
   Wire.endTransmission(true);
   delay(100);
 
@@ -213,16 +203,16 @@ void setup() {
   calibrate();
   updateHardwareFeedback();
 
-  // WiFi AP
   WiFi.softAP(ssid, password);
+  delay(1000);
+  Serial.printf("[NETWORK] AP SSID: %s\n", ssid);
+  Serial.printf("[NETWORK] AP IP: %s\n", WiFi.softAPIP().toString().c_str());
+  Serial.printf("[NETWORK] Gateway: %s\n", WiFi.gatewayIP().toString().c_str());
   WiFi.setSleep(false);
-  Serial.printf("[BOOT] AP IP: %s\n", WiFi.softAPIP().toString().c_str());
 
-  // TCP server for shin slave
   imuTcpServer.begin();
   Serial.printf("[BOOT] IMU TCP server on port %d\n", IMU_PORT);
 
-  // WebSocket
   ws.onEvent(onWsEvent);
   webServer.addHandler(&ws);
   webServer.begin();
@@ -233,11 +223,18 @@ void loop() {
   yield();
   unsigned long now = millis();
 
-  // Always update thigh angle every loop for accurate dt integration
   updateThighAngle();
-
-  // Always poll shin slave regardless of tracking state
   pollSlave();
+
+  static unsigned long lastStatusLog = 0;
+  if (now - lastStatusLog >= 5000) {
+    lastStatusLog = now;
+    if (slaveClient && slaveClient.connected()) {
+      Serial.printf("[STATUS] Slave connected from %s\n", slaveClient.remoteIP().toString().c_str());
+    } else {
+      Serial.println("[STATUS] No slave connection");
+    }
+  }
 
   if (now - lastCleanupTime >= CLEANUP_INTERVAL_MS) {
     lastCleanupTime = now;
@@ -246,7 +243,6 @@ void loop() {
 
   if (!trackingActive) return;
 
-  // Heap guard — skip sample if memory critically low
   if (ESP.getFreeHeap() < 10000) {
     Serial.printf("[WARN] Low heap: %u — skipping\n", ESP.getFreeHeap());
     delay(5);
@@ -260,9 +256,6 @@ void loop() {
       int emg1 = analogRead(emg1Pin);
       int emg2 = analogRead(emg2Pin);
 
-      // Format: "emg1,emg2,thighAngle,shinAngle"
-      // Frontend parses: v1=emg1, v2=emg2, i1=thigh, i2=shin
-      // Knee flexion computed on frontend as |i1 - i2|
       char buf[64];
       snprintf(buf, sizeof(buf), "%d,%d,%.2f,%.2f",
                emg1, emg2, thighAngle, shinAngleInterp);

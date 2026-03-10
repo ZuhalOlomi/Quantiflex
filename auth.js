@@ -1,5 +1,5 @@
 /**
- * SECTION 1: ROLE & AUTH SELECTION
+ * SECTION 1: ROLE SELECTION
  */
 function setRole(role) {
     const roleInput = document.getElementById("currentRole");
@@ -7,11 +7,8 @@ function setRole(role) {
     const btnClinician = document.getElementById("btn-clinician");
     const selector = document.getElementById("role-selector");
 
-    if (roleInput) {
-        roleInput.value = role;
-    }
+    if (roleInput) roleInput.value = role;
 
-    // Update Visual Toggles
     if (btnPatient && btnClinician) {
         if (role === 'patient') {
             btnPatient.classList.add("active");
@@ -23,42 +20,18 @@ function setRole(role) {
             if (selector) selector.style.transform = 'translateX(100%)';
         }
     }
-    console.log("Current active role set to:", role);
 }
 
 /**
- * SECTION 2: LOGIN, SIGNUP & REDIRECTION LOGIC
+ * SECTION 2: AUTHENTICATION
  */
-function showLoginSuccess(userName, role) {
-    const notification = document.getElementById("successNotification");
-    const message = document.getElementById("successMessage");
-
-    // STRICT ROUTING
-    const targetDashboard = (role === 'clinician') ? 'clinician_home.html' : 'patient_home.html';
-
-    if (notification && message) {
-        message.textContent = `Welcome, ${userName}! Opening ${role} portal...`;
-        notification.style.display = "block";
-        setTimeout(() => { window.location.href = targetDashboard; }, 2000);
-    } else {
-        window.location.href = targetDashboard;
-    }
-}
-
 function login() {
     const userInput = document.getElementById("username")?.value;
     const passInput = document.getElementById("password")?.value;
-    const roleInput = document.getElementById("currentRole");
+    const role = document.getElementById("currentRole")?.value;
     
-    if (!roleInput || !roleInput.value) {
-        alert("Please select a role (Patient or Clinician) first.");
-        return;
-    }
-    
-    const role = roleInput.value;
-
     if (!userInput || !passInput) {
-        alert("Please fill in both fields.");
+        alert("Please fill in all fields.");
         return;
     }
 
@@ -66,114 +39,76 @@ function login() {
     const savedPass = localStorage.getItem(`${role}_pass`);
 
     if (userInput === savedUser && passInput === savedPass) {
-        const userName = userInput.split('@')[0];
         localStorage.setItem("loggedIn", "true");
         localStorage.setItem("userRole", role);
-        localStorage.setItem("userName", userName);
-        showLoginSuccess(userName, role);
+        localStorage.setItem("userName", userInput.split('@')[0]);
+        
+        // Redirect logic
+        const target = (role === 'clinician') ? 'clinician_dashboard.html' : 'patient_home.html';
+        window.location.href = target;
     } else {
-        alert(`Invalid ${role} credentials. Please check your role or sign up.`);
+        alert("Invalid credentials for the selected role.");
     }
 }
 
 function signup() {
     const user = document.getElementById("username")?.value;
     const pass = document.getElementById("password")?.value;
-    const roleInput = document.getElementById("currentRole");
-    const role = roleInput ? roleInput.value : 'patient';
+    const role = document.getElementById("currentRole")?.value || 'patient';
 
-    if (!user || !pass) {
-        alert("Please fill in both fields.");
-        return;
-    }
-
+    if (!user || !pass) return alert("Fill in fields.");
+    
     localStorage.setItem(`${role}_user`, user);
     localStorage.setItem(`${role}_pass`, pass);
-    alert(`${role.charAt(0).toUpperCase() + role.slice(1)} account created! You can now log in.`);
+    alert(`${role} account created!`);
 }
 
-/**
- * SECTION 3: GOOGLE OAUTH
- */
-function handleCredentialResponse(response) {
-    try {
-        const responsePayload = decodeJwtResponse(response.credential);
-        const role = document.getElementById("currentRole")?.value || 'patient';
-
-        localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("userRole", role);
-        localStorage.setItem("userName", responsePayload.name);
-        localStorage.setItem("userEmail", responsePayload.email);
-
-        showLoginSuccess(responsePayload.name, role);
-    } catch (error) {
-        console.error("Google Sign-In error:", error);
-    }
-}
-
-function decodeJwtResponse(token) {
-    let base64Url = token.split('.')[1];
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
-/**
- * SECTION 4: GLOBAL LOGOUT & SECURITY
- */
 function logout() {
     localStorage.clear();
-    window.location.href = "logout.html";
+    window.location.href = "login.html";
 }
 
 /**
- * SECTION 5: INITIALIZATION & DATA SYNC
+ * SECTION 3: SECURITY & INITIALIZATION
  */
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
     const userRole = localStorage.getItem("userRole");
-    const userName = localStorage.getItem("userName");
-    
-    // Extract clean filename without query strings
     const path = window.location.pathname.toLowerCase();
     const filename = path.split('/').pop().split('?')[0] || 'index.html';
 
-    // 1. Handle URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('role')) {
-        setRole(urlParams.get('role'));
-    }
-
-    // 2. Update Navigation
+    // 1. Navigation Update
     const loginLink = document.querySelector('nav ul li a[href="login.html"]');
     if (isLoggedIn && loginLink) {
-        loginLink.textContent = userName || "Dashboard";
-        loginLink.href = (userRole === "clinician") ? "clinician_home.html" : "patient_home.html";
+        loginLink.textContent = "Dashboard";
+        loginLink.href = (userRole === "clinician") ? "clinician_dashboard.html" : "patient_home.html";
     }
 
-    // 3. Security Guard
-    const publicPages = ['login.html', 'logout.html', 'home.html', 'index.html', '', 'about.html', 'video.html'];
+    // 2. The Security Guard
+    const publicPages = ['login.html', 'index.html', 'about.html', 'video.html', ''];
     if (!publicPages.includes(filename) && !isLoggedIn) {
         window.location.href = "login.html";
+        return;
     }
 
-    // 4. Live Data Sync (For Patient Dashboard)
-    async function updateDashboardData() {
-        if (!window.location.pathname.includes('patient_home.html')) return;
-        
-        try {
-            const response = await fetch('http://127.0.0.1:5001/api/live-data', { method: 'POST' });
-            const data = await response.json();
-            const romDisplay = document.getElementById('rom-display');
-            if (romDisplay) {
-                romDisplay.innerText = `${data.liveRom}°`;
-            }
-        } catch (e) { /* Backend offline */ }
+    // 3. Role-Based Access Control
+    if (filename === 'clinician_dashboard.html' && userRole !== 'clinician') {
+        window.location.href = "patient_home.html";
+    }
+    if (filename === 'patient_home.html' && userRole !== 'patient') {
+        window.location.href = "clinician_dashboard.html";
     }
 
-    if (isLoggedIn && userRole === 'patient') {
-        setInterval(updateDashboardData, 2000);
+    // 4. Live Data Polling (Patient Only)
+    if (isLoggedIn && userRole === 'patient' && filename === 'patient_home.html') {
+        setInterval(async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5001/api/live-data', { method: 'POST' });
+                const data = await response.json();
+                if(document.getElementById('rom-display')) {
+                    document.getElementById('rom-display').innerText = `${data.liveRom}°`;
+                }
+            } catch (e) { console.log("Sleeve disconnected"); }
+        }, 2000);
     }
 });
