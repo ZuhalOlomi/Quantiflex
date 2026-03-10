@@ -6,47 +6,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | UTBiome</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Ensuring the toggle is functional and pretty */
+        .toggle-wrapper {
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 10; /* Ensures it stays above any background animations */
+        }
+
+        .role-toggle {
+            position: relative;
+            display: flex;
+            background: #eee;
+            border-radius: 30px;
+            overflow: hidden;
+            width: 100%;
+            height: 45px;
+            border: 1px solid #ddd;
+        }
+
+        #role-selector {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: #4d82ad;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .toggle-btn {
+            position: relative;
+            z-index: 2; /* Sits above the sliding blue background */
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            transition: color 0.3s;
+            outline: none;
+        }
+
+        .toggle-btn.active {
+            color: white;
+        }
+
+        /* Success Notification Styling */
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 
 <body>
     <header>
-        <h1>QuantiFlex</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="video.html">Video Demo</a></li>
-            </ul>
-        </nav>
+        <div class="nav-container">
+            <h1 class="logo">QuantiFlex</h1>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="video.html">Video Demo</a></li>
+                    <li id="nav-auth-item"><a href="login.html" id="auth-link" class="active">Login</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
         <section class="contact-section">
-            <h2>User Login</h2>
-            <h3>One step away from accessing data-driven insights</h3>
-
             <div id="successNotification" class="success-notification" style="display: none;">
-                <div class="success-content">
-                    <span class="success-icon">✓</span>
-                    <div>
-                        <h3>Welcome back!</h3>
-                        <p id="successMessage">You have successfully logged in</p>
-                    </div>
+                <span class="success-icon">✓</span>
+                <div>
+                    <strong id="successMessage">Welcome back! Redirecting...</strong>
                 </div>
             </div>
 
             <div class="gs_reveal_fromLeft contact-box">
-                <form id="authForm">
-
+                <h2>User Login</h2>
+                <form id="authForm" onsubmit="event.preventDefault(); login();">
                     <div class="toggle-wrapper">
                         <div class="role-toggle">
-                            <div id="role-selector" class="selector-patient"></div>
-
-                            <button type="button" id="btn-patient" class="toggle-btn active"
-                                onclick="setRole('patient')">
+                            <div id="role-selector"></div>
+                            <button type="button" id="btn-patient" class="toggle-btn active" onclick="setRole('patient')">
                                 Patient
                             </button>
                             <button type="button" id="btn-clinician" class="toggle-btn" onclick="setRole('clinician')">
@@ -54,76 +116,99 @@
                             </button>
                         </div>
                     </div>
+                    
                     <input type="hidden" id="currentRole" value="patient">
 
                     <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="example@email.com" required>
+                    <input type="email" id="username" placeholder="example@email.com" required>
 
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="***********" required>
 
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button type="button" onclick="login()" style="flex: 1;">Log In</button>
-                        <button type="button" onclick="signup()" style="flex: 1; background-color: #555;">Sign Up</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Log In</button>
+                        <button type="button" onclick="signup()" class="btn-secondary" style="flex: 1; background-color: #555; color: white; border: none;">Sign Up</button>
                     </div>
 
-                    <div style="text-align: center; margin: 20px 0; color: #888; font-size: 0.9rem; border-top: 1px solid #eee; line-height: 0.1em;">
-                        <span style="background:#fff; padding:0 10px;">OR</span>
-                    </div>
+                    <div class="divider"><span>OR</span></div>
 
-                    <div id="g_id_onload"
-                        data-client_id="415928026156-jctjji6t3vv2mb7v5cpttkstjn8dku9p.apps.googleusercontent.com"
+                    <div id="g_id_onload" data-client_id="YOUR_CLIENT_ID_HERE.apps.googleusercontent.com"
                         data-callback="handleCredentialResponse" data-auto_prompt="false">
                     </div>
-                    
-                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-                        data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="100%">
-                    </div>
+                    <div class="g_id_signin" data-type="standard" data-width="100%"></div>
                 </form>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
-    </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
     <script>
-        // GSAP Scroll Animation code
-        function animateFrom(elem, direction) {
-            direction = direction || 1;
-            var x = 0, y = direction * 100;
-            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
-            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
-            elem.style.transform = `translate(${x}px, ${y}px)`;
-            elem.style.opacity = "0";
-            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
-                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
-            });
+        // 1. ROLE TOGGLE LOGIC
+        function setRole(role) {
+            const selector = document.getElementById("role-selector");
+            const btnPatient = document.getElementById("btn-patient");
+            const btnClinician = document.getElementById("btn-clinician");
+            const roleInput = document.getElementById("currentRole");
+
+            if (role === 'patient') {
+                selector.style.transform = "translateX(0%)";
+                btnPatient.classList.add("active");
+                btnClinician.classList.remove("active");
+                roleInput.value = "patient";
+            } else {
+                selector.style.transform = "translateX(100%)";
+                btnClinician.classList.add("active");
+                btnPatient.classList.remove("active");
+                roleInput.value = "clinician";
+            }
         }
 
-        function hide(elem) {
-            gsap.set(elem, { autoAlpha: 0 });
+        // 2. LOGIN & REDIRECTION LOGIC
+function login() {
+    const role = document.getElementById("currentRole").value;
+    const email = document.getElementById("username").value;
+    const notification = document.getElementById("successNotification");
+    const message = document.getElementById("successMessage");
+    
+    // 1. Show the success UI
+    if (notification) notification.style.display = "flex";
+    if (message) message.textContent = `Welcome! Opening ${role} portal...`;
+    
+    // 2. Save session data
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("userName", email.split('@')[0]);
+
+    // 3. STRICT REDIRECTS
+    setTimeout(() => {
+        if (role === 'clinician') {
+            window.location.href = "clinician_home.html";
+        } else {
+            // For patients, redirecting to home or analysis
+            window.location.href = "patient_home.html";
+        }
+    }, 1500);
+}
+
+        function signup() {
+            alert("Redirecting to registration page...");
+            // window.location.href = "register.html";
         }
 
+        // 3. GSAP ANIMATION
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
-            gsap.utils.toArray(".gs_reveal_fromLeft").forEach(function (elem) {
-                hide(elem);
-                ScrollTrigger.create({
-                    trigger: elem,
-                    onEnter: function () { animateFrom(elem) },
-                    onEnterBack: function () { animateFrom(elem, -1) },
-                    onLeave: function () { hide(elem) }
-                });
-            });
+
+            const loginBox = document.querySelector(".gs_reveal_fromLeft");
+            gsap.fromTo(loginBox,
+                { x: -50, autoAlpha: 0 },
+                {
+                    duration: 1,
+                    x: 0,
+                    autoAlpha: 1,
+                    ease: "power2.out"
+                }
+            );
         });
     </script>
-
-    <script src="auth.js"></script>
 </body>
-
 </html>

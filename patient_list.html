@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuantiFlex | Clinical Queue</title>
+    
+    <script>
+        (function() {
+            const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+            const userRole = localStorage.getItem("userRole");
+            if (!isLoggedIn || userRole !== "clinician") {
+                window.location.replace("login.html");
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .list-container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
+        
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .patient-table-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead { background: #2c3e50; color: white; }
+        th, td { padding: 18px 20px; border-bottom: 1px solid #eee; }
+
+        .initials-circle {
+            width: 40px; height: 40px; background: #4d82ad; color: white;
+            border-radius: 50%; display: inline-flex; align-items: center;
+            justify-content: center; margin-right: 12px; font-weight: bold;
+        }
+
+        .condition-tag {
+            background: #f0f7ff; color: #4d82ad; padding: 5px 12px;
+            border-radius: 15px; font-size: 12px; font-weight: 600;
+            border: 1px solid #d1e3f5;
+        }
+
+        .empty-state {
+            padding: 100px 20px; text-align: center; color: #95a5a6;
+            background: #fafafa;
+        }
+
+        .empty-state i { font-size: 3rem; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.7;">PRO</span></h1>
+            <nav>
+                <ul>
+                    <li><a href="clinician_home.html">Dashboard</a></li>
+                    <li><a href="patient_list.html" class="active">Patient Queue</a></li>
+                    <li><a href="analysis.html">Analytics</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="list-container">
+        <div class="list-header">
+            <h2>Active Patient Population</h2>
+            <div id="stats-counter" style="color: #4d82ad; font-weight: bold;">0 Patients Enrolled</div>
+        </div>
+
+        <div class="patient-table-wrapper">
+            <table id="patientTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Status / Condition</th>
+                        <th>Email</th>
+                        <th>Blood Type</th>
+                        <th>Height/Weight</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="patientListBody">
+                    </tbody>
+            </table>
+
+            <div id="noDataMessage" class="empty-state">
+                <span style="font-size: 40px; display: block;">📋</span>
+                <p><strong>No patient records found in local storage.</strong></p>
+                <p style="font-size: 0.9rem;">To see data here, log in as a patient and save a profile in <em>demographics.html</em>.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const listBody = document.getElementById('patientListBody');
+            const table = document.getElementById('patientTable');
+            const emptyMsg = document.getElementById('noDataMessage');
+            const counter = document.getElementById('stats-counter');
+
+            // 1. Get the real data from LocalStorage
+            const savedData = localStorage.getItem('patientProfile');
+            
+            if (savedData) {
+                try {
+                    const patient = JSON.parse(savedData);
+                    
+                    // Validation: Only show if they actually entered a name
+                    if (patient.firstName && patient.lastName) {
+                        table.style.display = 'table';
+                        emptyMsg.style.display = 'none';
+                        counter.textContent = "1 Patient Enrolled";
+
+                        const initials = (patient.firstName[0] + patient.lastName[0]).toUpperCase();
+                        const fullName = `${patient.firstName} ${patient.lastName}`;
+                        
+                        // Create Row
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="display: flex; align-items: center;">
+                                <div class="initials-circle">${initials}</div>
+                                <strong>${fullName}</strong>
+                            </td>
+                            <td><span class="condition-tag">${patient.primaryCondition || 'Active Rehab'}</span></td>
+                            <td>${patient.email || '--'}</td>
+                            <td>${patient.bloodType || '--'}</td>
+                            <td>${patient.height ? patient.height + 'cm' : '--'} / ${patient.weight ? patient.weight + 'kg' : '--'}</td>
+                            <td style="color: #7f8c8d; font-size: 12px;">${new Date().toLocaleDateString()}</td>
+                        `;
+                        listBody.appendChild(row);
+                    }
+                } catch (e) {
+                    console.error("Error parsing patient data", e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
