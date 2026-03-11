@@ -19,12 +19,40 @@
             align-items: flex-start;
         }
 
-        .exercise-image {
+        .exercise-thumb {
             width: 150px;
             height: 150px;
-            object-fit: cover;
+            flex-shrink: 0;
             border-radius: 8px;
-            background: #f1f5f9;
+            overflow: hidden;
+            background: linear-gradient(135deg, #edf2f7, #dce8f3);
+        }
+
+        .exercise-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .exercise-thumb-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 2.4rem;
+            color: #4d82ad;
+        }
+
+        .exercise-thumb-fallback small {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7aa8c9;
         }
 
         .exercise-info {
@@ -40,9 +68,27 @@
         .exercise-meta {
             display: flex;
             gap: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: bold;
             color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .exercise-directions {
+            margin-bottom: 12px;
+            font-size: 0.93rem;
+            color: #444;
+            line-height: 1.65;
+        }
+
+        .exercise-directions strong {
+            display: block;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .exercise-directions p {
+            margin: 0;
         }
 
         .exercise-tips {
@@ -50,8 +96,39 @@
             padding: 10px 15px;
             border-left: 4px solid #fcc419;
             border-radius: 4px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #495057;
+        }
+
+        .exercise-video {
+            margin-top: 14px;
+        }
+
+        .exercise-video .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise-video .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        .exercise-video label {
+            display: block;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
         }
 
         /* Chat component styles */
@@ -64,13 +141,11 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            display: flex;
+            display: none;
             flex-direction: column;
             overflow: hidden;
             border: 1px solid #e1e8ed;
             z-index: 1000;
-            display: none;
-            /* Hidden by default */
         }
 
         #chat-header {
@@ -92,14 +167,23 @@
             flex-direction: column;
         }
 
+        .message {
+            margin-bottom: 12px;
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
         .message.patient {
             background: #4d82ad;
             color: white;
             align-self: flex-end;
             margin-left: auto;
             border-bottom-right-radius: 2px;
-            border: 1px solid #3a6d96;
-            box-shadow: 0 2px 8px rgba(77, 130, 173, 0.3);
         }
 
         .message.clinician {
@@ -108,19 +192,18 @@
             align-self: flex-start;
             border: 1px solid #cbd5e1;
             border-bottom-left-radius: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* Ensure text boxes look distinct */
-        .message {
-            margin-bottom: 15px;
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            animation: fadeIn 0.3s ease;
-            position: relative;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         #chat-toggle {
@@ -146,30 +229,6 @@
             transform: scale(1.1) rotate(5deg);
         }
 
-        /* Message bubble refined styles - Patient View */
-        .message {
-            margin-bottom: 12px;
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         #chat-input-area {
             padding: 15px;
             border-top: 1px solid #e1e8ed;
@@ -179,10 +238,11 @@
 
         #chat-input {
             flex: 1;
-            padding: 8px;
+            padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             outline: none;
+            font-family: inherit;
         }
 
         #send-btn {
@@ -201,7 +261,7 @@
                 flex-direction: column;
             }
 
-            .exercise-image {
+            .exercise-thumb {
                 width: 100%;
                 height: 200px;
             }
@@ -231,23 +291,21 @@
         <h2 style="text-align: center; margin-bottom: 40px; color: #2c3e50;">Active Rehabilitation Plan</h2>
 
         <div id="exercises-container">
-            <!-- Exercises will be loaded here -->
             <p style="text-align: center; color: #666;">Loading your exercises...</p>
         </div>
 
-        <!-- Chat Box -->
+        <!-- Chat Toggle -->
         <div id="chat-toggle" onclick="toggleChat()">
             <span>💬</span>
         </div>
 
+        <!-- Chat Box -->
         <div id="chat-container">
             <div id="chat-header">
                 Chat with Clinician
                 <span style="font-size: 1.2rem; cursor: pointer;" onclick="toggleChat()">×</span>
             </div>
-            <div id="chat-messages">
-                <!-- Messages will be loaded here -->
-            </div>
+            <div id="chat-messages"></div>
             <div id="chat-input-area">
                 <input type="text" id="chat-input" placeholder="Type a message...">
                 <button id="send-btn" onclick="sendMessage()">Send</button>
@@ -261,59 +319,233 @@
 
     <script>
         const API_BASE_URL = 'http://127.0.0.1:5001';
-        const PATIENT_ID = 'p101'; // Mocking current patient ID
+        const PATIENT_ID = 'p101';
 
+        // Knee Rehabilitation Exercises ────────────────────────
+        const FALLBACK_EXERCISES = [
+            {
+                name: 'Quad Sets',
+                sets: 3, reps: 10,
+                frequency: '3–4 times/day',
+                directions: 'Sit or lie on your back with your leg straight on a flat surface. Tighten the muscle on top of your thigh (quadriceps) by pressing the back of your knee down into the floor or bed. Hold for 5 seconds, then relax completely.',
+                tips: 'Breathe normally throughout. You should feel the muscle firm up but not feel pain. This can be done throughout the day while resting.',
+                image: 'exercises/quad-sets.jpg',
+                video: 'https://www.youtube.com/watch?v=9EhHFemc8WQ'
+            },
+            {
+                name: 'Straight Leg Raises',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Lie on your back. Bend the uninvolved knee with your foot flat on the floor. Tighten your quad on the involved leg (perform a quad set), then lift the straight leg to the height of the opposite bent knee — about 12 inches. Hold for 3 seconds, then slowly lower.',
+                tips: 'Keep your knee completely straight throughout the entire lift and lowering phase. Do not let it bend.',
+                image: 'exercises/straight-leg-raises.jpg',
+                video: 'https://www.youtube.com/watch?v=4UBnTSqRlD0'
+            },
+            {
+                name: 'Heel Slides',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Lie on your back with both legs straight. Slowly slide your heel toward your buttock by bending the knee as far as comfortable. Hold for 5 seconds, then slowly slide back to the starting position.',
+                tips: 'Keep your heel in contact with the surface at all times. Do not force the bend — work within a comfortable range and aim to increase it gradually each session.',
+                image: 'exercises/heel-slides.jpg',
+                video: 'https://www.youtube.com/watch?v=dPf8_MgS1aI'
+            },
+            {
+                name: 'Short Arc Quads',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Lie on your back. Place a rolled towel or firm bolster under your knee so it rests at approximately 60°. Tighten your quad and slowly lift your foot until the leg is fully straight. Hold for 5 seconds, then slowly lower.',
+                tips: 'Keep your thigh resting on the bolster at all times — do not lift the thigh. Focus on achieving full, terminal knee extension at the top.',
+                image: 'exercises/short-arc-quads.jpg',
+                video: 'https://www.youtube.com/watch?v=3f1k1huhRgI'
+            },
+            {
+                name: 'Ankle Pumps',
+                sets: 3, reps: 20,
+                frequency: '3–4 times/day',
+                directions: 'Lie or sit with your leg straight. Slowly pull your toes up toward your shin as far as possible (dorsiflexion), hold 2 seconds, then point your toes downward (plantarflexion), hold 2 seconds. Alternate in a slow, rhythmic pattern.',
+                tips: 'This exercise promotes circulation and helps reduce swelling. Perform it frequently — especially during the first several weeks after surgery or injury.',
+                image: 'exercises/ankle-pumps.jpg',
+                video: 'https://www.youtube.com/watch?v=O92TCCmEqbk'
+            },
+            {
+                name: 'Prone Knee Flexion',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Lie face down on a flat surface with your legs straight. Slowly bend your involved knee, bringing your heel toward your buttock as far as comfortable. Hold for 3 seconds, then slowly lower back to the starting position.',
+                tips: 'Keep your hip flat against the surface throughout — do not allow it to rise as you bend the knee.',
+                image: 'exercises/prone-knee-flexion.jpg',
+                video: 'https://www.youtube.com/watch?v=_LP6X9J68H0'
+            },
+            {
+                name: 'Terminal Knee Extension',
+                sets: 3, reps: 15,
+                frequency: '3 times/day',
+                directions: 'Secure a resistance band to a fixed anchor at knee height. Loop the other end around the back of your involved knee. Face the anchor and start with the knee slightly bent. Tighten your quad and fully straighten the knee. Hold 2 seconds, then slowly return.',
+                tips: 'Stand tall with your core engaged. Control the return movement — do not let the band snap your knee back into flexion.',
+                image: 'exercises/terminal-knee-extension.jpg',
+                video: 'https://www.youtube.com/watch?v=uUugNQxirt0'
+            },
+            {
+                name: 'Standing Hip Abduction',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Stand beside a wall or counter and hold it lightly for balance. Slowly lift your involved leg straight out to the side, keeping your toes pointing forward and your knee straight. Hold for 3 seconds, then slowly lower.',
+                tips: 'Do not lean your trunk toward the standing leg. Keep your back straight and movements slow and controlled.',
+                image: 'exercises/hip-abduction.jpg',
+                video: 'https://www.youtube.com/watch?v=xUxWsvWj3Go'
+
+            },
+            {
+                name: 'Heel Raises',
+                sets: 3, reps: 10,
+                frequency: '3 times/day',
+                directions: 'Stand with feet hip-width apart, lightly holding a stable surface for balance. Rise up onto the balls of both feet as high as comfortable. Hold for 3 seconds, then slowly lower your heels back to the floor.',
+                tips: 'Control the lowering phase — this eccentric portion builds significant calf strength. As you progress, your therapist may advance you to single-leg heel raises.',
+                image: 'exercises/heel-raises.jpg',
+                video: 'https://www.youtube.com/watch?v=cqDMYUaIXvw'
+            },
+            {
+                name: 'Wall Squats',
+                sets: 3, reps: 10,
+                frequency: '3 times/week',
+                directions: 'Stand with your back flat against a wall, feet shoulder-width apart and placed about 12 inches in front of the wall. Slowly slide down until your knees are bent at 45–60°. Hold for 5–10 seconds, then slide back up to standing.',
+                tips: 'Do not allow your knees to bend past 90°. Keep knees aligned over your second toes and do not let them cave inward.',
+                image: 'exercises/wall-squats.jpg',
+                video: 'https://www.youtube.com/watch?v=3J99J5NxNSQ'
+            },
+            {
+                name: 'Step-Ups',
+                sets: 3, reps: 10,
+                frequency: '3 times/week',
+                directions: 'Stand in front of a 4–6 inch step. Step up with the involved leg and place your whole foot on the step. Bring the other foot up, then step back down with the uninvolved leg first. The involved leg should do the majority of the work.',
+                tips: 'Keep your knee tracking over your second toe during the step. Use a handrail for balance if needed, especially early in rehabilitation.',
+                image: 'exercises/step-ups.jpg',
+                video: 'https://www.youtube.com/watch?v=xOcpKS8APxo'
+            },
+            {
+                name: 'Hamstring Curls (Standing)',
+                sets: 3, reps: 10,
+                frequency: '3 times/week',
+                directions: 'Stand holding a wall or counter for support. Slowly bend your involved knee, curling your heel toward your buttock as far as comfortable. Hold for 3 seconds, then slowly lower your foot back to the floor.',
+                tips: 'Keep both thighs even and parallel — do not let the involved hip hike up as you curl. Increase range of motion gradually.',
+                image: 'exercises/hamstring-curls.jpg',
+                video: 'https://www.youtube.com/watch?v=zRL2TBKc2cc'
+            }
+        ];
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return null;
+            let id = null;
+            try {
+                const u = new URL(url);
+                if (u.hostname.includes('youtu.be')) {
+                    id = u.pathname.slice(1);
+                } else if (u.hostname.includes('youtube.com')) {
+                    id = u.searchParams.get('v');
+                }
+            } catch (e) { return null; }
+            return id ? `https://www.youtube.com/embed/${id}` : null;
+        }
+
+        // ── Exercise Rendering ───────────────────────────────────────────────
+        function renderExercises(exercises) {
+            const container = document.getElementById('exercises-container');
+
+            if (!exercises || exercises.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;">No exercises assigned yet. Check back after your next appointment.</p>';
+                return;
+            }
+
+            container.innerHTML = exercises.map((ex, i) => {
+                const embedUrl = getYouTubeEmbedUrl(ex.video);
+                return `
+                <div class="exercise-card">
+                    <div class="exercise-thumb">
+                        <img src="${ex.image || ''}"
+                             alt="${ex.name}"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="exercise-thumb-fallback" style="display:none;">
+                            <span>🏋️</span>
+                            <small>${ex.name.split(' ').map(w => w[0]).join('').slice(0, 3)}</small>
+                        </div>
+                    </div>
+                    <div class="exercise-info">
+                        <h3>${ex.name}</h3>
+                        <div class="exercise-meta">
+                            <span>📋 ${ex.sets} sets × ${ex.reps} reps</span>
+                            <span>🔁 ${ex.frequency}</span>
+                        </div>
+                        ${ex.directions ? `
+                        <div class="exercise-directions">
+                            <strong>Instructions:</strong>
+                            <p>${ex.directions}</p>
+                        </div>` : ''}
+                        ${ex.tips ? `
+                        <div class="exercise-tips">
+                            <strong>💡 Tip:</strong> ${ex.tips}
+                        </div>` : ''}
+                        ${embedUrl ? `
+                        <div class="exercise-video">
+                            <label>▶ Video Demo</label>
+                            <div class="video-wrapper">
+                                <iframe src="${embedUrl}"
+                                    title="${ex.name} demo"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // ── Plan Loading ─────────────────────────────────────────────────────
         async function loadPlan() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/assignments/${PATIENT_ID}`);
                 const data = await response.json();
-                renderExercises(data.exercises || []);
+                const exercises = data.exercises || [];
+                renderExercises(exercises.length > 0 ? exercises : FALLBACK_EXERCISES);
             } catch (err) {
-                console.error("Error loading plan:", err);
-                document.getElementById('exercises-container').innerHTML = '<p style="text-align: center; color: red;">Failed to load plan. Is the backend running?</p>';
+                console.warn('Backend unavailable, showing sample exercises:', err.message);
+                renderExercises(FALLBACK_EXERCISES);
             }
         }
 
-        function renderExercises(exercises) {
-            const container = document.getElementById('exercises-container');
-            if (exercises.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666;">No exercises assigned yet.</p>';
-                return;
-            }
-
-            container.innerHTML = exercises.map(ex => `
-                <div class="exercise-card">
-                    <img src="${ex.image || 'quad-set-thumb.jpg'}" alt="${ex.name}" class="exercise-image" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
-                    <div class="exercise-info">
-                        <h3>${ex.name}</h3>
-                        <div class="exercise-meta">
-                            <span>Sets: ${ex.sets}</span>
-                            <span>Reps: ${ex.reps}</span>
-                            ${ex.frequency ? `<span>Freq: ${ex.frequency}</span>` : ''}
-                        </div>
-                        <div class="exercise-tips">
-                            <strong>Tip:</strong> ${ex.tips || 'Follow the instructions provided by your clinician.'}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+        // ── Chat ─────────────────────────────────────────────────────────────
+        function toggleChat() {
+            const container = document.getElementById('chat-container');
+            const toggle = document.getElementById('chat-toggle');
+            const isOpen = container.style.display === 'flex';
+            container.style.display = isOpen ? 'none' : 'flex';
+            toggle.style.display = isOpen ? 'flex' : 'none';
+            if (!isOpen) loadMessages();
         }
 
-        // Chat logic
         async function loadMessages() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/messages/${PATIENT_ID}`);
-                const messages = await response.json();
-                const container = document.getElementById('chat-messages');
-                container.innerHTML = messages.map(msg => `
-                    <div class="message ${msg.sender}">
-                        ${msg.text}
-                    </div>
-                `).join('');
-                container.scrollTop = container.scrollHeight;
+                const data = await response.json();
+                displayMessages(data.messages || []);
             } catch (err) {
-                console.error("Error loading messages:", err);
+                console.warn('Could not load messages:', err.message);
             }
+        }
+
+        function displayMessages(messages) {
+            const container = document.getElementById('chat-messages');
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#aaa;font-size:0.85rem;padding:10px 0;">No messages yet.</p>';
+                return;
+            }
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.role === 'patient' ? 'patient' : 'clinician'}">
+                    ${msg.text}
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
         }
 
         async function sendMessage() {
@@ -321,54 +553,32 @@
             const text = input.value.trim();
             if (!text) return;
 
+            input.value = '';
+
+            const container = document.getElementById('chat-messages');
+            const msgEl = document.createElement('div');
+            msgEl.className = 'message patient';
+            msgEl.textContent = text;
+            container.appendChild(msgEl);
+            container.scrollTop = container.scrollHeight;
+
             try {
-                const response = await fetch(`${API_BASE_URL}/api/messages`, {
+                await fetch(`${API_BASE_URL}/api/messages/${PATIENT_ID}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        patientId: PATIENT_ID,
-                        sender: 'patient',
-                        text: text,
-                        timestamp: new Date().toISOString()
-                    })
+                    body: JSON.stringify({ text, role: 'patient' })
                 });
-                const result = await response.json();
-                if (result.success) {
-                    input.value = '';
-                    loadMessages();
-                }
             } catch (err) {
-                console.error("Error sending message:", err);
+                console.warn('Could not send message:', err.message);
             }
         }
 
-        function toggleChat() {
-            const chat = document.getElementById('chat-container');
-            const toggle = document.getElementById('chat-toggle');
-            if (chat.style.display === 'none' || chat.style.display === '') {
-                chat.style.display = 'flex';
-                toggle.style.display = 'none';
-            } else {
-                chat.style.display = 'none';
-                toggle.style.display = 'flex';
-            }
-        }
-
-        // Toggle chat visibility if needed
-        // For now it's always visible on this page
-
-        // Initial load
-        window.onload = () => {
-            loadPlan();
-            loadMessages();
-            // Poll for new messages every 5 seconds
-            setInterval(loadMessages, 5000);
-        };
-
-        // Enter key for chat
-        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+        // Enter key to send
+        document.getElementById('chat-input').addEventListener('keypress', e => {
             if (e.key === 'Enter') sendMessage();
         });
+
+        document.addEventListener('DOMContentLoaded', loadPlan);
     </script>
 </body>
 
