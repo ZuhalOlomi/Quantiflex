@@ -561,9 +561,9 @@
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
-                <li><a href="home.html">Home</a></li>
-                <li><a href="clinician_dashboard.html">Dashboard</a></li>
-                <li><a href="assign_recovery.html" class="active">Assign Recovery</a></li>
+                <li><a href="/index">Home</a></li>
+                <li><a href="/clinician_dashboard">Dashboard</a></li>
+                <li><a href="/assign_recovery" class="active">Assign Recovery</a></li>
             </ul>
         </nav>
     </header>
@@ -685,10 +685,10 @@
     <footer>
         <p>© 2025-2026 QuantiFlex | Clinical Rehabilitation Technology</p>
         <p style="margin-top:10px;font-size:0.9rem;">
-            <a href="about.html" style="color:#4d82ad;text-decoration:none;">About</a> |
-            <a href="video.html" style="color:#4d82ad;text-decoration:none;">Video Demo</a> |
-            <a href="login.html" style="color:#4d82ad;text-decoration:none;">Login</a> |
-            <a href="recovery.html" style="color:#4d82ad;text-decoration:none;">Recovery</a>
+            <a href="/about" style="color:#4d82ad;text-decoration:none;">About</a> |
+            <a href="/video" style="color:#4d82ad;text-decoration:none;">Video Demo</a> |
+            <a href="/login" style="color:#4d82ad;text-decoration:none;">Login</a> |
+            <a href="/recovery" style="color:#4d82ad;text-decoration:none;">Recovery</a>
         </p>
     </footer>
 
@@ -876,7 +876,7 @@
             const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
             const userRole = localStorage.getItem('userRole');
             if (!isLoggedIn || userRole !== 'clinician') {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
                 return;
             }
             renderLibrary(DEFAULT_EXERCISES);
