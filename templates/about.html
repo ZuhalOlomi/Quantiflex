@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UTBiome Knee Sleeve - About Us</title>
+    <title>QuantiFlex — About Us</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 </head>
 
@@ -65,8 +64,7 @@
                         engineers, and experts in data analytics.
                     </p><br>
                     <div class="group-photo-container gs_reveal gs_reveal_fromRight">
-                        <img src="team_photo.jpg" alt="UTBiome Team Photo" class="team-img" />
-                    </div>
+<img src="{{ url_for('static', filename='team_photo.jpg') }}">                    </div>
 
                 </div>
             </div>

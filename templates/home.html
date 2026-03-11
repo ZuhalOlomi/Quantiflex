@@ -5,8 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UTBiome Knee Sleeve - Rehabilitation Tracking</title>
-    <link rel="stylesheet" href="style.css" />
-    <!-- GSAP Animations -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <!-- GSAP Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     <script src="auth.js"></script>
@@ -262,8 +261,6 @@
 
     </div>
 
-    <script src="app.js"></script>
-</body>
-
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </html>

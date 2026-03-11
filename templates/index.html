@@ -5,8 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex - Rehabilitation Tracking</title>
-    <link rel="stylesheet" href="style.css" />
-    
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     
@@ -108,7 +107,7 @@
     <main>
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted loop playsinline preload="auto">
-                <source src="knee_extension.mov" type="video/mp4">
+                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal" style="text-align: center;">

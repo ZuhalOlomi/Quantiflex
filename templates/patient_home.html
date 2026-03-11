@@ -16,8 +16,7 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     
     <style>
@@ -146,8 +145,7 @@
 
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted playsinline preload="auto">
-                <source src="knee_extension.mov" type="video/mp4">
-            </video>
+<video src="{{ url_for('static', filename='knee_extension.mov') }}"></video>            </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
                 <h2>Streamline Knee Rehabilitation</h2>
