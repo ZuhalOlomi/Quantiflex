@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTBiome — Analysis</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .page-wrap { max-width: 1400px; width: 95%; margin: 0 auto; }
+
+        /* ── Top toolbar ── */
+        .toolbar {
+            display: flex;
+            align-items: stretch;
+            background: #f8fafc;
+            border: 1.5px solid #e1e8ed;
+            border-radius: 12px;
+            margin: 18px 0 20px 0;
+            overflow: hidden;
+        }
+        .toolbar-left  { display: flex; align-items: center; gap: 10px; padding: 12px 20px; flex: 1; }
+        .toolbar-right { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-left: 1.5px solid #e1e8ed; }
+        .btn {
+            height: 34px;
+            padding: 0 16px;
+            border-radius: 7px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            transition: opacity 0.15s, box-shadow 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .btn-record   { background: #22c55e; color: white; border-color: #22c55e; }
+        .btn-ghost    { background: white; color: #475569; border-color: #e1e8ed; }
+        .btn-danger   { background: white; color: #ef4444; border-color: #fecaca; }
+        .btn-download { background: white; color: #4d82ad; border-color: #c8d8e8; }
+        .btn-upload   { background: white; color: #475569; border-color: #e1e8ed; }
+        .btn-clear    { background: white; color: #ef4444; border-color: #fecaca; }
+        .btn:hover    { opacity: 0.82; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .toolbar-divider { width: 1.5px; height: 20px; background: #e1e8ed; flex-shrink: 0; align-self: center; }
+
+        /* ── Charts ── */
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .chart-header {
+            padding: 13px 18px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e1e8ed;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chart-header-left { display: flex; align-items: center; gap: 8px; }
+        .chart-body-tall   { padding: 16px; height: 340px; }
+        .chart-body-mid    { padding: 16px; height: 220px; }
+        .chart-body-trend  { padding: 16px; height: 200px; }
+        .imu-badge {
+            font-size: 0.7em; font-weight: 700;
+            padding: 2px 8px; border-radius: 20px;
+        }
+        .imu-badge-thigh { background: rgba(46,204,113,0.15); color: #27ae60; }
+        .imu-badge-shank { background: rgba(155,89,182,0.15); color: #8e44ad; }
+
+        /* ── Ratio legend ── */
+        .ratio-legend { display: flex; gap: 14px; font-size: 0.76em; }
+        .ratio-legend span { display: flex; align-items: center; gap: 5px; }
+        .ratio-legend i { display:inline-block;width:12px;height:12px;border-radius:2px; }
+
+        /* ── Replay controls ── */
+        #replayScrollWrap {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82em;
+            color: #64748b;
+            padding: 10px 4px;
+            margin-bottom: 16px;
+            border-bottom: 1.5px solid #e1e8ed;
+        }
+        #replayScrollWrap.visible { display: flex; }
+        #replayScrollBar { flex: 1; accent-color: #4d82ad; }
+
+        .exercise-select {
+            padding: 6px 10px;
+            border-radius: 7px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #333;
+            background: white;
+            cursor: pointer;
+        }
+        .exercise-select:focus { outline: 2px solid #4d82ad; border-color: #4d82ad; }
+
+        .exercise-tag {
+            display: inline-block;
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: #eef3f8;
+            color: #4d82ad;
+            white-space: nowrap;
+        }
+
+        /* ── Two-col grid ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+        /* ── Trend cards ── */
+        .trend-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+        }
+        .trend-card-header {
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .trend-card-header h4 { margin: 0; font-size: 0.88em; color: #333; }
+        .trend-stat-row {
+            display: flex;
+            padding: 10px 16px;
+            background: #fafbfc;
+            border-top: 1px solid #f0f0f0;
+            gap: 10px;
+        }
+        .trend-stat { flex: 1; text-align: center; }
+        .trend-stat-label { font-size: 0.68em; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+        .trend-stat-value { font-size: 1em; font-weight: 700; margin-top: 2px; }
+        .trend-badge { font-size: 0.72em; padding: 2px 9px; border-radius: 20px; font-weight: 600; }
+        .trend-up   { background: rgba(39,174,96,0.12);   color: #27ae60; }
+        .trend-down { background: rgba(231,76,60,0.12);   color: #e74c3c; }
+        .trend-flat { background: rgba(149,165,166,0.15); color: #7f8c8d; }
+
+        /* ── Storage bar ── */
+        .storage-bar-wrap {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.76em; color: #bbb; margin: 0 0 16px 0;
+        }
+        .storage-bar-bg { flex:1; height:3px; background:#eee; border-radius:2px; overflow:hidden; }
+        .storage-bar-fill { height:100%; border-radius:2px; background:#4d82ad; transition:width 0.4s; }
+
+        /* ── History table ── */
+        .history-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        .history-table { width:100%; border-collapse:collapse; }
+        .history-table th, .history-table td { text-align:left; padding:11px 14px; border-bottom:1px solid #f0f0f0; font-size:0.88em; }
+        .history-table thead tr { background:#f8fafc; }
+        .history-table tbody tr:hover { background:#f8fafc; cursor:pointer; }
+        .history-table tbody tr.selected { background:#e8f4fd; }
+        .replay-btn {
+            font-size: 0.74em; padding: 3px 10px;
+            border-radius: 5px; border: 1px solid #4d82ad;
+            background: white; color: #4d82ad; cursor: pointer; font-weight: 600;
+        }
+        .replay-btn:hover { background:#4d82ad; color:white; }
+
+        .section-title {
+            font-size: 1em; font-weight: 700; color: #333;
+            margin: 24px 0 14px 0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .section-title span { font-size:0.78em; color:#aaa; font-weight:400; }
+
+        @media (max-width: 860px) {
+            .two-col { grid-template-columns: 1fr; }
+            .ratio-legend { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>UTBiome Knee Sleeve</h1>
+        <nav><ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="record.html">Record</a></li>
+            <li><a href="analysis.html" class="active">Analysis</a></li>
+            <li><a href="video.html">Video Demo</a></li>
+        </ul></nav>
+    </header>
+
+    <main>
+        <section class="analysis-hero">
+            <h2>Patient Progress Analytics</h2>
+            <p>Session history, trends, and detailed muscle ratio analysis</p>
+        </section>
+
+        <div class="page-wrap">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <a href="record.html" class="btn btn-record">▶ Record</a>
+                    <div class="toolbar-divider"></div>
+                    <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
+                    <button class="btn btn-upload" onclick="document.getElementById('csvFileInput').click()">↑ Upload CSV</button>
+                    <button id="downloadCsvBtn" class="btn btn-download" style="display:none;">↓ Download CSV</button>
+                </div>
+                <div class="toolbar-right">
+                    <button id="clearHistoryBtn" class="btn btn-clear">✕ Clear History</button>
+                </div>
+            </div>
+
+            <!-- Replay controls (hidden until replay) -->
+            <div id="replayScrollWrap">
+                <button id="replayRestartBtn" title="Restart" style="background:white;border:1.5px solid #e1e8ed;border-radius:6px;cursor:pointer;font-size:0.95em;padding:0 10px;height:30px;color:#475569;">⏮</button>
+                <button id="replayPlayPauseBtn" title="Play/Pause" style="background:#4d82ad;border:none;border-radius:6px;cursor:pointer;font-size:0.83em;height:30px;padding:0 14px;color:white;font-weight:700;font-family:inherit;">⏸ Pause</button>
+                <input id="replayScrollBar" type="range" min="0" max="100" value="0" style="flex:1;" />
+                <span id="replayScrollLabel" style="min-width:120px;text-align:right;font-size:0.82em;color:#777;">—</span>
+                <div style="display:flex; align-items:center; gap:8px; margin-left:12px; border-left:1px solid #eee; padding-left:12px; white-space:nowrap;">
+                    <span style="font-size:0.85em;color:#777;">Speed:</span>
+                    <input id="speedSlider" type="range" min="0.5" max="4" step="0.5" value="1" style="width:80px; accent-color:#4d82ad;" />
+                    <span id="speedLabel" style="min-width:30px; font-weight:600; color:#4d82ad;">1×</span>
+                </div>
+            </div>
+
+            <!-- EMG + IMU side by side -->
+            <div class="two-col">
+                <div class="chart-card">
+                    <div class="chart-header"><div class="chart-header-left">EMG Feed</div></div>
+                    <div class="chart-body-tall"><canvas id="emgChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-header-left">
+                            IMU Feed
+                            <span class="imu-badge imu-badge-thigh">Upper</span>
+                            <span class="imu-badge imu-badge-shank">Lower</span>
+                        </div>
+                    </div>
+                    <div class="chart-body-tall"><canvas id="imuChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Muscle ratio (full width) -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-header-left">Muscle Ratio (M1 / M2)</div>
+                    <div class="ratio-legend">
+                        <span><i style="background:rgba(231,76,60,0.3)"></i>Imbalanced</span>
+                        <span><i style="background:rgba(241,196,15,0.35)"></i>Borderline</span>
+                        <span><i style="background:rgba(39,174,96,0.25)"></i>Healthy (0.75–2.0)</span>
+                    </div>
+                </div>
+                <div class="chart-body-mid"><canvas id="ratioChart"></canvas></div>
+            </div>
+
+            <!-- Trends -->
+            <div class="section-title" style="justify-content:space-between; align-items:center;">
+                <span>📈 Session Trends <span id="trendSessionCount"></span></span>
+                <div style="display:flex; align-items:center; gap:8px; font-size:0.85em; font-weight:400;">
+                    <span style="color:#777;">Filter by exercise:</span>
+                    <select id="exerciseFilter" class="exercise-select">
+                        <option value="all">All Exercises</option>
+                    </select>
+                </div>
+            </div>
+            <div class="two-col" style="margin-bottom:18px;">
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Avg Knee Flexion per Session</h4>
+                        <span id="flexTrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="chart-body-trend"><canvas id="flexTrendChart"></canvas></div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat"><div class="trend-stat-label">Best</div><div class="trend-stat-value" id="flexBest" style="color:#e74c3c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Latest</div><div class="trend-stat-value" id="flexLatest" style="color:#e74c3c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">All-time avg</div><div class="trend-stat-value" id="flexAvgAll" style="color:#e74c3c">—°</div></div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Peak Knee Flexion per Session</h4>
+                        <span id="peakFlexTrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="chart-body-trend"><canvas id="peakFlexTrendChart"></canvas></div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat"><div class="trend-stat-label">Best</div><div class="trend-stat-value" id="peakFlexBest" style="color:#ad1c1c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Latest</div><div class="trend-stat-value" id="peakFlexLatest" style="color:#ad1c1c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Sessions</div><div class="trend-stat-value" id="peakFlexCount" style="color:#ad1c1c">—</div></div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Muscle Intensity — Ch1 Avg</h4>
+                        <span id="emg1TrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="chart-body-trend"><canvas id="emg1TrendChart"></canvas></div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat"><div class="trend-stat-label">Peak ever</div><div class="trend-stat-value" id="emg1PeakEver" style="color:#4d82ad">—</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Latest avg</div><div class="trend-stat-value" id="emg1Latest" style="color:#4d82ad">—</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Contractions</div><div class="trend-stat-value" id="emg1Contractions" style="color:#4d82ad">—</div></div>
+                    </div>
+                </div>
+                <div class="trend-card">
+                    <div class="trend-card-header">
+                        <h4>Muscle Intensity — Ch2 Avg</h4>
+                        <span id="emg2TrendBadge" class="trend-badge trend-flat">—</span>
+                    </div>
+                    <div class="chart-body-trend"><canvas id="emg2TrendChart"></canvas></div>
+                    <div class="trend-stat-row">
+                        <div class="trend-stat"><div class="trend-stat-label">Peak ever</div><div class="trend-stat-value" id="emg2PeakEver" style="color:#e67e22">—</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Latest avg</div><div class="trend-stat-value" id="emg2Latest" style="color:#e67e22">—</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Contractions</div><div class="trend-stat-value" id="emg2Contractions" style="color:#e67e22">—</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storage bar -->
+            <div class="storage-bar-wrap">
+                <span>Storage:</span>
+                <div class="storage-bar-bg"><div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div></div>
+                <span id="storageLabel">0 KB</span>
+            </div>
+
+            <!-- Session history -->
+            <div class="section-title">
+                Patient Session History
+                <span>(click row or Replay to view session)</span>
+            </div>
+            <div class="history-card">
+                <table class="history-table">
+                    <thead><tr>
+                        <th>Date</th>
+                        <th>Exercise</th>
+                        <th>Peak (Ch1/Ch2)</th>
+                        <th>Avg (Ch1/Ch2)</th>
+                        <th>Contractions</th>
+                        <th>Avg Knee Flex</th>
+                        <th>Peak Knee Flex</th>
+                        <th>Duration</th>
+                        <th></th>
+                    </tr></thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const csvFileInput    = document.getElementById('csvFileInput');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const downloadCsvBtn  = document.getElementById('downloadCsvBtn');
+
+        function setupDownload(session) {
+            downloadCsvBtn.style.display = 'block';
+            downloadCsvBtn.onclick = () => {
+                let csv = 'data:text/csv;charset=utf-8,Timestamp,EMG_Ch1,EMG_Ch2,IMU1_deg,IMU2_deg\n';
+                session.samples.forEach(s => { csv += `${s.t},${s.v1},${s.v2},${s.i1},${s.i2}\n`; });
+                const exEntry = loadExercises().find(e => e.id === session.exercise);
+                const exSlug = (exEntry ? exEntry.label.replace(/[^\w]+/g,'_').replace(/^_+|_+$/g,'') : 'session').toLowerCase();
+                const dateSlug = (session.date ? new Date(session.date) : new Date()).toISOString().slice(0,10);
+                const defaultName = `${exSlug}-${dateSlug}-quantiflex`;
+                const name = prompt('Name this file:', defaultName);
+                if (name === null) return;
+                const filename = (name.trim() || defaultName).replace(/\.csv$/i,'') + '.csv';
+                const link = document.createElement('a');
+                link.setAttribute('href', encodeURI(csv));
+                link.setAttribute('download', filename);
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            };
+        }
+        const historyBody     = document.getElementById('historyBody');
+
+        const HISTORY_KEY  = 'utbiome_history';
+        const MAX_SESSIONS = 15;
+        const DOWNSAMPLE_N = 2;
+        const WINDOW       = 150;
+
+        // ── Exercise management ───────────────────────────────────────────
+        const EXERCISES_KEY = 'utbiome_exercises';
+        const DEFAULT_EXERCISES = [
+            {id:'idle',         label:'🧘 Idle / Rest',    deletable:false},
+            {id:'squats',       label:'🏋️ Squats',         deletable:false},
+            {id:'leg_press',    label:'🦵 Leg Press',       deletable:false},
+            {id:'leg_extension',label:'📐 Leg Extension',   deletable:false},
+            {id:'walking',      label:'🚶 Walking',         deletable:false},
+        ];
+
+        function loadExercises() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(EXERCISES_KEY) || 'null');
+                if (saved && saved.length) return saved;
+            } catch(e) {}
+            return DEFAULT_EXERCISES.map(e=>({...e}));
+        }
+
+        function populateFilterSelect() {
+            const sel = document.getElementById('exerciseFilter');
+            const prev = sel.value;
+            sel.innerHTML = '<option value="all">All Exercises</option>';
+            loadExercises().forEach(ex => {
+                const opt = document.createElement('option');
+                opt.value = ex.id; opt.textContent = ex.label;
+                sel.appendChild(opt);
+            });
+            if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+        }
+
+        populateFilterSelect();
+
+        function getExerciseLabel(id) {
+            const ex = loadExercises().find(e => e.id === id);
+            return ex ? ex.label : (id || '—');
+        }
+
+        const RATIO_HEALTHY_LOW  = 0.75;
+        const RATIO_HEALTHY_HIGH = 2.0;
+        const RATIO_BORDER_LOW   = 0.25;
+        const RATIO_BORDER_HIGH  = 2.5;
+
+        // ── Colour helpers ────────────────────────────────────────────────
+        function lerpColor(a,b,t) { return [0,1,2].map(i=>Math.round(a[i]+(b[i]-a[i])*t)); }
+        const CR=[231,76,60], CY=[241,196,15], CG=[39,174,96];
+        function ratioToRgb(v) {
+            if (v===null) return null;
+            const stops=[{at:0,col:CR},{at:RATIO_BORDER_LOW,col:CR},{at:RATIO_HEALTHY_LOW,col:CY},
+                         {at:(RATIO_HEALTHY_LOW+RATIO_HEALTHY_HIGH)/2,col:CG},{at:RATIO_HEALTHY_HIGH,col:CY},
+                         {at:RATIO_BORDER_HIGH,col:CR},{at:4,col:CR}];
+            for (let i=1;i<stops.length;i++) {
+                if (v<=stops[i].at) {
+                    const t=(v-stops[i-1].at)/(stops[i].at-stops[i-1].at);
+                    const [r,g,b]=lerpColor(stops[i-1].col,stops[i].col,Math.max(0,Math.min(1,t)));
+                    return `rgb(${r},${g},${b})`;
+                }
+            }
+            return `rgb(${CR.join(',')})`;
+        }
+
+        // ── Health zone plugin ────────────────────────────────────────────
+        // ── Charts ────────────────────────────────────────────────────────
+        const emgChart = new Chart(document.getElementById('emgChart').getContext('2d'),{
+            type:'line',
+            data:{labels:[],datasets:[
+                {label:'Ch1',data:[],borderColor:'#4d82ad',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false},
+                {label:'Ch2',data:[],borderColor:'#e67e22',backgroundColor:'transparent', tension:0.3,pointRadius:0,fill:false}
+            ]},
+            options:{responsive:true,maintainAspectRatio:false,animation:false,
+                plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}},
+                scales:{y:{beginAtZero:true,max:4095,title:{display:true,text:'Amplitude'}},x:{display:false}}}
+        });
+
+        const imuChart = new Chart(document.getElementById('imuChart').getContext('2d'),{
+            type:'line',
+            data:{labels:[],datasets:[
+                {label:'Thigh (°)',data:[],borderColor:'rgba(46,204,113,0.7)',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,4]},
+                {label:'Shin (°)', data:[],borderColor:'rgba(155,89,182,0.7)',backgroundColor:'transparent',tension:0.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,4]},
+                {label:'Knee Flex (°)',data:[],borderColor:'#e74c3c',backgroundColor:'transparent',tension:0.4,pointRadius:0,fill:false,borderWidth:2.5}
+            ]},
+            options:{responsive:true,maintainAspectRatio:false,animation:false,
+                plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}},
+                scales:{y:{suggestedMin:-10,suggestedMax:120,title:{display:true,text:'Degrees (°)'}},x:{display:false}}}
+        });
+
+        const ratioChart = new Chart(document.getElementById('ratioChart').getContext('2d'),{
+            type:'line',
+            data:{labels:[],datasets:[{
+                label:'M1/M2',data:[],borderColor:'#27ae60',backgroundColor:'transparent',
+                tension:0.4,pointRadius:0,fill:false,borderWidth:3,
+                segment:{borderColor:ctx=>{const v=(ctx.p0.parsed.y+ctx.p1.parsed.y)/2;return ratioToRgb(v)||'transparent';}},
+                spanGaps:false
+            }]},
+            options:{responsive:true,maintainAspectRatio:false,animation:false,
+                plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{
+                    const v=ctx.parsed.y;if(v===null)return null;
+                    const z=v<RATIO_BORDER_LOW?'🔴 Imbalanced(low)':v<RATIO_HEALTHY_LOW?'🟡 Borderline(low)':v<=RATIO_HEALTHY_HIGH?'🟢 Healthy':v<=RATIO_BORDER_HIGH?'🟡 Borderline(high)':'🔴 Imbalanced(high)';
+                    return ` Ratio: ${v.toFixed(2)}  ${z}`;
+                }}}},
+                scales:{y:{min:0,max:4,title:{display:true,text:'M1/M2'},ticks:{stepSize:0.5,callback:v=>v.toFixed(1)+'x'},grid:{color:'rgba(0,0,0,0.05)'}},x:{display:false}}}
+        });
+
+        // ── Trend charts ──────────────────────────────────────────────────
+        function makeTrend(id,color,yLabel) {
+            return new Chart(document.getElementById(id).getContext('2d'),{
+                type:'line',
+                data:{labels:[],datasets:[{data:[],borderColor:color,
+                    backgroundColor: color + 'BF',
+                    tension:0.35,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:color,fill:true,borderWidth:2.5}]},
+                options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+                    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y.toFixed(1)} ${yLabel}`}}},
+                    scales:{y:{min:0,title:{display:true,text:yLabel},grid:{color:'rgba(0,0,0,0.04)'}},
+                            x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}}}}
+            });
+        }
+        const flexTrendChart     = makeTrend('flexTrendChart',    '#e74c3c','°');
+        const peakFlexTrendChart = makeTrend('peakFlexTrendChart','#ad1c1c','°');
+        const emg1TrendChart     = makeTrend('emg1TrendChart',    '#4d82ad','ADC');
+        const emg2TrendChart     = makeTrend('emg2TrendChart',    '#e67e22','ADC');
+
+        // ── Clear charts (in-place) ───────────────────────────────────────
+        function clearChart(chart) {
+            chart.data.labels.length = 0;
+            chart.data.datasets.forEach(d => { d.data.length = 0; });
+            chart.update('none');
+        }
+
+        // ── History helpers ───────────────────────────────────────────────
+        function loadHistory() { try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');}catch(e){return [];} }
+        function saveHistory(h){ localStorage.setItem(HISTORY_KEY,JSON.stringify(h)); }
+
+        // ── Storage bar ───────────────────────────────────────────────────
+        function updateStorageBar() {
+            const raw=(localStorage.getItem(HISTORY_KEY)||'[]');
+            const kb=(new Blob([raw]).size/1024).toFixed(1);
+            const pct=Math.min(kb/5120*100,100);
+            document.getElementById('storageBarFill').style.width=pct+'%';
+            document.getElementById('storageLabel').textContent=`${kb} KB / ~5 MB`;
+            document.getElementById('storageBarFill').style.background=pct>80?'#e74c3c':pct>60?'#f39c12':'#4d82ad';
+        }
+
+        // ── Trend badge ───────────────────────────────────────────────────
+        function trendBadge(values,elId) {
+            const el=document.getElementById(elId);
+            if(!el||values.length<2){if(el){el.textContent='—';el.className='trend-badge trend-flat';}return;}
+            const last=values[values.length-1],prev=values[values.length-2];
+            const pct=prev===0?0:((last-prev)/prev*100);
+            if(Math.abs(pct)<2){el.textContent='→ Stable';el.className='trend-badge trend-flat';}
+            else if(pct>0){el.textContent=`↑ +${pct.toFixed(1)}%`;el.className='trend-badge trend-up';}
+            else{el.textContent=`↓ ${pct.toFixed(1)}%`;el.className='trend-badge trend-down';}
+        }
+
+        // ── Update trend charts ───────────────────────────────────────────
+        function updateTrends() {
+            const history=loadHistory();
+            const filter = document.getElementById('exerciseFilter') ? document.getElementById('exerciseFilter').value : 'all';
+            const filtered = filter === 'all' ? history : history.filter(s => (s.exercise || 'idle') === filter);
+            const ordered=[...filtered].reverse();
+            const labels  =ordered.map((_,i)=>`S${i+1}`);
+            const avgFlex =ordered.map(s=>parseFloat(s.avgDelta)||0);
+            const peakFlex=ordered.map(s=>parseFloat(s.peakKnee)||0);
+            const avgEmg1 =ordered.map(s=>{const p=(s.avg||'').split('/');return parseInt(p[0])||0;});
+            const avgEmg2 =ordered.map(s=>{const p=(s.avg||'').split('/');return parseInt(p[1])||0;});
+
+            [[flexTrendChart,avgFlex],[peakFlexTrendChart,peakFlex],[emg1TrendChart,avgEmg1],[emg2TrendChart,avgEmg2]]
+            .forEach(([c,d])=>{c.data.labels=labels;c.data.datasets[0].data=d;c.update();});
+
+            trendBadge(avgFlex,'flexTrendBadge'); trendBadge(peakFlex,'peakFlexTrendBadge');
+            trendBadge(avgEmg1,'emg1TrendBadge'); trendBadge(avgEmg2,'emg2TrendBadge');
+
+            document.getElementById('trendSessionCount').textContent=
+                filtered.length ? `${filtered.length} of ${history.length} session${history.length>1?'s':''}`
+                                : (history.length ? `0 sessions match filter` : '');
+
+            if(avgFlex.length){
+                document.getElementById('flexBest').textContent=Math.max(...avgFlex).toFixed(1)+'°';
+                document.getElementById('flexLatest').textContent=avgFlex[avgFlex.length-1].toFixed(1)+'°';
+                document.getElementById('flexAvgAll').textContent=(avgFlex.reduce((a,b)=>a+b,0)/avgFlex.length).toFixed(1)+'°';
+            }
+            if(peakFlex.length){
+                document.getElementById('peakFlexBest').textContent=Math.max(...peakFlex).toFixed(1)+'°';
+                document.getElementById('peakFlexLatest').textContent=peakFlex[peakFlex.length-1].toFixed(1)+'°';
+                document.getElementById('peakFlexCount').textContent=peakFlex.length;
+            }
+            if(avgEmg1.length){
+                const latest=filtered[0];
+                document.getElementById('emg1PeakEver').textContent=Math.max(...ordered.map(s=>{const p=(s.peak||'').split('/');return parseInt(p[0])||0;})).toString();
+                document.getElementById('emg1Latest').textContent=avgEmg1[avgEmg1.length-1].toString();
+                document.getElementById('emg1Contractions').textContent=latest?(latest.flexCount||'—'):'—';
+                document.getElementById('emg2PeakEver').textContent=Math.max(...ordered.map(s=>{const p=(s.peak||'').split('/');return parseInt(p[1])||0;})).toString();
+                document.getElementById('emg2Latest').textContent=avgEmg2[avgEmg2.length-1].toString();
+                document.getElementById('emg2Contractions').textContent=latest?(latest.flexCount||'—'):'—';
+            }
+            updateStorageBar();
+        }
+
+        // ── Replay ────────────────────────────────────────────────────────
+        let activeReplayInterval = null;
+
+        function replaySession(session) {
+            if (!session.samples || !session.samples.length) return;
+            if (activeReplayInterval) clearInterval(activeReplayInterval);
+
+            clearChart(emgChart);
+            clearChart(imuChart);
+            clearChart(ratioChart);
+            setupDownload(session);
+
+            const BASE_INTERVAL_MS = 40;
+            const data    = session.samples.map(s=>({time:s.t,v1:s.v1,v2:s.v2,i1:s.i1,i2:s.i2}));
+            const allLbl  = data.map(r=>r.time);
+            const allV1   = data.map(r=>r.v1);
+            const allV2   = data.map(r=>r.v2);
+            const allI1   = data.map(r=>r.i1);
+            const allI2   = data.map(r=>r.i2);
+            const allKnee = data.map(r=>Math.abs(r.i1-r.i2));
+            const allRatio= data.map(r=>r.v2>0?r.v1/r.v2:null);
+
+            let head = 0, paused = false, finished = false;
+
+            const scrollWrap    = document.getElementById('replayScrollWrap');
+            const scrollBar     = document.getElementById('replayScrollBar');
+            const scrollLbl     = document.getElementById('replayScrollLabel');
+            const playPauseBtn  = document.getElementById('replayPlayPauseBtn');
+            const restartBtn    = document.getElementById('replayRestartBtn');
+            const speedSlider   = document.getElementById('speedSlider');
+            const speedLabel    = document.getElementById('speedLabel');
+
+            scrollBar.value = 0;
+            scrollLbl.textContent = 'Replaying...';
+            scrollWrap.classList.add('visible');
+            speedSlider.value = 1;
+            speedLabel.textContent = '1×';
+            setPlayPauseBtn(false);
+
+            function setPlayPauseBtn(isPaused) {
+                playPauseBtn.textContent = isPaused ? '▶ Play' : '⏸ Pause';
+                playPauseBtn.style.background = isPaused ? '#28a745' : '#4d82ad';
+            }
+
+            function getInterval() {
+                return Math.max(8, Math.round(BASE_INTERVAL_MS / parseFloat(speedSlider.value)));
+            }
+
+            // In-place fill helper
+            function fill(arr,src,from,to){arr.length=0;for(let i=from;i<to;i++)arr.push(src[i]);}
+
+            function renderWindow(startOverride) {
+                let vs, ve;
+                if (startOverride !== undefined) {
+                    vs = startOverride; ve = Math.min(vs + WINDOW, allLbl.length);
+                } else {
+                    ve = head; vs = Math.max(0, ve - WINDOW);
+                }
+                // Update scrub bar position
+                const pct = allLbl.length > 1 ? (head / (allLbl.length - 1)) * 100 : 100;
+                scrollBar.value = pct;
+                scrollLbl.textContent = `${head} / ${allLbl.length}`;
+
+                fill(emgChart.data.labels,           allLbl, vs, ve);
+                fill(emgChart.data.datasets[0].data, allV1,  vs, ve);
+                fill(emgChart.data.datasets[1].data, allV2,  vs, ve);
+                emgChart.update('none');
+
+                fill(imuChart.data.labels,           allLbl,  vs, ve);
+                fill(imuChart.data.datasets[0].data, allI1,   vs, ve);
+                fill(imuChart.data.datasets[1].data, allI2,   vs, ve);
+                fill(imuChart.data.datasets[2].data, allKnee, vs, ve);
+                imuChart.update('none');
+
+                fill(ratioChart.data.labels,          allLbl,   vs, ve);
+                fill(ratioChart.data.datasets[0].data,allRatio, vs, ve);
+                ratioChart.update('none');
+            }
+
+            function startInterval() {
+                activeReplayInterval = setInterval(tick, getInterval());
+            }
+
+            function tick() {
+                if (paused) return;
+                if (head >= data.length - 1) {
+                    clearInterval(activeReplayInterval);
+                    activeReplayInterval = null;
+                    finished = true;
+                    head = data.length - 1;
+                    renderWindow();
+                    scrollLbl.textContent = '← scrub to explore →';
+                    setPlayPauseBtn(true); // show Play to allow restart-from-end
+                    return;
+                }
+                head++;
+                renderWindow();
+            }
+
+            // Play / Pause
+            playPauseBtn.onclick = () => {
+                if (finished) {
+                    // Restart from beginning
+                    finished = false;
+                    head = 0;
+                    paused = false;
+                    setPlayPauseBtn(false);
+                    startInterval();
+                    return;
+                }
+                paused = !paused;
+                setPlayPauseBtn(paused);
+                if (!paused && !activeReplayInterval) startInterval();
+            };
+
+            // Restart
+            restartBtn.onclick = () => {
+                clearInterval(activeReplayInterval);
+                activeReplayInterval = null;
+                head = 0; paused = false; finished = false;
+                setPlayPauseBtn(false);
+                renderWindow();
+                startInterval();
+            };
+
+            // Scrub bar — works anytime (paused or playing)
+            scrollBar.oninput = () => {
+                head = Math.round((scrollBar.value / 100) * (allLbl.length - 1));
+                renderWindow();
+                if (finished) { finished = false; setPlayPauseBtn(false); startInterval(); }
+                else if (!paused && !activeReplayInterval) startInterval();
+            };
+
+            // Speed slider
+            speedSlider.oninput = () => {
+                const s = parseFloat(speedSlider.value);
+                speedLabel.textContent = s % 1 === 0 ? s + '×' : s.toFixed(1) + '×';
+                if (!paused && !finished) {
+                    clearInterval(activeReplayInterval);
+                    startInterval();
+                }
+            };
+
+            startInterval();
+        }
+
+        // ── Render history table ──────────────────────────────────────────
+        function renderHistory() {
+            const history=loadHistory();
+            const filter = document.getElementById('exerciseFilter') ? document.getElementById('exerciseFilter').value : 'all';
+            historyBody.innerHTML=history.map((s,idx)=>{
+                const exLabel = getExerciseLabel(s.exercise);
+                const matchesFilter = filter === 'all' || (s.exercise || 'idle') === filter;
+                return `<tr data-idx="${idx}" class="${idx===0?'selected':''}" style="${matchesFilter?'':'opacity:0.35;'}">
+                    <td>${s.date}</td>
+                    <td><span class="exercise-tag">${exLabel}</span></td>
+                    <td style="font-weight:700;color:#4d82ad">${s.peak}</td>
+                    <td>${s.avg}</td>
+                    <td>${s.flexCount}</td>
+                    <td style="color:#e74c3c">${s.avgDelta?s.avgDelta+'°':'—'}</td>
+                    <td style="color:#ad1c1c">${s.peakKnee?s.peakKnee+'°':'—'}</td>
+                    <td>${s.duration}s</td>
+                    <td><button class="replay-btn" data-idx="${idx}">Replay</button></td>
+                </tr>`;
+            }).join('');
+
+            historyBody.querySelectorAll('tr').forEach(row=>{
+                row.addEventListener('click',(e)=>{
+                    if(e.target.classList.contains('replay-btn'))return;
+                    const idx=parseInt(row.dataset.idx);
+                    historyBody.querySelectorAll('tr').forEach(r=>r.classList.remove('selected'));
+                    row.classList.add('selected');
+                    replaySession(history[idx]);
+                    document.getElementById('emgChart').closest('.chart-card').scrollIntoView({behavior:'smooth'});
+                });
+            });
+
+            historyBody.querySelectorAll('.replay-btn').forEach(btn=>{
+                btn.addEventListener('click',(e)=>{
+                    e.stopPropagation();
+                    const idx=parseInt(btn.dataset.idx);
+                    historyBody.querySelectorAll('tr').forEach(r=>r.classList.remove('selected'));
+                    btn.closest('tr').classList.add('selected');
+                    replaySession(history[idx]);
+                    document.getElementById('emgChart').closest('.chart-card').scrollIntoView({behavior:'smooth'});
+                });
+            });
+        }
+
+        // ── CSV Upload ────────────────────────────────────────────────────
+        csvFileInput.onchange = function(e) {
+            const file=e.target.files[0]; if(!file)return;
+            const reader=new FileReader();
+            reader.onload=function(ev){
+                const lines=ev.target.result.trim().split('\n');
+                const si=isNaN(parseInt(lines[0].split(',')[1]))?1:0;
+                const data=[];
+                lines.slice(si).forEach(line=>{
+                    const p=line.split(',');if(p.length<3)return;
+                    const v1=parseInt(p[1]),v2=parseInt(p[2]);
+                    const i1=p.length>=4?parseFloat(p[3]):0, i2=p.length>=5?parseFloat(p[4]):0;
+                    if(!isNaN(v1)&&!isNaN(v2))data.push({time:p[0].trim(),v1,v2,i1,i2});
+                });
+                if(!data.length){alert('No valid rows found in CSV.');return;}
+
+                // Save to history
+                const ch1=data.map(d=>d.v1).filter(v=>v<2800);
+                const ch2=data.map(d=>d.v2).filter(v=>v<2800);
+                const peak1=Math.max(...ch1),peak2=Math.max(...ch2);
+                const avg1=Math.round(ch1.reduce((a,b)=>a+b)/ch1.length);
+                const avg2=Math.round(ch2.reduce((a,b)=>a+b)/ch2.length);
+                const kneeVals=data.map(d=>Math.abs(d.i1-d.i2));
+                const avgDelta=(kneeVals.reduce((a,b)=>a+b,0)/kneeVals.length).toFixed(1);
+                const peakKnee=Math.max(...kneeVals).toFixed(1);
+                let flexCount=0;
+                for(let i=1;i<ch1.length;i++)if(ch1[i]>1500&&ch1[i-1]<=1500)flexCount++;
+                const downsampled=data.filter((_,i)=>i%DOWNSAMPLE_N===0)
+                    .map(d=>({t:d.time,v1:d.v1,v2:d.v2,i1:parseFloat(d.i1.toFixed(1)),i2:parseFloat(d.i2.toFixed(1))}));
+                const sess={id:`upload-${file.name}`,date:new Date().toLocaleString(),
+                    peak:`${peak1}/${peak2}`,avg:`${avg1}/${avg2}`,
+                    duration:(data.length*0.02).toFixed(1),flexCount,
+                    peakAngle1:Math.max(...data.map(d=>d.i1)).toFixed(1),
+                    peakAngle2:Math.max(...data.map(d=>d.i2)).toFixed(1),
+                    avgDelta,peakKnee,samples:downsampled};
+                let history=loadHistory();
+                if(!history.some(h=>h.id===sess.id)){
+                    history.unshift(sess);saveHistory(history.slice(0,MAX_SESSIONS));
+                }
+                renderHistory();updateTrends();
+
+                // Replay it immediately
+                replaySession(sess);
+                csvFileInput.value='';
+            };
+            reader.readAsText(file);
+        };
+
+        clearHistoryBtn.onclick=()=>{
+            if(confirm('Delete all session history? This cannot be undone.')){
+                localStorage.removeItem(HISTORY_KEY);
+                renderHistory();updateTrends();
+                clearChart(emgChart);clearChart(imuChart);clearChart(ratioChart);
+                document.getElementById('replayScrollWrap').classList.remove('visible');
+            }
+        };
+
+        const exerciseFilter = document.getElementById('exerciseFilter');
+        exerciseFilter.onchange = () => { updateTrends(); renderHistory(); };
+
+        // Refresh exercise list when tab gains focus (in case record page added new ones)
+        window.addEventListener('focus', () => { populateFilterSelect(); renderHistory(); updateTrends(); });
+
+        // ── Init ──────────────────────────────────────────────────────────
+        renderHistory();
+        updateTrends();
+
+        // Auto-replay most recent session if one exists
+        const history=loadHistory();
+        if(history.length) replaySession(history[0]);
+    });
+    </script>
+</body>
+</html>
