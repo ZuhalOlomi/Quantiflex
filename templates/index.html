@@ -43,7 +43,6 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.55);
-            /* Darker overlay for better text contrast */
             z-index: 1;
         }
 
@@ -137,18 +136,17 @@
             z-index: 2;
             max-width: 850px;
             width: 100%;
-            /* Ensures text has room to center */
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Centers items horizontally in the flex column */
             justify-content: center;
         }
 
         .hero-text p {
             text-align: center;
             margin: 20px 0;
+            color: white;
         }
     </style>
     <script src="auth.js"></script>
@@ -170,7 +168,7 @@
     <main>
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted loop playsinline preload="auto">
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+                <source src="{{ url_for('static', fiilename='knee_extension.mov') }}" type="video/mp4">
             </video>
 
             <div class="hero-overlay"></div>
