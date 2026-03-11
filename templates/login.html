@@ -83,10 +83,10 @@
             <h1 class="logo">QuantiFlex</h1>
             <nav>
                 <ul id="nav-menu">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="video.html">Video Demo</a></li>
-                    <li id="nav-auth-item"><a href="login.html" id="auth-link" class="active">Login</a></li>
+                    <li><a href="/index">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/video">Video Demo</a></li>
+                    <li id="nav-auth-item"><a href="/login" id="auth-link" class="active">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -180,17 +180,17 @@ function login() {
     // 3. STRICT REDIRECTS
     setTimeout(() => {
         if (role === 'clinician') {
-            window.location.href = "clinician_home.html";
+            window.location.href = "/clinician_home";
         } else {
             // For patients, redirecting to home or analysis
-            window.location.href = "patient_home.html";
+            window.location.href = "/patient_home";
         }
     }, 1500);
 }
 
         function signup() {
             alert("Redirecting to registration page...");
-            // window.location.href = "register.html";
+            // window.location.href = "/register";
         }
 
         // 3. GSAP ANIMATION

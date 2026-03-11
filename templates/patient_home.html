@@ -5,20 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex - Patient Dashboard</title>
-    
+
     <script>
-        (function() {
+        (function () {
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
             if (!isLoggedIn || userRole !== "patient") {
-                window.location.replace("login.html");
+                window.location.replace("/login");
             }
         })();
     </script>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
-    
+
     <style>
         .welcome-banner {
             background: #2c3e50;
@@ -32,11 +33,19 @@
             justify-content: space-between;
             flex-wrap: wrap;
             border-left: 6px solid #4d82ad;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .welcome-banner h2 { margin: 0; font-size: 1.9rem; font-family: "Georgia", serif; }
-        #userNameDisplay { color: #4d82ad; font-weight: bold; }
+        .welcome-banner h2 {
+            margin: 0;
+            font-size: 1.9rem;
+            font-family: "Georgia", serif;
+        }
+
+        #userNameDisplay {
+            color: #4d82ad;
+            font-weight: bold;
+        }
 
         .typing-container {
             margin-top: 8px;
@@ -45,8 +54,26 @@
             color: #ecf0f1;
         }
 
-        .cursor { display: inline-block; width: 2px; height: 1.2em; background-color: #4d82ad; margin-left: 5px; animation: blink 0.7s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: #4d82ad;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
 
         .logout-btn {
             background: #4d82ad;
@@ -58,7 +85,9 @@
             font-weight: 500;
         }
 
-        .logout-btn:hover { background: #e74c3c; }
+        .logout-btn:hover {
+            background: #e74c3c;
+        }
 
         .hero {
             position: relative;
@@ -74,8 +103,10 @@
 
         #bgVideo {
             position: absolute;
-            top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
             transform: translate(-50%, -50%);
             z-index: 0;
             object-fit: cover;
@@ -83,38 +114,44 @@
 
         .hero-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.65);
             z-index: 1;
         }
 
-        .hero-text { 
-            position: relative; 
-            z-index: 2; 
-            color: white; 
-            text-align: center; 
-            padding: 20px; 
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: center;
+            padding: 20px;
             max-width: 800px;
         }
 
-        .hero-text h2 { 
-            color: white; 
-            margin-bottom: 5px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
+        .hero-text h2 {
+            color: white;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-size: 2.2rem;
         }
 
-        .hero-text h3 { 
-            color: #4d82ad; 
-            margin-bottom: 15px; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
+        .hero-text h3 {
+            color: #4d82ad;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-weight: 400;
         }
 
-        .hero-text p { color: white; margin-bottom: 15px; letter-spacing: 1px; }
-
+        .hero-text p {
+            color: white;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 
@@ -124,9 +161,9 @@
             <h1 class="logo">QuantiFlex</h1>
             <nav>
                 <ul>
-                    <li><a href="patient_home.html" class="active">Dashboard</a></li>
-                    <li><a href="patient_analysis.html">My Analysis</a></li>
-                    <li><a href="demographics.html">My Profile</a></li>
+                    <li><a href="/patient_home" class="active">Dashboard</a></li>
+                    <li><a href="/patient_analysis">My Analysis</a></li>
+                    <li><a href="/demographics">My Profile</a></li>
                 </ul>
             </nav>
         </div>
@@ -140,20 +177,22 @@
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
             </div>
-            <a href="logout.html" class="logout-btn" id="logoutBtn" style="text-decoration: none; display: inline-block; text-align: center;">Secure Logout</a>
+            <a href="/logout" class="logout-btn" id="logoutBtn"
+                style="text-decoration: none; display: inline-block; text-align: center;">Secure Logout</a>
         </section>
 
         <section class="hero video-hero">
-            <video id="bgVideo" autoplay muted playsinline preload="auto">
-<video src="{{ url_for('static', filename='knee_extension.mov') }}"></video>            </video>
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='knee_extension.mp4') }}" type="video/mp4">
+            </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
                 <h2>Streamline Knee Rehabilitation</h2>
                 <h3>Track Progress Visually</h3>
-                <p style="text-align: center;"">Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
+                <p style="text-align: center;">Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
                 <div class="cta-buttons" style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-                    <a href="patient_analysis.html" class="btn-primary">Start Session</a>
-                </div>
+                    <a href="/patient_analysis" class="btn-primary">Start Session</a>
+            </div>
             </div>
         </section>
     </main>
@@ -166,7 +205,7 @@
             function loadPatientName() {
                 const savedProfile = localStorage.getItem('patientProfile');
                 const nameDisplay = document.getElementById('userNameDisplay');
-                
+
                 if (savedProfile) {
                     try {
                         const profile = JSON.parse(savedProfile);
@@ -218,4 +257,5 @@
         });
     </script>
 </body>
+
 </html>

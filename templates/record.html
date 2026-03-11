@@ -418,11 +418,11 @@
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
-                <li><a href="clinician_home.html">Dashboard</a></li>
-                <li><a href="patient_list.html">Patient Queue</a></li>
-                <li><a href="record.html" class="active">Record Session</a></li>
-                <li><a href="analysis.html">Clinical Analytics</a></li>
-                <li><a href="clinician_profile.html">My Profile</a></li>
+                <li><a href="/clinician_home">Dashboard</a></li>
+                <li><a href="/patient_list">Patient Queue</a></li>
+                <li><a href="/record" class="active">Record Session</a></li>
+                <li><a href="/analysis">Clinical Analytics</a></li>
+                <li><a href="/clinician_profile">My Profile</a></li>
             </ul>
         </nav>
     </header>
@@ -456,7 +456,7 @@
                     <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
                     <button class="btn btn-ghost" onclick="document.getElementById('csvFileInput').click()">↑ Upload
                         CSV</button>
-                    <a href="analysis.html" class="btn btn-primary">Analytics →</a>
+                    <a href="/analysis" class="btn btn-primary">Analytics →</a>
                 </div>
             </div>
 
@@ -502,7 +502,7 @@
                             style="display:none; flex:1; background:#555;">
                             ↓ Download CSV
                         </button>
-                        <a id="analysisLink" href="analysis.html" class="btn-full-analysis"
+                        <a id="analysisLink" href="/analysis" class="btn-full-analysis"
                             style="display:none; flex:1;">
                             View Full Analysis →
                         </a>

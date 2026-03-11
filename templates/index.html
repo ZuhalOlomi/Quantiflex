@@ -5,10 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex - Rehabilitation Tracking</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
-    
+
     <style>
         /* ---- HERO VIDEO & TEXT OVERLAY ---- */
         .hero {
@@ -19,7 +19,7 @@
             min-height: 80vh;
             text-align: center;
             overflow: hidden;
-            background: #000; 
+            background: #000;
         }
 
         #bgVideo {
@@ -42,20 +42,24 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.55); /* Darker overlay for better text contrast */
+            background: rgba(0, 0, 0, 0.55);
+            /* Darker overlay for better text contrast */
             z-index: 1;
         }
 
         .hero-text {
             position: relative;
-            z-index: 2; /* Sits above overlay */
+            z-index: 2;
+            /* Sits above overlay */
             max-width: 850px;
             padding: 20px;
         }
 
-        .hero-text h2, .hero-text h3, .hero-text p {
+        .hero-text h2,
+        .hero-text h3,
+        .hero-text p {
             color: #ffffff !important;
-            text-shadow: 0px 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .cta-buttons {
@@ -75,18 +79,66 @@
             border: 2px solid #4d82ad;
         }
 
-        .login-options { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-        .login-options .btn-primary { min-width: 180px; padding: 14px 30px; }
-        .login-options .btn-secondary { min-width: 180px; padding: 14px 30px; background: transparent; border: 2px solid #4d82ad; }
+        .login-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .login-options .btn-primary {
+            min-width: 180px;
+            padding: 14px 30px;
+        }
+
+        .login-options .btn-secondary {
+            min-width: 180px;
+            padding: 14px 30px;
+            background: transparent;
+            border: 2px solid #4d82ad;
+        }
 
         /* ---- FAQ STYLING ---- */
-        .faq-section { padding: 50px 10%; background: #fff; }
-        .faq-container { max-width: 900px; margin: 0 auto; }
-        .faq-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .faq-toggle { display: none; }
-        .faq-question { display: flex; justify-content: space-between; cursor: pointer; font-weight: bold; font-size: 1.1rem; color: #2c3e50; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: #555; }
-        .faq-toggle:checked ~ .faq-answer { max-height: 200px; padding-top: 10px; }
+        .faq-section {
+            padding: 50px 10%;
+            background: #fff;
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .faq-toggle {
+            display: none;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: #555;
+        }
+
+        .faq-toggle:checked~.faq-answer {
+            max-height: 200px;
+            padding-top: 10px;
+        }
     </style>
     <script src="auth.js"></script>
 </head>
@@ -96,31 +148,33 @@
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="video.html">Video Demo</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="/index" class="active">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/video">Video Demo</a></li>
+                <li><a href="/login">Login</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
         <section class="hero video-hero">
-            <video id="bgVideo" autoplay muted loop playsinline preload="auto">
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='knee_extension.mp4') }}" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal" style="text-align: center;">
                 <h2 style="text-align: center;"">Streamline Knee Rehabilitation</h2>
-                <h3 style="text-align: center;">Track Progress Visually</h3>
-                <p style="text-align: center;">
-                    Transforming knee rehabilitation using real-time data from our smart knee sleeve.<br><br>
-                    Utilize our intuitive dashboard to monitor patient progress, enhance adherence, and optimize recovery outcomes.
-                </p>
-                <div class="cta-buttons">
-                    <a href="video.html" class="btn-secondary" style="color: white; border-color: white;">Watch Demo</a>
-                    <a href="login.html" class="btn-primary">Get Started</a>
-                </div>
+                <h3 style=" text-align: center;">Track Progress Visually</h3>
+                    <p style="text-align: center;">
+                        Transforming knee rehabilitation using real-time data from our smart knee sleeve.<br><br>
+                        Utilize our intuitive dashboard to monitor patient progress, enhance adherence, and optimize
+                        recovery outcomes.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="/video" class="btn-secondary" style="color: white; border-color: white;">Watch
+                            Demo</a>
+                        <a href="/login" class="btn-primary">Get Started</a>
+                    </div>
             </div>
         </section>
 
@@ -128,8 +182,8 @@
             <h2>Ready to Transform Your Rehabilitation Journey?</h2>
             <p>Join hundreds of patients and clinicians already using UTBiome</p>
             <div class="login-options">
-                <a href="login.html?role=patient" class="btn-primary">Patient Login</a>
-                <a href="login.html?role=clinician" class="btn-secondary">Clinician Login</a>
+                <a href="/login.html?role=patient" class="btn-primary">Patient Login</a>
+                <a href="/login.html?role=clinician" class="btn-secondary">Clinician Login</a>
             </div>
         </section>
 
@@ -139,27 +193,44 @@
                 <div class="faq-item">
                     <input type="checkbox" id="faq1" class="faq-toggle">
                     <label for="faq1" class="faq-question"><span>What is the Quantiflex?</span><span>+</span></label>
-                    <div class="faq-answer"><p>Quantiflex is a wearable device that is designed to measure knee movement, range of motion, and other biomechanical data during rehabilitation exercises.</p></div>
+                    <div class="faq-answer">
+                        <p>Quantiflex is a wearable device that is designed to measure knee movement, range of motion,
+                            and other biomechanical data during rehabilitation exercises.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
                     <input type="checkbox" id="faq2" class="faq-toggle">
                     <label for="faq2" class="faq-question"><span>How accurate is the data?</span><span>+</span></label>
-                    <div class="faq-answer"><p>Quantiflex employs high-precision sensors and has been validated through clinical studies to ensure accurate data collection and reliable metrics.</p></div>
+                    <div class="faq-answer">
+                        <p>Quantiflex employs high-precision sensors and has been validated through clinical studies to
+                            ensure accurate data collection and reliable metrics.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
                     <input type="checkbox" id="faq3" class="faq-toggle">
-                    <label for="faq3" class="faq-question"><span>Who is the knee sleeve designed for?</span><span>+</span></label>
-                    <div class="faq-answer"><p>It is designed for patients undergoing knee rehabilitation, including ACL reconstruction, meniscus repair, or total knee replacement recovery.</p></div>
+                    <label for="faq3" class="faq-question"><span>Who is the knee sleeve designed
+                            for?</span><span>+</span></label>
+                    <div class="faq-answer">
+                        <p>It is designed for patients undergoing knee rehabilitation, including ACL reconstruction,
+                            meniscus repair, or total knee replacement recovery.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
                     <input type="checkbox" id="faq4" class="faq-toggle">
                     <label for="faq4" class="faq-question"><span>Is my data safe?</span><span>+</span></label>
-                    <div class="faq-answer"><p>Yes, UTBiome prioritizes data security and patient privacy. All data is encrypted and stored securely in compliance with HIPAA regulations.</p></div>
+                    <div class="faq-answer">
+                        <p>Yes, UTBiome prioritizes data security and patient privacy. All data is encrypted and stored
+                            securely in compliance with HIPAA regulations.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
                     <input type="checkbox" id="faq5" class="faq-toggle">
-                    <label for="faq5" class="faq-question"><span>Can clinicians use this for monitoring?</span><span>+</span></label>
-                    <div class="faq-answer"><p>Absolutely! Quantiflex provides clinicians with real-time data to monitor patient progress remotely and enable timely interventions.</p></div>
+                    <label for="faq5" class="faq-question"><span>Can clinicians use this for
+                            monitoring?</span><span>+</span></label>
+                    <div class="faq-answer">
+                        <p>Absolutely! Quantiflex provides clinicians with real-time data to monitor patient progress
+                            remotely and enable timely interventions.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -183,7 +254,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
             gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
-                gsap.set(elem, { autoAlpha: 0 }); 
+                gsap.set(elem, { autoAlpha: 0 });
                 ScrollTrigger.create({
                     trigger: elem,
                     start: "top 90%",
@@ -202,4 +273,5 @@
         });
     </script>
 </body>
+
 </html>

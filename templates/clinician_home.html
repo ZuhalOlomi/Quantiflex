@@ -5,20 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex - Clinician Portal</title>
-    
+
     <script>
-        (function() {
+        (function () {
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
             if (!isLoggedIn || userRole !== "clinician") {
-                window.location.replace("login.html");
+                window.location.replace("/login");
             }
         })();
     </script>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
-    
+
     <style>
         /* Matches Patient Page Aesthetic */
         .welcome-banner {
@@ -33,11 +34,19 @@
             justify-content: space-between;
             flex-wrap: wrap;
             border-left: 6px solid #4d82ad;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .welcome-banner h2 { margin: 0; font-size: 1.9rem; font-family: "Georgia", serif; }
-        #clinicianNameDisplay { color: #4d82ad; font-weight: bold; }
+        .welcome-banner h2 {
+            margin: 0;
+            font-size: 1.9rem;
+            font-family: "Georgia", serif;
+        }
+
+        #clinicianNameDisplay {
+            color: #4d82ad;
+            font-weight: bold;
+        }
 
         .typing-container {
             margin-top: 8px;
@@ -46,8 +55,26 @@
             color: #ecf0f1;
         }
 
-        .cursor { display: inline-block; width: 2px; height: 1.2em; background-color: #4d82ad; margin-left: 5px; animation: blink 0.7s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: #4d82ad;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
 
         .logout-btn {
             background: #4d82ad;
@@ -61,7 +88,9 @@
             cursor: pointer;
         }
 
-        .logout-btn:hover { background: #e74c3c; }
+        .logout-btn:hover {
+            background: #e74c3c;
+        }
 
         /* Video Hero Styles - Exact match to Patient UI */
         .hero {
@@ -78,8 +107,10 @@
 
         #bgVideo {
             position: absolute;
-            top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
             transform: translate(-50%, -50%);
             z-index: 0;
             object-fit: cover;
@@ -87,38 +118,45 @@
 
         .hero-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.65);
             z-index: 1;
         }
 
-        .hero-text { 
-            position: relative; 
-            z-index: 2; 
-            color: white; 
-            text-align: center; 
-            padding: 20px; 
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: center;
+            padding: 20px;
             max-width: 850px;
         }
 
-        .hero-text h2 { 
-            color: white; 
-            margin-bottom: 5px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
+        .hero-text h2 {
+            color: white;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-size: 2.2rem;
         }
 
-        .hero-text h3 { 
-            color: #4d82ad; 
-            margin-bottom: 15px; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
+        .hero-text h3 {
+            color: #4d82ad;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-weight: 400;
         }
 
-        .hero-text p { color: white; margin-bottom: 25px; letter-spacing: 1px; line-height: 1.6; }
-
+        .hero-text p {
+            color: white;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -128,11 +166,11 @@
             <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.8;">PRO</span></h1>
             <nav>
                 <ul>
-                    <li><a href="clinician_home.html" class="active">Dashboard</a></li>
-                    <li><a href="patient_list.html">Patient Queue</a></li>
-                    <li><a href="record.html">Record Session</a></li>
-                    <li><a href="analysis.html">Clinical Analytics</a></li>
-                    <li><a href="clinician_profile.html">My Profile</a></li>
+                    <li><a href="/clinician_home" class="active">Dashboard</a></li>
+                    <li><a href="/patient_list">Patient Queue</a></li>
+                    <li><a href="/record">Record Session</a></li>
+                    <li><a href="/analysis">Clinical Analytics</a></li>
+                    <li><a href="/clinician_profile">My Profile</a></li>
                 </ul>
             </nav>
         </div>
@@ -146,23 +184,24 @@
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
             </div>
-            <a href="logout.html" class="logout-btn" id="logoutBtn" style="text-decoration: none; display: inline-block; text-align: center;">Secure Logout</a>
+            <a href="/logout" class="logout-btn" id="logoutBtn"
+                style="text-decoration: none; display: inline-block; text-align: center;">Secure Logout</a>
         </section>
 
         <section class="hero video-hero">
-            <video id="bgVideo" autoplay muted playsinline preload="auto">
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='knee_extension.mp4') }}" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
                 <h2>Precision Oversight</h2>
                 <h3>Real-Time Biomechanical Telemetry</h3>
                 <p>
-                    Monitor patient recovery trajectories with high-fidelity telemetry. 
+                    Monitor patient recovery trajectories with high-fidelity telemetry.
                     Review automated ROM analytics and provide targeted interventions for outliers.
                 </p>
                 <div class="cta-buttons" style="display: flex; justify-content: center; gap: 15px;">
-                    <a href="patient_list.html" class="btn-primary">View Patient Queue</a>
+                    <a href="/patient_list" class="btn-primary">View Patient Queue</a>
                 </div>
             </div>
         </section>
@@ -173,7 +212,7 @@
             gsap.registerPlugin(ScrollTrigger);
 
             // 1. DYNAMIC NAME INJECTION
-            const fullName = localStorage.getItem('userName') || "Clinician"; 
+            const fullName = localStorage.getItem('userName') || "Clinician";
             document.getElementById('clinicianNameDisplay').textContent = fullName.split(' ')[0];
 
             // 2. CLINICAL TYPEWRITER
@@ -196,9 +235,9 @@
             type();
 
             // 3. LOGOUT LOGIC
-            document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('logoutBtn').addEventListener('click', function () {
                 localStorage.clear();
-                window.location.replace('login.html');
+                window.location.replace('/login');
             });
 
             // 4. VIDEO LOOP (4 SECONDS)
@@ -219,4 +258,5 @@
         });
     </script>
 </body>
+
 </html>

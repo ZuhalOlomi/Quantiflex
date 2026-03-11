@@ -28,7 +28,7 @@
             <p>Your secure session has ended. Thank you for using Quantiflex! </p>
         
             <div style="margin-top: 30px;">
-                <a href="login.html" class="toggle-btn active" style="text-decoration: none; padding: 12px 25px; display: inline-block; background-color: #007bff; color: white; border-radius: 5px;">
+                <a href="/login" class="toggle-btn active" style="text-decoration: none; padding: 12px 25px; display: inline-block; background-color: #007bff; color: white; border-radius: 5px;">
                     Log Back In
                 </a>
             </div>
@@ -47,7 +47,7 @@
             countElement.textContent = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                window.location.href = "index.html";
+                window.location.href = "/index";
 
             }
         }, 1000);
