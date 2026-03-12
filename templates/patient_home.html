@@ -21,6 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 
     <style>
+        /* ─── Layout & Banner ─── */
         .welcome-banner {
             background: #2c3e50;
             color: white;
@@ -36,65 +37,22 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .welcome-banner h2 {
-            margin: 0;
-            font-size: 1.9rem;
-            font-family: "Georgia", serif;
-        }
+        .welcome-banner h2 { margin: 0; font-size: 1.9rem; font-family: "Georgia", serif; }
+        #userNameDisplay { color: #4d82ad; font-weight: bold; }
 
-        #userNameDisplay {
-            color: #4d82ad;
-            font-weight: bold;
-        }
+        /* ─── Typewriter & Animations ─── */
+        .typing-container { margin-top: 8px; font-size: 1.15rem; min-height: 1.6em; color: #ecf0f1; }
+        .cursor { display: inline-block; width: 2px; height: 1.2em; background-color: #4d82ad; margin-left: 5px; animation: blink 0.7s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .typing-container {
-            margin-top: 8px;
-            font-size: 1.15rem;
-            min-height: 1.6em;
-            color: #ecf0f1;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background-color: #4d82ad;
-            margin-left: 5px;
-            animation: blink 0.7s infinite;
-        }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        .logout-btn {
-            background: #4d82ad;
-            color: white;
-            padding: 10px 22px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .logout-btn:hover {
-            background: #e74c3c;
-        }
-
+        /* ─── Fixed Hero & Video Background ─── */
         .hero {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 60vh;
+            max-height: 500px;
             overflow: hidden;
             background: #000;
             border-radius: 15px;
@@ -105,11 +63,11 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            min-width: 100%;
-            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transform: translate(-50%, -50%);
             z-index: 0;
-            object-fit: cover;
         }
 
         .hero-overlay {
@@ -118,7 +76,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.55);
             z-index: 1;
         }
 
@@ -131,27 +89,20 @@
             max-width: 800px;
         }
 
-        .hero-text h2 {
-            color: white;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 2.2rem;
-        }
+        .hero-text h2 { color: white; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-size: 2.2rem; }
+        .hero-text h3 { color: #4d82ad; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 400; }
+        .hero-text p { color: white; margin-bottom: 15px; letter-spacing: 1px; }
 
-        .hero-text h3 {
-            color: #4d82ad;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 400;
-        }
-
-        .hero-text p {
+        .logout-btn {
+            background: #4d82ad;
             color: white;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+            padding: 10px 22px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: 500;
         }
+        .logout-btn:hover { background: #e74c3c; }
     </style>
 </head>
 
@@ -178,22 +129,21 @@
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
             </div>
-            <a href="/logout" class="logout-btn" id="logoutBtn"
-                style="text-decoration: none; display: inline-block; text-align: center;">Secure Logout</a>
+            <a href="/logout" class="logout-btn" id="logoutBtn">Secure Logout</a>
         </section>
 
         <section class="hero video-hero">
-            <video autoplay muted loop playsinline>
+            <video id="bgVideo" autoplay muted loop playsinline>
                 <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
                 <h2>Streamline Knee Rehabilitation</h2>
                 <h3>Track Progress Visually</h3>
-                <p style="text-align: center;">Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
-                <div class="cta-buttons" style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-                    <a href="/patient_analysis" class="btn-primary">Start Session</a>
-            </div>
+                <p>Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
+                <div class="cta-buttons" style="margin-top: 25px; display: flex; justify-content: center;">
+                    <a href="/patient_analysis" class="btn-primary" style="text-decoration: none;">Start Session</a>
+                </div>
             </div>
         </section>
     </main>
@@ -202,20 +152,15 @@
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
 
-            // 1. DYNAMIC NAME INJECTION (Updated to pull from demographics object)
+            // 1. DYNAMIC NAME INJECTION
             function loadPatientName() {
                 const savedProfile = localStorage.getItem('patientProfile');
                 const nameDisplay = document.getElementById('userNameDisplay');
-
                 if (savedProfile) {
                     try {
                         const profile = JSON.parse(savedProfile);
-                        if (profile.firstName) {
-                            nameDisplay.textContent = profile.firstName;
-                        }
-                    } catch (e) {
-                        console.error('Error loading name:', e);
-                    }
+                        if (profile.firstName) nameDisplay.textContent = profile.firstName;
+                    } catch (e) { console.error('Error loading name:', e); }
                 }
             }
             loadPatientName();
@@ -252,7 +197,7 @@
             gsap.utils.toArray(".gs_reveal").forEach(elem => {
                 gsap.fromTo(elem, { autoAlpha: 0, y: 30 }, {
                     duration: 1, y: 0, autoAlpha: 1, ease: "power2.out",
-                    scrollTrigger: { trigger: elem, start: "top 90%" }
+                    scrollTrigger: { trigger: elem, start: "top 95%" }
                 });
             });
         });
