@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UTBiome — Analysis</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .page-wrap { max-width: 1400px; width: 95%; margin: 0 auto; }
 
@@ -198,12 +199,13 @@
 </head>
 <body>
     <header>
-        <h1>QuantiFlex</h1>
+        <h1>UTBiome Knee Sleeve</h1>
         <nav><ul>
-            <li><a href="/clinician_home">Dashboard</a></li>
-            <li><a href="/patient_list">Patient Queue</a></li>
-            <li><a href="/analysis" class="active">Clinical Analysis</a></li>
-            <li><a href="/clinician_profile">My Profile</a></li>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="record.html">Record</a></li>
+            <li><a href="analysis.html" class="active">Analysis</a></li>
+            <li><a href="video.html">Video Demo</a></li>
         </ul></nav>
     </header>
 
@@ -217,7 +219,7 @@
             <!-- Toolbar -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <a href="/record" class="btn btn-record">▶ Record</a>
+                    <a href="record.html" class="btn btn-record">▶ Record</a>
                     <div class="toolbar-divider"></div>
                     <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
                     <button class="btn btn-upload" onclick="document.getElementById('csvFileInput').click()">↑ Upload CSV</button>
@@ -302,9 +304,9 @@
                     </div>
                     <div class="chart-body-trend"><canvas id="peakFlexTrendChart"></canvas></div>
                     <div class="trend-stat-row">
-                        <div class="trend-stat"><div class="trend-stat-label">Best</div><div class="trend-stat-value" id="peakFlexBest" style="color:#e74c3c">—°</div></div>
-                        <div class="trend-stat"><div class="trend-stat-label">Latest</div><div class="trend-stat-value" id="peakFlexLatest" style="color:#e74c3c">—°</div></div>
-                        <div class="trend-stat"><div class="trend-stat-label">Sessions</div><div class="trend-stat-value" id="peakFlexCount" style="color:#e74c3c">—</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Best</div><div class="trend-stat-value" id="peakFlexBest" style="color:#ad1c1c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Latest</div><div class="trend-stat-value" id="peakFlexLatest" style="color:#ad1c1c">—°</div></div>
+                        <div class="trend-stat"><div class="trend-stat-label">Sessions</div><div class="trend-stat-value" id="peakFlexCount" style="color:#ad1c1c">—</div></div>
                     </div>
                 </div>
                 <div class="trend-card">
@@ -502,7 +504,7 @@
             return new Chart(document.getElementById(id).getContext('2d'),{
                 type:'line',
                 data:{labels:[],datasets:[{data:[],borderColor:color,
-                    backgroundColor:color.replace(')',',.08)').replace('rgb','rgba'),
+                    backgroundColor: color + 'BF',
                     tension:0.35,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:color,fill:true,borderWidth:2.5}]},
                 options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
                     plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y.toFixed(1)} ${yLabel}`}}},
@@ -511,7 +513,7 @@
             });
         }
         const flexTrendChart     = makeTrend('flexTrendChart',    '#e74c3c','°');
-        const peakFlexTrendChart = makeTrend('peakFlexTrendChart','#c0392b','°');
+        const peakFlexTrendChart = makeTrend('peakFlexTrendChart','#ad1c1c','°');
         const emg1TrendChart     = makeTrend('emg1TrendChart',    '#4d82ad','ADC');
         const emg2TrendChart     = makeTrend('emg2TrendChart',    '#e67e22','ADC');
 
@@ -603,6 +605,7 @@
             clearChart(ratioChart);
             setupDownload(session);
 
+            const BASE_INTERVAL_MS = 40;
             const data    = session.samples.map(s=>({time:s.t,v1:s.v1,v2:s.v2,i1:s.i1,i2:s.i2}));
             const allLbl  = data.map(r=>r.time);
             const allV1   = data.map(r=>r.v1);
@@ -635,7 +638,7 @@
             }
 
             function getInterval() {
-                return Math.max(1, Math.round(10 / parseFloat(speedSlider.value)));
+                return Math.max(8, Math.round(BASE_INTERVAL_MS / parseFloat(speedSlider.value)));
             }
 
             // In-place fill helper
@@ -749,8 +752,8 @@
                     <td style="font-weight:700;color:#4d82ad">${s.peak}</td>
                     <td>${s.avg}</td>
                     <td>${s.flexCount}</td>
-                    <td style="color:#e67e22">${s.avgDelta?s.avgDelta+'°':'—'}</td>
-                    <td style="color:#e74c3c">${s.peakKnee?s.peakKnee+'°':'—'}</td>
+                    <td style="color:#e74c3c">${s.avgDelta?s.avgDelta+'°':'—'}</td>
+                    <td style="color:#ad1c1c">${s.peakKnee?s.peakKnee+'°':'—'}</td>
                     <td>${s.duration}s</td>
                     <td><button class="replay-btn" data-idx="${idx}">Replay</button></td>
                 </tr>`;

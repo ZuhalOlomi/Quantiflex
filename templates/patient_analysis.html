@@ -201,11 +201,10 @@
     <header>
         <h1>UTBiome Knee Sleeve</h1>
         <nav><ul>
-            <li><a href="home.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="record.html">Record</a></li>
-            <li><a href="analysis.html" class="active">Analysis</a></li>
-            <li><a href="video.html">Video Demo</a></li>
+                    <li><a href="/patient_home">Dashboard</a></li>
+                    <li><a href="/patient_analysis" class="active">My Analysis</a></li>
+                    <li><a href="/ex_recovery">My Recovery Plan</a></li>
+                    <li><a href="/demographics">My Profile</a></li>
         </ul></nav>
     </header>
 
@@ -219,8 +218,6 @@
             <!-- Toolbar -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <a href="record.html" class="btn btn-record">▶ Record</a>
-                    <div class="toolbar-divider"></div>
                     <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
                     <button class="btn btn-upload" onclick="document.getElementById('csvFileInput').click()">↑ Upload CSV</button>
                     <button id="downloadCsvBtn" class="btn btn-download" style="display:none;">↓ Download CSV</button>
