@@ -563,9 +563,9 @@
         <h1 class="logo">QuantiFlex <span>PRO</span></h1>
         <nav>
             <ul>
-                <li><a href="clinician_dashboard.html">Dashboard</a></li>
-                <li><a href="patient_list.html">Patient Queue</a></li>
-                <li><a href="assign_recovery.html" class="active">Assign Recovery</a></li>
+                <li><a href="/clinician_dashboard">Dashboard</a></li>
+                <li><a href="/patient_list">Patient Queue</a></li>
+                <li><a href="/assign_recovery" class="active">Assign Recovery</a></li>
             </ul>
         </nav>
     </div>
@@ -827,7 +827,7 @@
             const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
             const userRole = localStorage.getItem('userRole');
             if (!isLoggedIn || userRole !== 'clinician') {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
                 return;
             }
             loadPatients();
