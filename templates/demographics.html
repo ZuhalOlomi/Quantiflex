@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex My Profile</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
         /* Patient Profile Specific Styles */
         .profile-container {
             max-width: 1200px;
@@ -58,7 +59,7 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .form-section {
@@ -174,7 +175,7 @@
         .btn-primary:hover {
             background-color: #3a6788;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-secondary {
@@ -192,7 +193,7 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .patient-avatar {
@@ -322,11 +323,11 @@
 
             <div class="profile-grid">
                 <div class="profile-form-container">
-                    
+
                     <form id="patientForm">
                         <div class="form-section">
                             <h3>Personal Information</h3>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName">First Name *</label>
@@ -390,7 +391,7 @@
 
                         <div class="form-section">
                             <h3>Contact Information</h3>
-                            
+
                             <div class="form-group">
                                 <label for="email">Email Address</label>
                                 <input type="email" id="email" name="email">
@@ -415,10 +416,11 @@
 
                         <div class="form-section">
                             <h3>Medical Information</h3>
-                            
+
                             <div class="form-group">
                                 <label for="primaryCondition">Primary Condition</label>
-                                <input type="text" id="primaryCondition" name="primaryCondition" placeholder="e.g., ACL Reconstruction">
+                                <input type="text" id="primaryCondition" name="primaryCondition"
+                                    placeholder="e.g., ACL Reconstruction">
                             </div>
 
                             <div class="form-group">
@@ -458,12 +460,14 @@
 
                             <div class="form-group">
                                 <label for="medications">Current Medications</label>
-                                <textarea id="medications" name="medications" rows="3" placeholder="List current medications and dosages"></textarea>
+                                <textarea id="medications" name="medications" rows="3"
+                                    placeholder="List current medications and dosages"></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="notes">Additional Notes</label>
-                                <textarea id="notes" name="notes" rows="3" placeholder="Any additional information"></textarea>
+                                <textarea id="notes" name="notes" rows="3"
+                                    placeholder="Any additional information"></textarea>
                             </div>
                         </div>
 
@@ -560,7 +564,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const patientForm = document.getElementById('patientForm');
             const saveStatus = document.getElementById('saveStatus');
             const clearFormBtn = document.getElementById('clearFormBtn');
@@ -569,13 +573,13 @@
             loadPatientData();
 
             // Form submit handler
-            patientForm.addEventListener('submit', function(e) {
+            patientForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 savePatientData();
             });
 
             // Clear form button handler
-            clearFormBtn.addEventListener('click', function() {
+            clearFormBtn.addEventListener('click', function () {
                 if (confirm('Are you sure you want to clear all form data?')) {
                     patientForm.reset();
                     // Optional: remove from localStorage as well
@@ -587,10 +591,10 @@
             // Real-time update display
             const formInputs = patientForm.querySelectorAll('input, select, textarea');
             formInputs.forEach(input => {
-                input.addEventListener('input', function() {
+                input.addEventListener('input', function () {
                     updateDisplayFromForm();
                 });
-                input.addEventListener('change', function() {
+                input.addEventListener('change', function () {
                     updateDisplayFromForm();
                 });
             });
@@ -622,7 +626,7 @@
 
                 // Save to localStorage
                 localStorage.setItem('patientProfile', JSON.stringify(formData));
-                
+
                 // Show save status
                 saveStatus.classList.add('show');
                 setTimeout(() => {
@@ -632,11 +636,11 @@
 
             function loadPatientData() {
                 const savedData = localStorage.getItem('patientProfile');
-                
+
                 if (savedData) {
                     try {
                         const formData = JSON.parse(savedData);
-                        
+
                         document.getElementById('firstName').value = formData.firstName || '';
                         document.getElementById('lastName').value = formData.lastName || '';
                         document.getElementById('dob').value = formData.dob || '';
@@ -696,7 +700,7 @@
                 // Update Name & Initials
                 const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim();
                 document.getElementById('displayName').textContent = fullName || 'New Patient';
-                
+
                 let initials = '--';
                 if (data.firstName && data.lastName) {
                     initials = (data.firstName[0] + data.lastName[0]).toUpperCase();
@@ -704,7 +708,7 @@
                     initials = data.firstName[0].toUpperCase();
                 }
                 document.getElementById('avatarInitials').textContent = initials;
-                
+
                 // Only show assigned ID if they have a name saved
                 document.getElementById('displayPatientId').textContent = fullName ? `Patient ID: P-${Math.floor(Math.random() * 9000) + 1000}` : 'Patient ID: Not Assigned';
 
@@ -712,12 +716,12 @@
                 document.getElementById('displayDOB').textContent = data.dob || '--';
                 document.getElementById('displayGender').textContent = data.gender || '--';
                 document.getElementById('displayBloodType').textContent = data.bloodType || '--';
-                
+
                 const hw = [];
                 if (data.height) hw.push(`${data.height} cm`);
                 if (data.weight) hw.push(`${data.weight} kg`);
                 document.getElementById('displayHeightWeight').textContent = hw.length > 0 ? hw.join(' / ') : '--';
-                
+
                 document.getElementById('displayOccupation').textContent = data.occupation || '--';
                 document.getElementById('displayEmail').textContent = data.email || '--';
                 document.getElementById('displayPhone').textContent = data.phone || '--';
@@ -731,7 +735,7 @@
                 // Update Conditions Tags
                 const preExistingDiv = document.getElementById('displayPreExisting');
                 if (data.conditions && data.conditions.length > 0) {
-                    preExistingDiv.innerHTML = data.conditions.map(c => 
+                    preExistingDiv.innerHTML = data.conditions.map(c =>
                         `<span class="condition-tag">${c.charAt(0).toUpperCase() + c.slice(1)}</span>`
                     ).join('');
                 } else {
@@ -743,7 +747,7 @@
                 document.getElementById('displayName').textContent = 'New Patient';
                 document.getElementById('avatarInitials').textContent = '--';
                 document.getElementById('displayPatientId').textContent = 'Patient ID: Not Assigned';
-                
+
                 const elements = ['displayDOB', 'displayGender', 'displayBloodType', 'displayHeightWeight', 'displayOccupation', 'displayEmail', 'displayPhone', 'displayEmergency', 'displayAddress', 'displayCondition', 'displayPreExisting', 'displayAllergies', 'displayMedications', 'displayNotes'];
                 elements.forEach(id => {
                     document.getElementById(id).textContent = '--';
