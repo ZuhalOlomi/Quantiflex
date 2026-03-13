@@ -27,7 +27,7 @@
 
 <body>
     <header>
-        <h1>Quantiflex</h1>
+        <h1>QuantiFlex</h1>
     </header>
 
     <main>
@@ -47,6 +47,9 @@
     </main>
 
     <script>
+        // Ensure auth state is cleared on logout page
+        localStorage.clear();
+
         let timeLeft = 5;
         const countElement = document.getElementById('count');
 
@@ -57,7 +60,6 @@
             if (timeLeft <= 0) {
                 clearInterval(timer);
                 window.location.href = "index.html";
-
             }
         }, 1000);
     </script>

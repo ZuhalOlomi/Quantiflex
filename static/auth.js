@@ -44,7 +44,7 @@ function login() {
         localStorage.setItem("userName", userInput.split('@')[0]);
         
         // Redirect logic
-        const target = (role === 'clinician') ? 'clinician_dashboard.html' : 'patient_home.html';
+        const target = (role === 'clinician') ? 'clinician_home.html' : 'patient_home.html';
         window.location.href = target;
     } else {
         alert("Invalid credentials for the selected role.");
@@ -65,7 +65,7 @@ function signup() {
 
 function logout() {
     localStorage.clear();
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 /**
@@ -79,9 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 1. Navigation Update
     const loginLink = document.querySelector('nav ul li a[href="login.html"]');
-    if (isLoggedIn && loginLink) {
-        loginLink.textContent = "Dashboard";
-        loginLink.href = (userRole === "clinician") ? "clinician_dashboard.html" : "patient_home.html";
+    if (loginLink) {
+        if (isLoggedIn) {
+            loginLink.textContent = "Dashboard";
+            loginLink.href = (userRole === "clinician") ? "clinician_home.html" : "patient_home.html";
+        } else {
+            loginLink.textContent = "Login";
+            loginLink.href = "login.html";
+        }
     }
 
     // 2. The Security Guard
@@ -92,11 +97,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 3. Role-Based Access Control
-    if (filename === 'clinician_dashboard.html' && userRole !== 'clinician') {
+    if (filename === 'clinician_home.html' && userRole !== 'clinician') {
         window.location.href = "patient_home.html";
     }
     if (filename === 'patient_home.html' && userRole !== 'patient') {
-        window.location.href = "clinician_dashboard.html";
+        window.location.href = "clinician_home.html";
     }
 
     // 4. Live Data Polling (Patient Only)
