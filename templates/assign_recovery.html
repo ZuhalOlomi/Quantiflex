@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assign Recovery Plan | QuantiFlex PRO</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* ── Layout ─────────────────────────────────────── */
+        /* ── Layout & Theme ─────────────────────────────────────── */
         body {
             background-color: #f8fafc;
             color: #334155;
@@ -21,7 +21,6 @@
             padding: 40px 20px;
         }
 
-        /* ── Navigation ─────────────────────────────────── */
         header {
             background: white;
             border-bottom: 1px solid #e2e8f0;
@@ -35,6 +34,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 20px;
+        }
+
+        .logo span {
+            color: #4d82ad;
+            font-size: 0.8rem;
+            vertical-align: top;
         }
 
         nav ul {
@@ -56,6 +61,23 @@
             border-bottom: 2px solid #4d82ad;
         }
 
+        .hero-banner {
+            text-align: center;
+            padding: 40px 20px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hero-banner h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .hero-banner p {
+            color: #64748b;
+            margin-top: 5px;
+        }
+
         /* ── Patient Bar ─────────────────────────────────── */
         .patient-bar {
             background: white;
@@ -70,19 +92,11 @@
             margin-bottom: 28px;
         }
 
-        .patient-bar label {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
         .patient-bar select {
             padding: 9px 14px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 0.9rem;
             min-width: 240px;
-            color: #2c3e50;
-            font-family: inherit;
         }
 
         .load-btn {
@@ -93,21 +107,9 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: background 0.2s;
         }
 
-        .load-btn:hover {
-            background: #3a6788;
-        }
-
-        #planStatus {
-            font-size: 0.88rem;
-            color: #27ae60;
-            font-weight: 500;
-        }
-
+        /* ── Main Grid Layout ────────────────────────────── */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 360px;
@@ -115,7 +117,6 @@
             align-items: start;
         }
 
-        /* ── Mode Toggle ─────────────────────────────────── */
         .mode-toggle {
             display: flex;
             border-radius: 10px;
@@ -126,19 +127,12 @@
 
         .mode-btn {
             flex: 1;
-            padding: 12px 18px;
+            padding: 12px;
             border: none;
             background: white;
             color: #4d82ad;
             font-weight: 600;
-            font-size: 0.9rem;
             cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-
-        .mode-btn:not(:last-child) {
-            border-right: 1.5px solid #4d82ad;
         }
 
         .mode-btn.active {
@@ -146,11 +140,6 @@
             color: white;
         }
 
-        .mode-btn:hover:not(.active) {
-            background: #edf2f7;
-        }
-
-        /* ── Exercise Library ────────────────────────────── */
         .panel-card {
             background: white;
             border-radius: 12px;
@@ -159,52 +148,27 @@
             padding: 20px;
         }
 
-        .panel-card h3 {
-            margin: 0 0 6px 0;
-            color: #2c3e50;
-        }
-
-        .panel-subtitle {
-            color: #888;
-            font-size: 0.85rem;
-            margin: 0 0 18px 0;
-        }
-
         #librarySearch {
             width: 100%;
-            padding: 10px 13px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            box-sizing: border-box;
             margin-bottom: 18px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        #librarySearch:focus {
-            border-color: #4d82ad;
         }
 
         .library-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 15px;
         }
 
         .lib-card {
             border: 1.5px solid #e1e8ed;
             border-radius: 10px;
-            padding: 14px 16px;
-            transition: all 0.2s;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-        }
-
-        .lib-card:hover {
-            border-color: #4d82ad;
-            box-shadow: 0 4px 14px rgba(77, 130, 173, 0.14);
+            transition: 0.2s;
         }
 
         .lib-card.in-plan {
@@ -213,398 +177,172 @@
         }
 
         .lib-card h4 {
+            margin: 0 0 5px 0;
             color: #4d82ad;
-            margin: 0 0 6px 0;
-            font-size: 0.93rem;
         }
 
-        .lib-card .lib-meta {
+        .lib-preview {
+            font-size: 0.85rem;
             color: #666;
-            font-size: 0.8rem;
-            display: flex;
-            gap: 14px;
-            margin-bottom: 8px;
-        }
-
-        .lib-card .lib-preview {
-            color: #555;
-            font-size: 0.81rem;
-            line-height: 1.45;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            flex: 1;
-            margin-bottom: 12px;
+            flex-grow: 1;
         }
 
         .lib-add-btn {
-            width: 100%;
+            margin-top: 10px;
             padding: 8px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.83rem;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: background 0.2s;
             background: #4d82ad;
             color: white;
-        }
-
-        .lib-add-btn:hover:not(:disabled) {
-            background: #3a6788;
-        }
-
-        .lib-add-btn:disabled {
-            background: #27ae60;
-            cursor: default;
-        }
-
-        /* ── Custom Form ─────────────────────────────────── */
-        .form-grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.88rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            padding: 9px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            color: #2c3e50;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4d82ad;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .req { color: #e74c3c; }
-
-        .form-add-btn {
-            width: 100%;
-            padding: 12px;
-            background: #27ae60;
-            color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 700;
+            border-radius: 6px;
             cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s;
-            margin-top: 4px;
-        }
-
-        .form-add-btn:hover {
-            background: #219a52;
         }
 
         /* ── Current Plan Panel ──────────────────────────── */
         .plan-panel {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e1e8ed;
             padding: 20px;
+            border: 1px solid #e1e8ed;
             position: sticky;
             top: 20px;
         }
 
-        .plan-panel-header {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #edf2f7;
-        }
-
-        .plan-panel-header h3 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        #planCount {
-            color: #999;
-            font-size: 0.82rem;
-            font-weight: normal;
-        }
-
-        .plan-empty {
-            text-align: center;
-            color: #aaa;
-            padding: 28px 0;
-            font-size: 0.88rem;
-            line-height: 1.6;
-        }
-
         .plan-item {
             border: 1px solid #e1e8ed;
+            padding: 10px;
             border-radius: 8px;
-            padding: 11px 12px;
             margin-bottom: 10px;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .plan-item h4 {
-            color: #4d82ad;
-            margin: 0 0 4px 0;
-            font-size: 0.88rem;
-            padding-right: 50px;
+            margin: 0;
+            font-size: 0.9rem;
         }
 
-        .plan-item .item-meta {
-            color: #666;
-            font-size: 0.78rem;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .plan-item-actions {
-            position: absolute;
-            top: 9px;
-            right: 9px;
-            display: flex;
-            gap: 5px;
-        }
-
-        .icon-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1px solid;
+        .del-btn {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
             cursor: pointer;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            font-family: inherit;
-            transition: all 0.2s;
-            background: white;
-        }
-
-        .del-icon-btn {
-            color: #c62828;
-            border-color: #ef9a9a;
-        }
-
-        .del-icon-btn:hover {
-            background: #c62828;
-            color: white;
         }
 
         .save-btn {
             width: 100%;
-            padding: 13px;
+            padding: 15px;
             background: #4d82ad;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-weight: bold;
             cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s;
-            margin-top: 14px;
-        }
-
-        .save-btn:hover:not(:disabled) {
-            background: #3a6788;
+            margin-top: 10px;
         }
 
         .save-btn:disabled {
-            background: #b0c8da;
+            background: #cbd5e1;
             cursor: not-allowed;
         }
 
-        /* ── Modal ───────────────────────────────────────── */
+        /* ── Modal & Toast ───────────────────────────────── */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.38);
-            z-index: 2000;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
+            align-items: center;
+            z-index: 1000;
         }
 
         .modal {
             background: white;
-            border-radius: 14px;
-            padding: 28px;
-            max-width: 540px;
-            width: 100%;
-            max-height: 88vh;
+            padding: 30px;
+            border-radius: 15px;
+            width: 500px;
+            max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
         }
 
-        .modal h3 {
-            margin: 0 0 4px 0;
-            color: #2c3e50;
-        }
-
-        .modal-sub {
-            color: #888;
-            font-size: 0.83rem;
-            margin: 0 0 20px 0;
-        }
-
-        .modal-form-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .modal-actions {
+        .form-group {
+            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            flex-direction: column;
         }
 
-        .modal-confirm {
-            flex: 1;
-            padding: 11px;
-            background: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.92rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s;
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
         }
 
-        .modal-confirm:hover { background: #219a52; }
-
-        .modal-cancel {
-            padding: 11px 20px;
-            background: white;
-            color: #666;
+        .form-group input,
+        .form-group textarea {
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 0.92rem;
-            cursor: pointer;
-            font-family: inherit;
         }
 
-        .modal-cancel:hover { background: #f5f5f5; }
-
-        /* ── Toast ───────────────────────────────────────── */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            padding: 12px 22px;
-            border-radius: 8px;
+            transform: translateX(-50%);
+            background: #334155;
             color: white;
-            background: #2c3e50;
-            font-weight: 600;
-            font-size: 0.9rem;
-            z-index: 3000;
-            transition: transform 0.3s ease;
-            white-space: nowrap;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        @media (max-width: 900px) {
-            .main-layout { grid-template-columns: 1fr; }
-            .plan-panel { position: static; order: -1; }
-        }
-
-        @media (max-width: 600px) {
-            .form-grid-3, .modal-form-3 { grid-template-columns: 1fr; }
-            .library-grid { grid-template-columns: 1fr; }
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 2000;
         }
     </style>
 </head>
 
 <body>
-<header>
-    <div class="nav-container">
-        <h1 class="logo">QuantiFlex <span>PRO</span></h1>
-        <nav>
-            <ul>
-                <li><a href="/clinician_dashboard">Dashboard</a></li>
-                <li><a href="/patient_list">Patient Queue</a></li>
-                <li><a href="/assign_recovery" class="active">Assign Recovery</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+    <header>
+        <div class="nav-container">
+            <h1 class="logo">QuantiFlex <span>PRO</span></h1>
+            <nav>
+                <ul>
+                    <li><a href="/clinician_home">Dashboard</a></li>
+                    <li><a href="/patient_list">Patient Queue</a></li>
+                    <li><a href="/assign_recovery" class="active">Assign Recovery</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<section class="hero-banner">
-    <h2>Assign Recovery Plan</h2>
-    <p>Design personalized exercise protocols and clinical cues</p>
-</section>
+    <section class="hero-banner">
+        <h2>Assign Recovery Plan</h2>
+        <p>Design personalized exercise protocols and clinical cues</p>
+    </section>
 
     <main class="assign-container">
-        <h2 style="text-align:center; color:#2c3e50; margin-bottom:30px;">Assign Recovery Plan</h2>
-
         <div class="patient-bar">
-            <label for="patientSelect">Patient:</label>
+            <label for="patientSelect">Select Patient:</label>
             <select id="patientSelect">
                 <option value="">— Select a patient —</option>
+                <option value="p101">Zuhal Olomi (Post-Op Knee)</option>
             </select>
             <button class="load-btn" onclick="loadPatientPlan()">Load Existing Plan</button>
             <span id="planStatus"></span>
         </div>
 
         <div class="main-layout">
-            <div>
+            <div class="controls-area">
                 <div class="mode-toggle">
-                    <button class="mode-btn active" id="btnLib" onclick="switchMode('library')">
-                        Default Exercise Library
-                    </button>
-                    <button class="mode-btn" id="btnCustom" onclick="switchMode('custom')">
-                        Create Custom Exercise
-                    </button>
+                    <button class="mode-btn active" id="btnLib" onclick="switchMode('library')">Default Library</button>
+                    <button class="mode-btn" id="btnCustom" onclick="switchMode('custom')">Custom Exercise</button>
                 </div>
 
                 <div id="panelLib">
                     <div class="panel-card">
-                        <h3>Knee Rehabilitation Exercises</h3>
-                        <p class="panel-subtitle">Click <strong>Add to Plan</strong> on any exercise to review and
-                            adjust its details before assigning.</p>
-                        <input type="text" id="librarySearch" placeholder="Search exercises…"
+                        <h3>Exercise Library</h3>
+                        <input type="text" id="librarySearch" placeholder="Search exercises..."
                             oninput="filterLibrary(this.value)">
                         <div class="library-grid" id="libraryGrid"></div>
                     </div>
@@ -612,127 +350,47 @@
 
                 <div id="panelCustom" style="display:none;">
                     <div class="panel-card">
-                        <h3>New Custom Exercise</h3>
-                        <p class="panel-subtitle">Create an exercise not included in the default library and add it
-                            directly to the plan.</p>
-
-                        <div class="form-group">
-                            <label>Exercise Name <span class="req">*</span></label>
-                            <input type="text" id="cName" placeholder="e.g. Single Leg Balance">
+                        <h3>Create Custom Exercise</h3>
+                        <div class="form-group"><label>Name*</label><input type="text" id="cName"></div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                            <div class="form-group"><label>Sets*</label><input type="number" id="cSets" value="3"></div>
+                            <div class="form-group"><label>Reps</label><input type="number" id="cReps" value="10"></div>
+                            <div class="form-group"><label>Freq*</label><input type="text" id="cFrequency"
+                                    value="3x/day"></div>
                         </div>
-
-                        <div class="form-grid-3">
-                            <div class="form-group" style="margin:0;">
-                                <label>Sets <span class="req">*</span></label>
-                                <input type="number" id="cSets" placeholder="3" min="1" max="10">
-                            </div>
-                            <div class="form-group" style="margin:0;">
-                                <label>Reps</label>
-                                <input type="number" id="cReps" placeholder="10" min="1">
-                            </div>
-                            <div class="form-group" style="margin:0;">
-                                <label>Frequency <span class="req">*</span></label>
-                                <input type="text" id="cFrequency" placeholder="3×/week">
-                            </div>
+                        <div class="form-group"><label>Instructions*</label><textarea id="cDirections"
+                                rows="3"></textarea></div>
+                        <div class="form-group"><label>Clinical Cues</label><textarea id="cTips" rows="2"></textarea>
                         </div>
-
-                        <div class="form-group">
-                            <label>Directions <span class="req">*</span></label>
-                            <textarea id="cDirections" rows="4"
-                                placeholder="Step-by-step instructions for performing this exercise…"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Tips / Clinical Cues</label>
-                            <textarea id="cTips" rows="3"
-                                placeholder="Safety notes, alignment cues, progressions…"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Image URL <span style="color:#aaa;font-weight:normal;">(optional)</span></label>
-                            <input type="text" id="cImage" placeholder="https://… or relative path">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Video URL <span style="color:#aaa;font-weight:normal;">(optional)</span></label>
-                            <input type="text" id="cVideo" placeholder="https://www.youtube.com/watch?v=…">
-                        </div>
-
-                        <button class="form-add-btn" onclick="addCustomExercise()">
-                            + Add to Plan
-                        </button>
+                        <button class="save-btn" onclick="addCustomExercise()">+ Add to Plan</button>
                     </div>
                 </div>
             </div>
 
             <div class="plan-panel">
-                <div class="plan-panel-header">
-                    <h3>Current Plan</h3>
-                    <span id="planCount"></span>
-                </div>
+                <h3>Current Plan <span id="planCount" style="color:#64748b; font-size: 0.9rem;"></span></h3>
                 <div id="planItems">
-                    <div class="plan-empty">
-                        <p>No exercises added yet.</p>
-                        <p>Select from the library or create a custom exercise.</p>
-                    </div>
+                    <p style="text-align:center; color:#94a3b8; padding: 20px;">No exercises added.</p>
                 </div>
-                <button class="save-btn" id="saveBtn" onclick="savePlan()" disabled>
-                    💾 Save &amp; Assign Plan
-                </button>
+                <button class="save-btn" id="saveBtn" onclick="savePlan()" disabled>💾 Save & Assign Plan</button>
             </div>
         </div>
     </main>
 
-    <div class="modal-overlay" id="modalOverlay" style="display:none;" onclick="handleOverlayClick(event)">
-        <div class="modal" onclick="event.stopPropagation()">
-            <h3 id="modalTitle">Review Exercise</h3>
-            <p class="modal-sub">Adjust the details if needed, then add to the plan.</p>
-
-            <div class="form-group">
-                <label>Exercise Name</label>
-                <input type="text" id="mName">
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal">
+            <h3>Review Exercise</h3>
+            <div class="form-group"><label>Name</label><input type="text" id="mName"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <div class="form-group"><label>Sets</label><input type="number" id="mSets"></div>
+                <div class="form-group"><label>Reps</label><input type="number" id="mReps"></div>
+                <div class="form-group"><label>Freq</label><input type="text" id="mFrequency"></div>
             </div>
-
-            <div class="modal-form-3">
-                <div class="form-group" style="margin:0;">
-                    <label>Sets</label>
-                    <input type="number" id="mSets" min="1">
-                </div>
-                <div class="form-group" style="margin:0;">
-                    <label>Reps</label>
-                    <input type="number" id="mReps" min="1">
-                </div>
-                <div class="form-group" style="margin:0;">
-                    <label>Frequency</label>
-                    <input type="text" id="mFrequency">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Directions</label>
-                <textarea id="mDirections" rows="4"
-                    style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Tips / Cues</label>
-                <textarea id="mTips" rows="3"
-                    style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" id="mImage" placeholder="https://… or relative path">
-            </div>
-
-            <div class="form-group">
-                <label>Video URL</label>
-                <input type="text" id="mVideo" placeholder="https://www.youtube.com/watch?v=…">
-            </div>
-
-            <div class="modal-actions">
-                <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-confirm" onclick="confirmAdd()">✓ Add to Plan</button>
+            <div class="form-group"><label>Directions</label><textarea id="mDirections" rows="4"></textarea></div>
+            <div class="form-group"><label>Tips/Cues</label><textarea id="mTips" rows="2"></textarea></div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="load-btn" style="flex:1; background:#94a3b8;" onclick="closeModal()">Cancel</button>
+                <button class="load-btn" style="flex:1; background:#27ae60;" onclick="confirmAdd()">Add to Plan</button>
             </div>
         </div>
     </div>
@@ -742,99 +400,111 @@
     <script>
         const API_BASE_URL = 'http://127.0.0.1:5001';
 
-        // Knee Rehabilitation Exercise Library ─────────────────
+        // ── Exercise Library (with Corrected Static Paths) ──
         const DEFAULT_EXERCISES = [
-            {
-                id: 'ex01', name: 'Quad Sets', sets: 3, reps: 10, frequency: '3–4 times/day',
-                directions: 'Sit or lie on your back with your leg straight on a flat surface. Tighten the muscle on top of your thigh (quadriceps) by pressing the back of your knee down into the floor or bed. Hold for 5 seconds, then relax completely.',
-                tips: 'Breathe normally throughout. You should feel the muscle firm up but not feel pain. This can be performed frequently throughout the day.',
-                image: 'exercises/quad-sets.jpg', video: 'https://www.youtube.com/watch?v=9EhHFemc8WQ'
-            },
-            {
-                id: 'ex02', name: 'Straight Leg Raises', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Lie on your back. Bend the uninvolved knee with your foot flat on the floor. Tighten your quad on the involved leg (perform a quad set), then lift the straight leg to the height of the opposite bent knee — about 12 inches. Hold for 3 seconds, then slowly lower.',
-                tips: 'Keep your knee completely straight throughout the entire lift and lowering phase.',
-                image: 'exercises/straight-leg-raises.jpg', video: 'https://www.youtube.com/watch?v=4UBnTSqRlD0'
-            },
-            {
-                id: 'ex03', name: 'Heel Slides', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Lie on your back with both legs straight. Slowly slide your heel toward your buttock by bending the knee as far as comfortable. Hold for 5 seconds, then slowly slide back to the starting position.',
-                tips: 'Keep your heel in contact with the surface at all times. Never force the bend — work within a comfortable range and increase it progressively.',
-                image: 'exercises/heel-slides.jpg', video: 'https://www.youtube.com/watch?v=dPf8_MgS1aI'
-            },
-            {
-                id: 'ex04', name: 'Short Arc Quads', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Lie on your back. Place a rolled towel or firm bolster under your knee so it rests at approximately 60°. Tighten your quad and slowly lift your foot until the leg is fully straight. Hold for 5 seconds, then slowly lower.',
-                tips: 'Keep your thigh on the bolster at all times — do not lift the thigh. Focus on achieving full terminal knee extension.',
-                image: 'exercises/short-arc-quads.jpg', video: 'https://www.youtube.com/watch?v=3f1k1huhRgI'
-            },
-            {
-                id: 'ex05', name: 'Ankle Pumps', sets: 3, reps: 20, frequency: '3–4 times/day',
-                directions: 'Lie or sit with your leg extended. Slowly pull your toes up toward your shin (dorsiflexion), hold 2 seconds, then point your toes downward (plantarflexion), hold 2 seconds. Alternate in a slow, rhythmic pattern.',
-                tips: 'This promotes circulation and reduces swelling. Perform frequently — especially in the early post-operative period.',
-                image: 'exercises/ankle-pumps.jpg', video: 'https://www.youtube.com/watch?v=O92TCCmEqbk'
-            },
-            {
-                id: 'ex06', name: 'Prone Knee Flexion', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Lie face down on a flat surface with both legs straight. Slowly bend your involved knee, bringing your heel toward your buttock as far as comfortable. Hold for 3 seconds, then slowly lower back to the start.',
-                tips: 'Keep your hip flat against the surface — do not allow it to rise as you bend the knee.',
-                image: 'exercises/prone-knee-flexion.jpg', video: 'https://www.youtube.com/watch?v=_LP6X9J68H0'
-            },
-            {
-                id: 'ex07', name: 'Terminal Knee Extension', sets: 3, reps: 15, frequency: '3 times/day',
-                directions: 'Secure a resistance band to a fixed anchor at knee height. Loop the other end around the back of your involved knee. Face the anchor and start with a slight knee bend. Tighten your quad and fully straighten the knee. Hold 2 seconds, then slowly return.',
-                tips: 'Stand tall with core engaged. Control the return — do not let the band snap the knee back into flexion.',
-                image: 'exercises/terminal-knee-extension.jpg', video: 'https://www.youtube.com/watch?v=uUugNQxirt0'
-            },
-            {
-                id: 'ex08', name: 'Standing Hip Abduction', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Stand beside a wall or counter and hold it lightly for balance. Slowly lift your involved leg straight out to the side, keeping your toes pointing forward and your knee straight. Hold for 3 seconds, then slowly lower.',
-                tips: 'Do not lean your trunk toward the standing leg. Keep your back straight and movements deliberate.',
-                image: 'exercises/hip-abduction.jpg', video: 'https://www.youtube.com/watch?v=xUxWsvWj3Go'
-            },
-            {
-                id: 'ex09', name: 'Heel Raises', sets: 3, reps: 10, frequency: '3 times/day',
-                directions: 'Stand with feet hip-width apart, lightly holding a stable surface for balance. Rise up onto the balls of both feet as high as comfortable. Hold for 3 seconds, then slowly lower your heels back to the floor.',
-                tips: 'Control the lowering phase for maximum eccentric benefit. Progress to single-leg heel raises as strength improves.',
-                image: 'exercises/heel-raises.jpg', video: 'https://www.youtube.com/watch?v=cqDMYUaIXvw'
-            },
-            {
-                id: 'ex10', name: 'Wall Squats', sets: 3, reps: 10, frequency: '3 times/week',
-                directions: 'Stand with your back flat against a wall, feet shoulder-width apart and about 12 inches in front of the wall. Slowly slide down until your knees are bent at 45–60°. Hold for 5–10 seconds, then slide back up to standing.',
-                tips: 'Do not allow your knees to bend past 90°. Keep your knees tracking over your second toes — do not let them cave inward.',
-                image: 'exercises/wall-squats.jpg', video: 'https://www.youtube.com/watch?v=3J99J5NxNSQ'
-            },
-            {
-                id: 'ex11', name: 'Step-Ups', sets: 3, reps: 10, frequency: '3 times/week',
-                directions: 'Stand in front of a 4–6 inch step. Step up with the involved leg, placing your whole foot on the step. Bring the other foot up level, then step down with the uninvolved leg first. The involved leg should bear the majority of the work.',
-                tips: 'Keep your knee tracking over your second toe throughout the movement. Use a handrail for balance as needed.',
-                image: 'exercises/step-ups.jpg', video: 'https://www.youtube.com/watch?v=xOcpKS8APxo'
-            },
-            {
-                id: 'ex12', name: 'Hamstring Curls (Standing)', sets: 3, reps: 10, frequency: '3 times/week',
-                directions: 'Stand holding a wall or counter for support. Slowly bend your involved knee, curling your heel toward your buttock. Hold for 3 seconds, then slowly lower your foot back to the floor.',
-                tips: 'Keep both thighs even and parallel — do not let the involved hip hike up. Increase range of motion incrementally over sessions.',
-                image: 'exercises/hamstring-curls.jpg', video: 'https://www.youtube.com/watch?v=zRL2TBKc2cc'
-            }
+            { id: 'ex01', name: 'Quad Sets', sets: 3, reps: 10, frequency: '3–4x/day', directions: 'Sit with leg straight. Tighten quad by pressing knee down.', tips: 'Hold 5s.', image: '/static/exercises/quad-sets.jpg', video: 'https://youtu.be/9EhHFemc8WQ' },
+            { id: 'ex02', name: 'Straight Leg Raises', sets: 3, reps: 10, frequency: '3x/day', directions: 'Lie on back, lift straight leg to height of other knee.', tips: 'Keep knee locked.', image: '/static/exercises/straight-leg-raises.jpg', video: 'https://youtu.be/4UBnTSqRlD0' },
+            { id: 'ex03', name: 'Heel Slides', sets: 3, reps: 10, frequency: '3x/day', directions: 'Slide heel toward buttock.', tips: 'Work within pain-free range.', image: '/static/exercises/heel-slides.jpg', video: 'https://youtu.be/dPf8_MgS1aI' },
+            { id: 'ex04', name: 'Short Arc Quads', sets: 3, reps: 10, frequency: '3x/day', directions: 'Rolled towel under knee, lift foot.', tips: 'Achieve full extension.', image: '/static/exercises/short-arc-quads.jpg', video: 'https://youtu.be/3f1k1huhRgI' },
+            { id: 'ex05', name: 'Ankle Pumps', sets: 3, reps: 20, frequency: '4x/day', directions: 'Flex and point toes.', tips: 'Improves circulation.', image: '/static/exercises/ankle-pumps.jpg', video: 'https://youtu.be/O92TCCmEqbk' },
+            { id: 'ex06', name: 'Prone Knee Flexion', sets: 3, reps: 10, frequency: '3x/day', directions: 'Lie face down, bend knee.', tips: 'Keep hips flat.', image: '/static/exercises/prone-knee-flexion.jpg', video: 'https://youtu.be/_LP6X9J68H0' }
         ];
 
-        // ── State ─────────────────────────────────────────────────────────────
         let currentPlan = [];
-        let activeModalData = null; 
 
-        // ── Init ──────────────────────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
-            const userRole = localStorage.getItem('userRole');
-            if (!isLoggedIn || userRole !== 'clinician') {
-                window.location.href = '/login';
-                return;
+        // ── Core Logic ──
+        function renderLibrary(data) {
+            const grid = document.getElementById('libraryGrid');
+            grid.innerHTML = data.map(ex => {
+                const isAdded = currentPlan.some(p => p.name === ex.name);
+                return `
+                <div class="lib-card ${isAdded ? 'in-plan' : ''}">
+                    <h4>${ex.name}</h4>
+                    <p class="lib-preview">${ex.directions}</p>
+                    <button class="lib-add-btn" onclick="openModal('${ex.id}')" ${isAdded ? 'disabled' : ''}>
+                        ${isAdded ? '✓ Added' : '+ Add to Plan'}
+                    </button>
+                </div>`;
+            }).join('');
+        }
+
+        function filterLibrary(q) {
+            const filtered = DEFAULT_EXERCISES.filter(ex => ex.name.toLowerCase().includes(q.toLowerCase()));
+            renderLibrary(filtered);
+        }
+
+        function openModal(id) {
+            const ex = DEFAULT_EXERCISES.find(e => e.id === id);
+            document.getElementById('mName').value = ex.name;
+            document.getElementById('mSets').value = ex.sets;
+            document.getElementById('mReps').value = ex.reps;
+            document.getElementById('mFrequency').value = ex.frequency;
+            document.getElementById('mDirections').value = ex.directions;
+            document.getElementById('mTips').value = ex.tips;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+        function confirmAdd() {
+            const ex = {
+                name: document.getElementById('mName').value,
+                sets: document.getElementById('mSets').value,
+                reps: document.getElementById('mReps').value,
+                frequency: document.getElementById('mFrequency').value,
+                directions: document.getElementById('mDirections').value,
+                tips: document.getElementById('mTips').value
+            };
+            currentPlan.push(ex);
+            updatePlanUI();
+            closeModal();
+        }
+
+        function addCustomExercise() {
+            const ex = {
+                name: document.getElementById('cName').value,
+                sets: document.getElementById('cSets').value,
+                reps: document.getElementById('cReps').value,
+                frequency: document.getElementById('cFrequency').value,
+                directions: document.getElementById('cDirections').value,
+                tips: document.getElementById('cTips').value
+            };
+            if (!ex.name || !ex.directions) return alert("Fill required fields");
+            currentPlan.push(ex);
+            updatePlanUI();
+            switchMode('library');
+        }
+
+        function updatePlanUI() {
+            const container = document.getElementById('planItems');
+            const saveBtn = document.getElementById('saveBtn');
+            const count = document.getElementById('planCount');
+
+            if (currentPlan.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 20px;">No exercises added.</p>';
+                saveBtn.disabled = true;
+                count.textContent = "";
+            } else {
+                saveBtn.disabled = false;
+                count.textContent = `(${currentPlan.length})`;
+                container.innerHTML = currentPlan.map((ex, i) => `
+                    <div class="plan-item">
+                        <div>
+                            <h4>${ex.name}</h4>
+                            <small>${ex.sets}x${ex.reps} | ${ex.frequency}</small>
+                        </div>
+                        <button class="del-btn" onclick="removeEx(${i})">✕</button>
+                    </div>
+                `).join('');
             }
-            loadPatients();
             renderLibrary(DEFAULT_EXERCISES);
-        });
+        }
 
-        // ── Mode Toggle ───────────────────────────────────────────────────────
+        function removeEx(i) {
+            currentPlan.splice(i, 1);
+            updatePlanUI();
+        }
+
         function switchMode(mode) {
             const isLib = mode === 'library';
             document.getElementById('btnLib').classList.toggle('active', isLib);
@@ -843,198 +513,28 @@
             document.getElementById('panelCustom').style.display = isLib ? 'none' : 'block';
         }
 
-        // ── Patient Selection ─────────────────────────────────────────────────
-        function loadPatients() {
-            const select = document.getElementById('patientSelect');
-            const savedProfile = localStorage.getItem('patientProfile');
-            
-            if (savedProfile) {
-                try {
-                    const profile = JSON.parse(savedProfile);
-                    if (profile.firstName && profile.lastName) {
-                        const option = document.createElement('option');
-                        option.value = 'p101'; 
-                        option.textContent = `${profile.firstName} ${profile.lastName} (${profile.primaryCondition || 'Active Rehab'})`;
-                        select.appendChild(option);
-                    }
-                } catch (e) { console.error("Error loading patient", e); }
-            }
+        async function savePlan() {
+            const pid = document.getElementById('patientSelect').value;
+            if (!pid) return showToast("Select a patient!");
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/assignments/${pid}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ exercises: currentPlan })
+                });
+                if (res.ok) showToast("Plan Assigned!");
+            } catch (e) { showToast("Save failed."); }
         }
 
-        function loadPatientPlan() {
-            const patientId = document.getElementById('patientSelect').value;
-            if (!patientId) return showToast("Please select a patient first.");
-            
-            currentPlan = []; // Reset
-            renderPlan();
-            showToast("Plan cleared and ready for new assignment.");
-            document.getElementById('saveBtn').disabled = false;
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
         }
 
-        // ── Library Rendering & Searching ──────────────────────────────────────
-        function renderLibrary(exercises) {
-            const grid = document.getElementById('libraryGrid');
-            grid.innerHTML = exercises.map(ex => {
-                const inPlan = currentPlan.some(p => p.id === ex.id);
-                return `
-                <div class="lib-card ${inPlan ? 'in-plan' : ''}">
-                    <h4>${ex.name}</h4>
-                    <div class="lib-meta">
-                        <span>Sets: ${ex.sets}</span>
-                        <span>Reps: ${ex.reps}</span>
-                    </div>
-                    <div class="lib-preview">${ex.directions}</div>
-                    <button class="lib-add-btn" onclick='openModal(${JSON.stringify(ex)})' ${inPlan ? 'disabled' : ''}>
-                        ${inPlan ? '✓ Added' : '+ Add to Plan'}
-                    </button>
-                </div>
-            `}).join('');
-        }
-
-        function filterLibrary(term) {
-            term = term.toLowerCase();
-            const filtered = DEFAULT_EXERCISES.filter(ex => 
-                ex.name.toLowerCase().includes(term) || ex.directions.toLowerCase().includes(term)
-            );
-            renderLibrary(filtered);
-        }
-
-        // ── Modal Logic (Editing before adding) ────────────────────────────────
-        function openModal(exercise) {
-            activeModalData = { ...exercise }; // Clone
-            document.getElementById('mName').value = exercise.name;
-            document.getElementById('mSets').value = exercise.sets;
-            document.getElementById('mReps').value = exercise.reps;
-            document.getElementById('mFrequency').value = exercise.frequency;
-            document.getElementById('mDirections').value = exercise.directions;
-            document.getElementById('mTips').value = exercise.tips || '';
-            document.getElementById('mImage').value = exercise.image || '';
-            document.getElementById('mVideo').value = exercise.video || '';
-            
-            document.getElementById('modalOverlay').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').style.display = 'none';
-            activeModalData = null;
-        }
-
-        function handleOverlayClick(event) {
-            if (event.target.id === 'modalOverlay') closeModal();
-        }
-
-        function confirmAdd() {
-            if (!activeModalData) return;
-            
-            const updatedExercise = {
-                id: activeModalData.id,
-                name: document.getElementById('mName').value,
-                sets: document.getElementById('mSets').value,
-                reps: document.getElementById('mReps').value,
-                frequency: document.getElementById('mFrequency').value,
-                directions: document.getElementById('mDirections').value,
-                tips: document.getElementById('mTips').value,
-                image: document.getElementById('mImage').value,
-                video: document.getElementById('mVideo').value,
-            };
-
-            currentPlan.push(updatedExercise);
-            closeModal();
-            renderPlan();
-            renderLibrary(DEFAULT_EXERCISES); // Re-render to show green checkmark
-            document.getElementById('saveBtn').disabled = false;
-        }
-
-        // ── Custom Exercise Addition ──────────────────────────────────────────
-        function addCustomExercise() {
-            const name = document.getElementById('cName').value.trim();
-            const sets = document.getElementById('cSets').value;
-            const frequency = document.getElementById('cFrequency').value.trim();
-            const directions = document.getElementById('cDirections').value.trim();
-
-            if (!name || !sets || !frequency || !directions) {
-                showToast("Please fill all required (*) fields.");
-                return;
-            }
-
-            const customExercise = {
-                id: 'custom_' + Date.now(),
-                name, sets, frequency, directions,
-                reps: document.getElementById('cReps').value,
-                tips: document.getElementById('cTips').value,
-                image: document.getElementById('cImage').value,
-                video: document.getElementById('cVideo').value,
-            };
-
-            currentPlan.push(customExercise);
-            
-            // Clear form
-            ['cName','cSets','cReps','cFrequency','cDirections','cTips','cImage','cVideo'].forEach(id => document.getElementById(id).value = '');
-            
-            renderPlan();
-            switchMode('library');
-            document.getElementById('saveBtn').disabled = false;
-        }
-
-        // ── Current Plan Rendering ────────────────────────────────────────────
-        function renderPlan() {
-            const container = document.getElementById('planItems');
-            document.getElementById('planCount').textContent = `(${currentPlan.length} exercises)`;
-
-            if (currentPlan.length === 0) {
-                container.innerHTML = `
-                    <div class="plan-empty">
-                        <p>No exercises added yet.</p>
-                        <p>Select from the library or create a custom exercise.</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = currentPlan.map((ex, index) => `
-                <div class="plan-item">
-                    <h4>${ex.name}</h4>
-                    <div class="item-meta">
-                        <span>Sets: ${ex.sets}</span>
-                        <span>Reps: ${ex.reps}</span>
-                        <span>Freq: ${ex.frequency}</span>
-                    </div>
-                    <div class="plan-item-actions">
-                        <button class="icon-btn del-icon-btn" onclick="removePlanItem(${index})" title="Remove">✕</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function removePlanItem(index) {
-            currentPlan.splice(index, 1);
-            renderPlan();
-            renderLibrary(DEFAULT_EXERCISES); // Refresh library checkmarks
-            if (currentPlan.length === 0) document.getElementById('saveBtn').disabled = true;
-        }
-
-        // ── Save Functionality ────────────────────────────────────────────────
-        function savePlan() {
-            const patientId = document.getElementById('patientSelect').value;
-            if (!patientId) {
-                showToast("Please select a patient before saving.");
-                return;
-            }
-
-            // In a real app, POST to API_BASE_URL. Here, we mock the success.
-            console.log("Saving Plan Data:", { patient: patientId, exercises: currentPlan });
-            showToast(`Success! Plan assigned to patient.`);
-            
-            // Optional: simulate saving by putting it in localStorage for the patient page to grab
-            localStorage.setItem('assigned_exercises', JSON.stringify(currentPlan));
-        }
-
-        // ── UI Utilities ──────────────────────────────────────────────────────
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
+        document.addEventListener('DOMContentLoaded', () => renderLibrary(DEFAULT_EXERCISES));
     </script>
 </body>
+
 </html>
