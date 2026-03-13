@@ -7,109 +7,108 @@
     <title>Assign Recovery Plan | QuantiFlex PRO</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* ── Layout & Theme ─────────────────────────────────────── */
+        /* ── Page-level overrides to match site theme ── */
         body {
-            background-color: #f8fafc;
-            color: #334155;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: "Georgia", serif;
+            background: #f4f4f4;
+            color: #333;
             margin: 0;
+            padding: 0;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .assign-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        /* hero banner */
+        .analysis-hero {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dce3ea;
         }
 
-        header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 10px 0;
+        .analysis-hero h2 {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin: 0 0 0.4rem;
+            font-family: "Georgia", serif;
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo span {
-            color: #4d82ad;
-            font-size: 0.8rem;
-            vertical-align: top;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 20px;
+        .analysis-hero p {
+            color: #666;
+            font-size: 1.1rem;
             margin: 0;
             padding: 0;
         }
 
-        nav a {
-            text-decoration: none;
-            color: #64748b;
-            font-weight: 500;
+        /* ── Main container ── */
+        .assign-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 20px 60px;
         }
 
-        nav a.active {
-            color: #4d82ad;
-            border-bottom: 2px solid #4d82ad;
-        }
-
-        .hero-banner {
-            text-align: center;
-            padding: 40px 20px;
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .hero-banner h2 {
-            margin: 0;
-            color: #2c3e50;
-        }
-
-        .hero-banner p {
-            color: #64748b;
-            margin-top: 5px;
-        }
-
-        /* ── Patient Bar ─────────────────────────────────── */
+        /* ── Patient bar ── */
         .patient-bar {
             background: white;
-            padding: 18px 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e1e8ed;
+            padding: 20px 26px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
             flex-wrap: wrap;
             margin-bottom: 28px;
         }
 
+        .patient-bar label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+
         .patient-bar select {
-            padding: 9px 14px;
-            border: 1px solid #ddd;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            min-width: 240px;
+            font-family: "Georgia", serif;
+            font-size: 14px;
+            min-width: 260px;
+            transition: border-color 0.3s ease;
+            color: #2c3e50;
+        }
+
+        .patient-bar select:focus {
+            outline: none;
+            border-color: #4d82ad;
+            box-shadow: 0 0 0 3px rgba(77, 130, 173, 0.1);
         }
 
         .load-btn {
-            padding: 9px 20px;
+            padding: 10px 22px;
             background: #4d82ad;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            font-family: "Georgia", serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        /* ── Main Grid Layout ────────────────────────────── */
+        .load-btn:hover {
+            background: #3a6788;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #planStatus {
+            font-size: 13px;
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        /* ── Main 2-col grid ── */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 360px;
@@ -117,12 +116,13 @@
             align-items: start;
         }
 
+        /* ── Mode toggle ── */
         .mode-toggle {
             display: flex;
             border-radius: 10px;
-            border: 1.5px solid #4d82ad;
+            border: 2px solid #4d82ad;
             overflow: hidden;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .mode-btn {
@@ -132,7 +132,10 @@
             background: white;
             color: #4d82ad;
             font-weight: 600;
+            font-family: "Georgia", serif;
+            font-size: 14px;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .mode-btn.active {
@@ -140,35 +143,68 @@
             color: white;
         }
 
+        .mode-btn:not(.active):hover {
+            background: rgba(77, 130, 173, 0.08);
+        }
+
+        /* ── Panel cards ── */
         .panel-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e1e8ed;
-            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+            padding: 24px;
+        }
+
+        .panel-card h3 {
+            color: #4d82ad;
+            margin: 0 0 18px;
+            font-size: 1.2rem;
+            font-family: "Georgia", serif;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 12px;
         }
 
         #librarySearch {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
+            font-family: "Georgia", serif;
+            font-size: 14px;
             margin-bottom: 18px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
         }
 
+        #librarySearch:focus {
+            outline: none;
+            border-color: #4d82ad;
+            box-shadow: 0 0 0 3px rgba(77, 130, 173, 0.1);
+        }
+
+        /* ── Library grid ── */
         .library-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
         }
 
         .lib-card {
-            border: 1.5px solid #e1e8ed;
-            border-radius: 10px;
-            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            transition: 0.2s;
+            transition: all 0.25s ease;
+            overflow: hidden;
+            background: white;
+        }
+
+        .lib-card:hover {
+            border-color: #4d82ad;
+            box-shadow: 0 4px 12px rgba(77, 130, 173, 0.15);
+            transform: translateY(-2px);
         }
 
         .lib-card.in-plan {
@@ -176,83 +212,195 @@
             background: #f4fef7;
         }
 
+        .lib-card-img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+            background: #ecf0f1;
+        }
+
+        .lib-card-img-fallback {
+            width: 100%;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8f4fd, #d5e8f5);
+            font-size: 2.5rem;
+        }
+
+        .lib-card-body {
+            padding: 14px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .lib-card h4 {
-            margin: 0 0 5px 0;
-            color: #4d82ad;
+            margin: 0 0 6px;
+            color: #2c3e50;
+            font-size: 1rem;
+            font-family: "Georgia", serif;
         }
 
         .lib-preview {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #666;
+            line-height: 1.5;
             flex-grow: 1;
+            margin-bottom: 12px;
         }
 
         .lib-add-btn {
-            margin-top: 10px;
-            padding: 8px;
+            padding: 8px 12px;
             background: #4d82ad;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            font-family: "Georgia", serif;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
-        /* ── Current Plan Panel ──────────────────────────── */
+        .lib-add-btn:hover:not(:disabled) {
+            background: #3a6788;
+        }
+
+        .lib-add-btn:disabled {
+            background: #27ae60;
+            cursor: not-allowed;
+        }
+
+        /* ── Custom exercise form ── */
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #34495e;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: "Georgia", serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4d82ad;
+            box-shadow: 0 0 0 3px rgba(77, 130, 173, 0.1);
+        }
+
+        /* ── Plan panel (right col) ── */
         .plan-panel {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 24px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
             position: sticky;
             top: 20px;
         }
 
+        .plan-panel h3 {
+            color: #4d82ad;
+            margin: 0 0 18px;
+            font-size: 1.2rem;
+            font-family: "Georgia", serif;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 12px;
+        }
+
         .plan-item {
-            border: 1px solid #e1e8ed;
-            padding: 10px;
-            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 12px 14px;
+            border-radius: 10px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #f8f9fa;
+            transition: border-color 0.2s ease;
+        }
+
+        .plan-item:hover {
+            border-color: #4d82ad;
         }
 
         .plan-item h4 {
-            margin: 0;
+            margin: 0 0 3px;
             font-size: 0.9rem;
+            color: #2c3e50;
+            font-family: "Georgia", serif;
+        }
+
+        .plan-item small {
+            color: #7f8c8d;
+            font-size: 0.8rem;
         }
 
         .del-btn {
-            background: #fee2e2;
-            color: #dc2626;
+            background: #fde8e8;
+            color: #c0392b;
             border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
+            border-radius: 6px;
+            padding: 5px 9px;
             cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        .del-btn:hover {
+            background: #f5c6c6;
         }
 
         .save-btn {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: #4d82ad;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
+            font-family: "Georgia", serif;
+            font-size: 15px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover:not(:disabled) {
+            background: #3a6788;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
         }
 
         .save-btn:disabled {
-            background: #cbd5e1;
+            background: #bdc3c7;
             cursor: not-allowed;
+            transform: none;
         }
 
-        /* ── Modal & Toast ───────────────────────────────── */
+        /* ── Modal ── */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.45);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -261,69 +409,117 @@
 
         .modal {
             background: white;
-            padding: 30px;
+            padding: 32px;
             border-radius: 15px;
-            width: 500px;
+            width: 520px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .modal h3 {
+            color: #2c3e50;
+            font-family: "Georgia", serif;
+            margin: 0 0 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 12px;
+        }
+
+        .modal-actions {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
+            margin-top: 22px;
         }
 
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            padding: 10px;
-            border: 1px solid #ddd;
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #ecf0f1;
+            color: #34495e;
+            border: none;
             border-radius: 8px;
+            cursor: pointer;
+            font-family: "Georgia", serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s ease;
         }
 
+        .btn-cancel:hover { background: #bdc3c7; }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: "Georgia", serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-confirm:hover {
+            background: #1e8449;
+            transform: translateY(-1px);
+        }
+
+        /* ── Toast ── */
         .toast {
             position: fixed;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: #334155;
+            background: #2c3e50;
             color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 13px 28px;
+            border-radius: 10px;
             display: none;
             z-index: 2000;
+            font-family: "Georgia", serif;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-panel {
+                position: static;
+            }
         }
     </style>
 </head>
 
 <body>
     <header>
-        <div class="nav-container">
-            <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.7;">PRO</span></h1>
-            <nav>
-                <ul>
-            <li><a href="/clinician_home">Dashboard</a></li>
-            <li><a href="/patient_list" class="active">Patient Queue</a></li>
-            <li><a href="/analysis">Clinical Analysis</a></li>
-            <li><a href="/assign_recovery">Assign Recovery</a></li>
-            <li><a href="/clinician_profile">My Profile</a></li>
-                </ul>
-            </nav>
-        </div>
+        <h1>QuantiFlex <span style="font-size: 1rem; font-family: Georgia, serif; font-weight: 300; opacity: 0.85;">PRO</span></h1>
+        <nav>
+            <ul>
+                <li><a href="/clinician_home">Dashboard</a></li>
+                <li><a href="/patient_list">Patient Queue</a></li>
+                <li><a href="/analysis">Clinical Analysis</a></li>
+                <li><a href="/assign_recovery" class="active">Assign Recovery</a></li>
+                <li><a href="/clinician_profile">My Profile</a></li>
+            </ul>
+        </nav>
     </header>
 
-         <section class="analysis-hero">
-            <h2>Patient Progress Analytics</h2>
-            <p>Session history, trends, and detailed muscle ratio analysis</p>
-        </section>
+    <section class="analysis-hero">
+        <h2>Assign Recovery Plan</h2>
+        <p>Build and assign personalised rehabilitation programmes for your patients</p>
+    </section>
 
     <main class="assign-container">
+
+        <!-- Patient selector bar -->
         <div class="patient-bar">
             <label for="patientSelect">Select Patient:</label>
             <select id="patientSelect">
@@ -335,97 +531,114 @@
         </div>
 
         <div class="main-layout">
+
+            <!-- Left col: library / custom toggle -->
             <div class="controls-area">
                 <div class="mode-toggle">
                     <button class="mode-btn active" id="btnLib" onclick="switchMode('library')">Default Library</button>
                     <button class="mode-btn" id="btnCustom" onclick="switchMode('custom')">Custom Exercise</button>
                 </div>
 
+                <!-- Library panel -->
                 <div id="panelLib">
                     <div class="panel-card">
                         <h3>Exercise Library</h3>
-                        <input type="text" id="librarySearch" placeholder="Search exercises..."
-                            oninput="filterLibrary(this.value)">
+                        <input type="text" id="librarySearch" placeholder="🔍  Search exercises…" oninput="filterLibrary(this.value)">
                         <div class="library-grid" id="libraryGrid"></div>
                     </div>
                 </div>
 
+                <!-- Custom panel -->
                 <div id="panelCustom" style="display:none;">
                     <div class="panel-card">
                         <h3>Create Custom Exercise</h3>
-                        <div class="form-group"><label>Name*</label><input type="text" id="cName"></div>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                            <div class="form-group"><label>Sets*</label><input type="number" id="cSets" value="3"></div>
-                            <div class="form-group"><label>Reps</label><input type="number" id="cReps" value="10"></div>
-                            <div class="form-group"><label>Freq*</label><input type="text" id="cFrequency"
-                                    value="3x/day"></div>
+                        <div class="form-group"><label>Name *</label><input type="text" id="cName" placeholder="Exercise name"></div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+                            <div class="form-group"><label>Sets *</label><input type="number" id="cSets" value="3" min="1"></div>
+                            <div class="form-group"><label>Reps</label><input type="number" id="cReps" value="10" min="1"></div>
+                            <div class="form-group"><label>Frequency *</label><input type="text" id="cFrequency" value="3x/day"></div>
                         </div>
-                        <div class="form-group"><label>Instructions*</label><textarea id="cDirections"
-                                rows="3"></textarea></div>
-                        <div class="form-group"><label>Clinical Cues</label><textarea id="cTips" rows="2"></textarea>
-                        </div>
+                        <div class="form-group"><label>Instructions *</label><textarea id="cDirections" rows="3" placeholder="Step-by-step instructions…"></textarea></div>
+                        <div class="form-group"><label>Clinical Cues</label><textarea id="cTips" rows="2" placeholder="Tips or cues for the patient…"></textarea></div>
                         <button class="save-btn" onclick="addCustomExercise()">+ Add to Plan</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Right col: current plan -->
             <div class="plan-panel">
-                <h3>Current Plan <span id="planCount" style="color:#64748b; font-size: 0.9rem;"></span></h3>
+                <h3>Current Plan <span id="planCount" style="color:#7f8c8d; font-size:0.88rem; font-weight:normal;"></span></h3>
                 <div id="planItems">
-                    <p style="text-align:center; color:#94a3b8; padding: 20px;">No exercises added.</p>
+                    <p style="text-align:center; color:#bdc3c7; padding:20px 0; font-size:0.95rem;">No exercises added yet.</p>
                 </div>
-                <button class="save-btn" id="saveBtn" onclick="savePlan()" disabled>💾 Save & Assign Plan</button>
+                <button class="save-btn" id="saveBtn" onclick="savePlan()" disabled>💾 Save &amp; Assign Plan</button>
             </div>
         </div>
     </main>
 
+    <!-- Review / edit modal -->
     <div class="modal-overlay" id="modalOverlay" style="display:none;">
         <div class="modal">
             <h3>Review Exercise</h3>
             <div class="form-group"><label>Name</label><input type="text" id="mName"></div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
                 <div class="form-group"><label>Sets</label><input type="number" id="mSets"></div>
                 <div class="form-group"><label>Reps</label><input type="number" id="mReps"></div>
-                <div class="form-group"><label>Freq</label><input type="text" id="mFrequency"></div>
+                <div class="form-group"><label>Frequency</label><input type="text" id="mFrequency"></div>
             </div>
             <div class="form-group"><label>Directions</label><textarea id="mDirections" rows="4"></textarea></div>
-            <div class="form-group"><label>Tips/Cues</label><textarea id="mTips" rows="2"></textarea></div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="load-btn" style="flex:1; background:#94a3b8;" onclick="closeModal()">Cancel</button>
-                <button class="load-btn" style="flex:1; background:#27ae60;" onclick="confirmAdd()">Add to Plan</button>
+            <div class="form-group"><label>Tips / Cues</label><textarea id="mTips" rows="2"></textarea></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmAdd()">✓ Add to Plan</button>
             </div>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
+    <footer>
+        <p>© 2025-2026 UTBiome | Clinical Rehabilitation Technology</p>
+    </footer>
+
     <script>
         const API_BASE_URL = 'http://127.0.0.1:5001';
 
-        // ── Exercise Library (with Corrected Static Paths) ──
         const DEFAULT_EXERCISES = [
-            { id: 'ex01', name: 'Quad Sets', sets: 3, reps: 10, frequency: '3–4x/day', directions: 'Sit with leg straight. Tighten quad by pressing knee down.', tips: 'Hold 5s.', image: '/static/exercises/quad-sets.jpg', video: 'https://youtu.be/9EhHFemc8WQ' },
-            { id: 'ex02', name: 'Straight Leg Raises', sets: 3, reps: 10, frequency: '3x/day', directions: 'Lie on back, lift straight leg to height of other knee.', tips: 'Keep knee locked.', image: '/static/exercises/straight-leg-raises.jpg', video: 'https://youtu.be/4UBnTSqRlD0' },
-            { id: 'ex03', name: 'Heel Slides', sets: 3, reps: 10, frequency: '3x/day', directions: 'Slide heel toward buttock.', tips: 'Work within pain-free range.', image: '/static/exercises/heel-slides.jpg', video: 'https://youtu.be/dPf8_MgS1aI' },
-            { id: 'ex04', name: 'Short Arc Quads', sets: 3, reps: 10, frequency: '3x/day', directions: 'Rolled towel under knee, lift foot.', tips: 'Achieve full extension.', image: '/static/exercises/short-arc-quads.jpg', video: 'https://youtu.be/3f1k1huhRgI' },
-            { id: 'ex05', name: 'Ankle Pumps', sets: 3, reps: 20, frequency: '4x/day', directions: 'Flex and point toes.', tips: 'Improves circulation.', image: '/static/exercises/ankle-pumps.jpg', video: 'https://youtu.be/O92TCCmEqbk' },
-            { id: 'ex06', name: 'Prone Knee Flexion', sets: 3, reps: 10, frequency: '3x/day', directions: 'Lie face down, bend knee.', tips: 'Keep hips flat.', image: '/static/exercises/prone-knee-flexion.jpg', video: 'https://youtu.be/_LP6X9J68H0' }
+            { id: 'ex01', name: 'Quad Sets',               sets: 3,  reps: 10, frequency: '3–4x/day', directions: 'Sit with leg straight. Tighten quad by pressing knee down.',                     tips: 'Hold 5 s.',                       image: '/static/exercises/quad-sets.jpg',             video: 'https://youtu.be/9EhHFemc8WQ' },
+            { id: 'ex02', name: 'Straight Leg Raises',     sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Lie on back, lift straight leg to height of other knee.',                       tips: 'Keep knee locked.',               image: '/static/exercises/straight-leg-raises.jpg',  video: 'https://youtu.be/4UBnTSqRlD0' },
+            { id: 'ex03', name: 'Heel Slides',             sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Slide heel toward buttock.',                                                    tips: 'Work within pain-free range.',    image: '/static/exercises/heel-slides.jpg',          video: 'https://youtu.be/dPf8_MgS1aI' },
+            { id: 'ex04', name: 'Short Arc Quads',         sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Rolled towel under knee, lift foot.',                                           tips: 'Achieve full extension.',         image: '/static/exercises/short-arc-quads.jpg',      video: 'https://youtu.be/3f1k1huhRgI' },
+            { id: 'ex05', name: 'Ankle Pumps',             sets: 3,  reps: 20, frequency: '4x/day',   directions: 'Flex and point toes.',                                                          tips: 'Improves circulation.',           image: '/static/exercises/ankle-pumps.jpg',          video: 'https://youtu.be/O92TCCmEqbk' },
+            { id: 'ex06', name: 'Prone Knee Flexion',      sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Lie face down, bend knee.',                                                     tips: 'Keep hips flat.',                 image: '/static/exercises/prone-knee-flexion.jpg',   video: 'https://youtu.be/_LP6X9J68H0' },
+            { id: 'ex07', name: 'Terminal Knee Extension', sets: 3,  reps: 15, frequency: '3x/day',   directions: 'Band around back of knee. Face anchor. Fully straighten knee from slight bend.', tips: 'Control the return movement.',   image: '/static/exercises/terminal-knee-extension.jpg', video: 'https://youtu.be/uUugNQxirt0' },
+            { id: 'ex08', name: 'Hip Abduction',           sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Stand, hold wall. Lift leg straight out to side.',                              tips: 'Keep back straight.',             image: '/static/exercises/hip-abduction.jpg',        video: 'https://youtu.be/xUxWsvWj3Go' },
+            { id: 'ex09', name: 'Heel Raises',             sets: 3,  reps: 10, frequency: '3x/day',   directions: 'Rise onto balls of feet, hold 3 s, lower slowly.',                             tips: 'Control the eccentric phase.',    image: '/static/exercises/heel-raises.jpg',          video: 'https://youtu.be/cqDMYUaIXvw' },
+            { id: 'ex10', name: 'Wall Squats',             sets: 3,  reps: 10, frequency: '3x/week',  directions: 'Back against wall, slide to 45–60° knee bend, hold.',                          tips: 'Knees must not exceed 90°.',      image: '/static/exercises/wall-squats.jpg',          video: 'https://youtu.be/3J99J5NxNSQ' },
+            { id: 'ex11', name: 'Step-Ups',                sets: 3,  reps: 10, frequency: '3x/week',  directions: 'Step up with involved leg, full foot on step, then step down uninvolved first.', tips: 'Knee over second toe.',          image: '/static/exercises/step-ups.jpg',             video: 'https://youtu.be/xOcpKS8APxo' },
+            { id: 'ex12', name: 'Hamstring Curls',         sets: 3,  reps: 10, frequency: '3x/week',  directions: 'Stand holding wall. Curl heel toward buttock slowly, hold 3 s, lower.',         tips: 'Keep thighs even.',               image: '/static/exercises/hamstring-curls.jpg',      video: 'https://youtu.be/zRL2TBKc2cc' },
         ];
 
         let currentPlan = [];
 
-        // ── Core Logic ──
+        /* ── Render library ── */
         function renderLibrary(data) {
             const grid = document.getElementById('libraryGrid');
             grid.innerHTML = data.map(ex => {
                 const isAdded = currentPlan.some(p => p.name === ex.name);
                 return `
                 <div class="lib-card ${isAdded ? 'in-plan' : ''}">
-                    <h4>${ex.name}</h4>
-                    <p class="lib-preview">${ex.directions}</p>
-                    <button class="lib-add-btn" onclick="openModal('${ex.id}')" ${isAdded ? 'disabled' : ''}>
-                        ${isAdded ? '✓ Added' : '+ Add to Plan'}
-                    </button>
+                    <img class="lib-card-img" src="${ex.image}"
+                         alt="${ex.name}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="lib-card-img-fallback" style="display:none;">🏋️</div>
+                    <div class="lib-card-body">
+                        <h4>${ex.name}</h4>
+                        <p class="lib-preview">${ex.directions}</p>
+                        <button class="lib-add-btn" onclick="openModal('${ex.id}')" ${isAdded ? 'disabled' : ''}>
+                            ${isAdded ? '✓ Added' : '+ Add to Plan'}
+                        </button>
+                    </div>
                 </div>`;
             }).join('');
         }
@@ -435,57 +648,62 @@
             renderLibrary(filtered);
         }
 
+        /* ── Modal ── */
         function openModal(id) {
             const ex = DEFAULT_EXERCISES.find(e => e.id === id);
-            document.getElementById('mName').value = ex.name;
-            document.getElementById('mSets').value = ex.sets;
-            document.getElementById('mReps').value = ex.reps;
+            document.getElementById('mName').value      = ex.name;
+            document.getElementById('mSets').value      = ex.sets;
+            document.getElementById('mReps').value      = ex.reps;
             document.getElementById('mFrequency').value = ex.frequency;
             document.getElementById('mDirections').value = ex.directions;
-            document.getElementById('mTips').value = ex.tips;
+            document.getElementById('mTips').value      = ex.tips;
             document.getElementById('modalOverlay').style.display = 'flex';
         }
 
-        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
 
         function confirmAdd() {
             const ex = {
-                name: document.getElementById('mName').value,
-                sets: document.getElementById('mSets').value,
-                reps: document.getElementById('mReps').value,
-                frequency: document.getElementById('mFrequency').value,
+                name:       document.getElementById('mName').value,
+                sets:       document.getElementById('mSets').value,
+                reps:       document.getElementById('mReps').value,
+                frequency:  document.getElementById('mFrequency').value,
                 directions: document.getElementById('mDirections').value,
-                tips: document.getElementById('mTips').value
+                tips:       document.getElementById('mTips').value
             };
             currentPlan.push(ex);
             updatePlanUI();
             closeModal();
         }
 
+        /* ── Custom exercise ── */
         function addCustomExercise() {
             const ex = {
-                name: document.getElementById('cName').value,
-                sets: document.getElementById('cSets').value,
-                reps: document.getElementById('cReps').value,
-                frequency: document.getElementById('cFrequency').value,
+                name:       document.getElementById('cName').value,
+                sets:       document.getElementById('cSets').value,
+                reps:       document.getElementById('cReps').value,
+                frequency:  document.getElementById('cFrequency').value,
                 directions: document.getElementById('cDirections').value,
-                tips: document.getElementById('cTips').value
+                tips:       document.getElementById('cTips').value
             };
-            if (!ex.name || !ex.directions) return alert("Fill required fields");
+            if (!ex.name || !ex.directions) return alert('Please fill in the required fields.');
             currentPlan.push(ex);
             updatePlanUI();
             switchMode('library');
         }
 
+        /* ── Plan panel ── */
         function updatePlanUI() {
             const container = document.getElementById('planItems');
-            const saveBtn = document.getElementById('saveBtn');
-            const count = document.getElementById('planCount');
+            const saveBtn   = document.getElementById('saveBtn');
+            const count     = document.getElementById('planCount');
 
             if (currentPlan.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 20px;">No exercises added.</p>';
+                container.innerHTML = '<p style="text-align:center; color:#bdc3c7; padding:20px 0; font-size:0.95rem;">No exercises added yet.</p>';
                 saveBtn.disabled = true;
-                count.textContent = "";
+                count.textContent = '';
             } else {
                 saveBtn.disabled = false;
                 count.textContent = `(${currentPlan.length})`;
@@ -493,7 +711,7 @@
                     <div class="plan-item">
                         <div>
                             <h4>${ex.name}</h4>
-                            <small>${ex.sets}x${ex.reps} | ${ex.frequency}</small>
+                            <small>${ex.sets} sets × ${ex.reps} reps &nbsp;|&nbsp; ${ex.frequency}</small>
                         </div>
                         <button class="del-btn" onclick="removeEx(${i})">✕</button>
                     </div>
@@ -507,36 +725,59 @@
             updatePlanUI();
         }
 
+        /* ── Mode toggle ── */
         function switchMode(mode) {
             const isLib = mode === 'library';
             document.getElementById('btnLib').classList.toggle('active', isLib);
             document.getElementById('btnCustom').classList.toggle('active', !isLib);
-            document.getElementById('panelLib').style.display = isLib ? 'block' : 'none';
-            document.getElementById('panelCustom').style.display = isLib ? 'none' : 'block';
+            document.getElementById('panelLib').style.display    = isLib ? 'block' : 'none';
+            document.getElementById('panelCustom').style.display = isLib ? 'none'  : 'block';
         }
 
+        /* ── Load existing plan ── */
+        async function loadPatientPlan() {
+            const pid = document.getElementById('patientSelect').value;
+            if (!pid) return showToast('Please select a patient first.');
+            try {
+                const res  = await fetch(`${API_BASE_URL}/api/assignments/${pid}`);
+                const data = await res.json();
+                if (data.exercises && data.exercises.length > 0) {
+                    currentPlan = data.exercises;
+                    updatePlanUI();
+                    document.getElementById('planStatus').textContent = `✓ Plan loaded (${currentPlan.length} exercises)`;
+                } else {
+                    document.getElementById('planStatus').textContent = 'No existing plan found.';
+                }
+            } catch (e) {
+                document.getElementById('planStatus').textContent = 'Could not load — server offline.';
+            }
+        }
+
+        /* ── Save plan ── */
         async function savePlan() {
             const pid = document.getElementById('patientSelect').value;
-            if (!pid) return showToast("Select a patient!");
-
+            if (!pid) return showToast('Select a patient first!');
             try {
                 const res = await fetch(`${API_BASE_URL}/api/assignments/${pid}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ exercises: currentPlan })
                 });
-                if (res.ok) showToast("Plan Assigned!");
-            } catch (e) { showToast("Save failed."); }
+                if (res.ok) showToast('✓ Plan assigned successfully!');
+            } catch (e) {
+                showToast('Save failed — check server connection.');
+            }
         }
 
-        function showToast(m) {
+        /* ── Toast ── */
+        function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = m; t.style.display = 'block';
+            t.textContent = msg;
+            t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 3000);
         }
 
         document.addEventListener('DOMContentLoaded', () => renderLibrary(DEFAULT_EXERCISES));
     </script>
 </body>
-
 </html>
