@@ -11,12 +11,12 @@
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
             if (!isLoggedIn || userRole !== "clinician") {
-                window.location.replace("/login");
+                window.location.replace("login.html");
             }
         })();
     </script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="../static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 
@@ -111,11 +111,11 @@
             <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.8;">PRO</span></h1>
             <nav>
                 <ul>
-                    <li><a href="/clinician_home" class="active">Dashboard</a></li>
-                    <li><a href="/patient_list">Patient Queue</a></li>
-                    <li><a href="/analysis">Clinical Analytics</a></li>
-                    <li><a href="/assign_recovery">Assign Recovery Plan</a></li>
-                    <li><a href="/clinician_profile">My Profile</a></li>
+                    <li><a href="clinician_home.html" class="active">Dashboard</a></li>
+                    <li><a href="patient_list.html">Patient Queue</a></li>
+                    <li><a href="analysis.html">Clinical Analytics</a></li>
+                    <li><a href="assign_recovery.html">Assign Recovery Plan</a></li>
+                    <li><a href="clinician_profile.html">My Profile</a></li>
                 </ul>
             </nav>
         </div>
@@ -129,12 +129,12 @@
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
             </div>
-            <a href="/logout" class="logout-btn" id="logoutBtn">Secure Logout</a>
+            <a href="logout.html" class="logout-btn" id="logoutBtn">Secure Logout</a>
         </section>
 
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted loop playsinline>
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+                <source src="../static/knee_extension.mov" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
@@ -142,7 +142,7 @@
                 <h3>Real-Time Biomechanical Telemetry</h3>
                 <p>Monitor patient recovery trajectories with high-fidelity telemetry. Review automated ROM analytics and provide targeted interventions for outliers.</p>
                 <div class="cta-buttons" style="display: flex; justify-content: center;">
-                    <a href="/patient_list" class="btn-primary" style="text-decoration: none;">View Patient Queue</a>
+                    <a href="patient_list.html" class="btn-primary" style="text-decoration: none;">View Patient Queue</a>
                 </div>
             </div>
         </section>
@@ -179,7 +179,7 @@
             document.getElementById('logoutBtn').addEventListener('click', function (e) {
                 e.preventDefault();
                 localStorage.clear();
-                window.location.replace('/login');
+                window.location.replace('login.html');
             });
 
             // 4. VIDEO LOOP (4 SECONDS)

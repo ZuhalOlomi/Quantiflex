@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="../static/style.css">
     <style>
         /* Ensuring the toggle is functional and pretty */
         .toggle-wrapper {
@@ -85,10 +85,10 @@
             <h1 class="logo">QuantiFlex</h1>
             <nav>
                 <ul id="nav-menu">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/video">Video Demo</a></li>
-                    <li id="nav-auth-item"><a href="/login" id="auth-link" class="active">Login</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="video.html">Video Demo</a></li>
+                    <li id="nav-auth-item"><a href="login.html" id="auth-link" class="active">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -184,10 +184,10 @@
             // 3. STRICT REDIRECTS
             setTimeout(() => {
                 if (role === 'clinician') {
-                    window.location.href = "/clinician_home";
+                    window.location.href = "clinician_home.html";
                 } else {
                     // For patients, redirecting to home or analysis
-                    window.location.href = "/patient_home";
+                    window.location.href = "patient_home.html";
                 }
             }, 1500);
         }

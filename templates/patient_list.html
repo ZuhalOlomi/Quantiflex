@@ -11,12 +11,12 @@
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
             if (!isLoggedIn || userRole !== "clinician") {
-                window.location.replace("/login");
+                window.location.replace("login.html");
             }
         })();
     </script>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    <style>
+<link rel="stylesheet" href="../static/style.css">    <style>
         .list-container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
         
         .list-header {
@@ -65,11 +65,11 @@
             <h1 class="logo">QuantiFlex <span style="font-weight: 300; font-size: 0.6em; opacity: 0.7;">PRO</span></h1>
             <nav>
                 <ul>
-            <li><a href="/clinician_home">Dashboard</a></li>
-            <li><a href="/patient_list" class="active">Patient Queue</a></li>
-            <li><a href="/analysis">Clinical Analysis</a></li>
-            <li><a href="/assign_recovery">Assign Recovery</a></li>
-            <li><a href="/clinician_profile">My Profile</a></li>
+            <li><a href="clinician_home.html">Dashboard</a></li>
+            <li><a href="patient_list.html" class="active">Patient Queue</a></li>
+            <li><a href="analysis.html">Clinical Analysis</a></li>
+            <li><a href="assign_recovery.html">Assign Recovery</a></li>
+            <li><a href="clinician_profile.html">My Profile</a></li>
                 </ul>
             </nav>
         </div>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuantiFlex - Rehabilitation Tracking</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="../static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 
@@ -149,7 +149,7 @@
             color: white;
         }
     </style>
-    <script src="auth.js"></script>
+    <script src="../static/auth.js"></script>
 </head>
 
 <body>
@@ -157,10 +157,10 @@
         <h1>QuantiFlex</h1>
         <nav>
             <ul>
-                <li><a href="/" class="active">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/video">Video Demo</a></li>
-                <li><a href="/login">Login</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="video.html">Video Demo</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -168,7 +168,7 @@
     <main>
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted loop playsinline preload="auto">
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+                <source src="../static/knee_extension.mov" type="video/mp4">
             </video>
 
             <div class="hero-overlay"></div>
@@ -182,8 +182,8 @@
                     recovery outcomes.
                 </p>
                 <div class="cta-buttons">
-                    <a href="/video" class="btn-secondary" style="color: white; border-color: white;">Watch Demo</a>
-                    <a href="/login" class="btn-primary">Get Started</a>
+                    <a href="video.html" class="btn-secondary" style="color: white; border-color: white;">Watch Demo</a>
+                    <a href="login.html" class="btn-primary">Get Started</a>
                 </div>
             </div>
         </section>
@@ -191,8 +191,8 @@
             <h2>Ready to Transform Your Rehabilitation Journey?</h2>
             <p>Join hundreds of patients and clinicians already using UTBiome</p>
             <div class="login-options">
-                <a href="/login?role=patient" class="btn-primary">Patient Login</a>
-                <a href="/login?role=clinician" class="btn-secondary">Clinician Login</a>
+                <a href="login.html" class="btn-primary">Patient Login</a>
+                <a href="login.html" class="btn-secondary">Clinician Login</a>
             </div>
         </section>
 

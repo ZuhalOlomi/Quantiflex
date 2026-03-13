@@ -11,7 +11,7 @@
             const isLoggedIn = localStorage.getItem("loggedIn") === "true";
             const userRole = localStorage.getItem("userRole");
             if (!isLoggedIn || userRole !== "patient") {
-                window.location.replace("/login");
+                window.location.replace("login.html");
             }
         })();
 
@@ -21,7 +21,7 @@
 
     </script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="../static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 
@@ -117,10 +117,10 @@
             <h1 class="logo">QuantiFlex</h1>
             <nav>
                 <ul>
-                    <li><a href="/patient_home" class="active">Dashboard</a></li>
-                    <li><a href="/patient_analysis">My Analysis</a></li>
-                    <li><a href="/ex_recovery">My Recovery Plan</a></li>
-                    <li><a href="/demographics">My Profile</a></li>
+                    <li><a href="patient_home.html" class="active">Dashboard</a></li>
+                    <li><a href="patient_analysis.html">My Analysis</a></li>
+                    <li><a href="ex_recovery.html">My Recovery Plan</a></li>
+                    <li><a href="demographics.html">My Profile</a></li>
                 </ul>
             </nav>
         </div>
@@ -134,12 +134,12 @@
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
             </div>
-            <a href="/logout" class="logout-btn" id="logoutBtn">Secure Logout</a>
+            <a href="logout.html" class="logout-btn" id="logoutBtn">Secure Logout</a>
         </section>
 
         <section class="hero video-hero">
             <video id="bgVideo" autoplay muted loop playsinline>
-                <source src="{{ url_for('static', filename='knee_extension.mov') }}" type="video/mp4">
+                <source src="../static/knee_extension.mov" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
             <div class="hero-text gs_reveal">
@@ -147,7 +147,7 @@
                 <h3>Track Progress Visually</h3>
                 <p>Monitor your daily knee range of motion and stay on top of your rehabilitation goals.</p>
                 <div class="cta-buttons" style="margin-top: 25px; display: flex; justify-content: center;">
-                    <a href="/patient_analysis" class="btn-primary" style="text-decoration: none;">Start Session</a>
+                    <a href="patient_analysis.html" class="btn-primary" style="text-decoration: none;">Start Session</a>
                 </div>
             </div>
         </section>
