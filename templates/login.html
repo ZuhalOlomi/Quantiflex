@@ -9,14 +9,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         /* Ensuring the toggle is functional and pretty */
         .toggle-wrapper {
             margin-bottom: 25px;
             position: relative;
-            z-index: 10; /* Ensures it stays above any background animations */
+            z-index: 10;
+            /* Ensures it stays above any background animations */
         }
 
         .role-toggle {
@@ -43,7 +44,8 @@
 
         .toggle-btn {
             position: relative;
-            z-index: 2; /* Sits above the sliding blue background */
+            z-index: 2;
+            /* Sits above the sliding blue background */
             flex: 1;
             background: none;
             border: none;
@@ -68,7 +70,7 @@
             color: white;
             padding: 15px 25px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -107,7 +109,8 @@
                     <div class="toggle-wrapper">
                         <div class="role-toggle">
                             <div id="role-selector"></div>
-                            <button type="button" id="btn-patient" class="toggle-btn active" onclick="setRole('patient')">
+                            <button type="button" id="btn-patient" class="toggle-btn active"
+                                onclick="setRole('patient')">
                                 Patient
                             </button>
                             <button type="button" id="btn-clinician" class="toggle-btn" onclick="setRole('clinician')">
@@ -115,7 +118,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <input type="hidden" id="currentRole" value="patient">
 
                     <label for="username">Username</label>
@@ -126,7 +129,8 @@
 
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
                         <button type="submit" class="btn-primary" style="flex: 1;">Log In</button>
-                        <button type="button" onclick="signup()" class="btn-secondary" style="flex: 1; background-color: #555; color: white; border: none;">Sign Up</button>
+                        <button type="button" onclick="signup()" class="btn-secondary"
+                            style="flex: 1; background-color: #555; color: white; border: none;">Sign Up</button>
                     </div>
 
                     <div class="divider"><span>OR</span></div>
@@ -162,31 +166,31 @@
         }
 
         // 2. LOGIN & REDIRECTION LOGIC
-function login() {
-    const role = document.getElementById("currentRole").value;
-    const email = document.getElementById("username").value;
-    const notification = document.getElementById("successNotification");
-    const message = document.getElementById("successMessage");
-    
-    // 1. Show the success UI
-    if (notification) notification.style.display = "flex";
-    if (message) message.textContent = `Welcome! Opening ${role} portal...`;
-    
-    // 2. Save session data
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("userRole", role);
-    localStorage.setItem("userName", email.split('@')[0]);
+        function login() {
+            const role = document.getElementById("currentRole").value;
+            const email = document.getElementById("username").value;
+            const notification = document.getElementById("successNotification");
+            const message = document.getElementById("successMessage");
 
-    // 3. STRICT REDIRECTS
-    setTimeout(() => {
-        if (role === 'clinician') {
-            window.location.href = "/clinician_home";
-        } else {
-            // For patients, redirecting to home or analysis
-            window.location.href = "/patient_home";
+            // 1. Show the success UI
+            if (notification) notification.style.display = "flex";
+            if (message) message.textContent = `Welcome! Opening ${role} portal...`;
+
+            // 2. Save session data
+            localStorage.setItem("loggedIn", "true");
+            localStorage.setItem("userRole", role);
+            localStorage.setItem("userName", email.split('@')[0]);
+
+            // 3. STRICT REDIRECTS
+            setTimeout(() => {
+                if (role === 'clinician') {
+                    window.location.href = "/clinician_home";
+                } else {
+                    // For patients, redirecting to home or analysis
+                    window.location.href = "/patient_home";
+                }
+            }, 1500);
         }
-    }, 1500);
-}
 
         function signup() {
             alert("Redirecting to registration page...");
@@ -210,4 +214,5 @@ function login() {
         });
     </script>
 </body>
+
 </html>

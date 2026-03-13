@@ -4,114 +4,268 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UTBiome Knee Sleeve</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Demo Video | QuantiFlex</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* Internal overrides to ensure the Demo page looks premium */
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        .video-hero {
+            padding: 60px 20px;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .video-intro h2 {
+            font-family: "Georgia", serif;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .video-subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            line-height: 1.6;
+        }
+
+        /* Responsive Video Wrapper */
+        .video-container {
+            margin: 0 auto;
+            max-width: 900px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-caption {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Features Section */
+        .video-features {
+            background: white;
+            padding: 80px 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .video-features h2 {
+            text-align: center;
+            font-family: "Georgia", serif;
+            font-size: 2.2rem;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            padding: 30px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #4d82ad;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: #4d82ad;
+            margin-bottom: 12px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 20px;
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: #4d82ad;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #3a6385;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body>
     <header>
-        <h1>QuantiFlex</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/video" class="active">Demo Video</a></li>
-                <li><a href="/login">Login</a></li>
-            </ul>
-        </nav>
+        <div class="nav-container">
+            <h1 class="logo">QuantiFlex</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/video" class="active">Demo Video</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
         <section class="video-hero gs_reveal">
             <div class="video-intro">
-                <h2>See How QuantiFlex Transforms Knee Rehabilitation</h2>
-                <p class="video-subtitle">Watch our comprehensive demo to discover how our smart knee sleeve and
-                    analytics platform work together to improve patient outcomes</p>
+                <h2>Experience the Future of Recovery</h2>
+                <p class="video-subtitle">Watch our comprehensive demo to discover how the QuantiFlex smart sleeve provides real-time biomechanical telemetry for superior clinical outcomes.</p>
             </div>
 
             <div class="video-container gs_reveal gs_reveal_fromRight">
                 <div class="video-wrapper">
-                    <iframe src="XXX" title="UTBiome Knee Sleeve Demo Video"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                    <iframe src="https://www.youtube.com/embed/O92TCCmEqbk" title="QuantiFlex Demo Video" allowfullscreen></iframe>
                 </div>
                 <div class="video-caption">
-                    <p>Full demonstration of the UTBiome Knee Sleeve system - 5:24</p>
+                    <p><strong>System Walkthrough:</strong> Hardware Setup, Mobile Syncing, and Clinician Dashboard - 5:24</p>
                 </div>
             </div>
         </section>
 
         <section class="video-features">
-            <h2 class="gs_reveal">What You'll See in This Demo</h2>
+            <h2 class="gs_reveal">Key Demo Highlights</h2>
             <div class="features-grid">
                 <div class="feature-card gs_reveal gs_reveal_fromLeft">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Device Setup</h3>
-                    <p>Learn how to properly fit and calibrate the knee sleeve for accurate data collection</p>
+                    <span class="feature-icon">🎯</span>
+                    <h3>Precision Fitting</h3>
+                    <p>Observe the IMU sensor placement and how the compression sleeve ensures consistent anatomical alignment for accurate ROM data.</p>
                 </div>
                 <div class="feature-card gs_reveal">
-                    <div class="feature-icon">📊</div>
-                    <h3>Real-time Analytics</h3>
-                    <p>See live data streaming and how it translates to actionable insights for clinicians</p>
+                    <span class="feature-icon">📊</span>
+                    <h3>Live Telemetry</h3>
+                    <p>Watch as patient movements are captured in real-time and transmitted via Bluetooth to our secure cloud analytics engine.</p>
                 </div>
                 <div class="feature-card gs_reveal gs_reveal_fromRight">
-                    <div class="feature-icon">👨‍⚕️</div>
-                    <h3>Clinical Integration</h3>
-                    <p>Watch how physiotherapists use the dashboard to monitor multiple patients</p>
+                    <span class="feature-icon">👨‍⚕️</span>
+                    <h3>Clinician Oversight</h3>
+                    <p>Review the Pro Dashboard where surgeons can monitor longitudinal recovery graphs and identify outliers instantly.</p>
                 </div>
             </div>
         </section>
 
         <section class="cta-section gs_reveal">
             <div class="cta-content">
-                <h2>Ready to Experience Quantiflex?</h2>
-                <p>Start your free trial or schedule a personalized demo with our team</p>
+                <h2>Ready to Modernize Your Clinic?</h2>
+                <p>Join the University of Toronto research network and start your pilot program today.</p>
                 <div class="cta-buttons">
-                    <a href="/login" class="btn-primary">Get Started</a>
-                    <a href="/about#contact" class="btn-primary">Contact Sales</a>
+                    <a href="/login" class="btn-primary">Clinician Login</a>
+                    <a href="/about" class="btn-primary" style="background: transparent; border: 2px solid #4d82ad;">Learn More</a>
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>© 2025-2026 UTBiome | Quantiflex</p>
+        <p>© 2025-2026 UTBiome | QuantiFlex Rehabilitation Systems</p>
     </footer>
 
     <script>
-        // GSAP Scroll Animation
-        function animateFrom(elem, direction) {
-            direction = direction || 1;
-            var x = 0, y = direction * 100;
-            if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
-            else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
-            elem.style.transform = `translate(${x}px, ${y}px)`;
-            elem.style.opacity = "0";
-            gsap.fromTo(elem, { x, y, autoAlpha: 0 }, {
-                duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
-            });
-        }
-
-        function hide(elem) {
-            gsap.set(elem, { autoAlpha: 0 });
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
-            gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
-                hide(elem);
-                ScrollTrigger.create({
-                    trigger: elem,
-                    onEnter: function () { animateFrom(elem) },
-                    onEnterBack: function () { animateFrom(elem, -1) },
-                    onLeave: function () { hide(elem) }
+
+            // Optimized GSAP Reveal Function
+            function initReveals() {
+                gsap.utils.toArray(".gs_reveal").forEach(function (elem) {
+                    let x = 0, y = 50;
+                    
+                    // Determine starting position based on class
+                    if (elem.classList.contains("gs_reveal_fromLeft")) { x = -100; y = 0; }
+                    else if (elem.classList.contains("gs_reveal_fromRight")) { x = 100; y = 0; }
+
+                    // Initial state
+                    gsap.set(elem, { x: x, y: y, autoAlpha: 0 });
+
+                    // ScrollTrigger animation
+                    ScrollTrigger.create({
+                        trigger: elem,
+                        start: "top 85%", // Trigger when element is 85% from top
+                        onEnter: function () {
+                            gsap.to(elem, {
+                                duration: 1.5,
+                                x: 0,
+                                y: 0,
+                                autoAlpha: 1,
+                                ease: "expo.out",
+                                overwrite: "auto"
+                            });
+                        },
+                        // Keep content visible once scrolled (Standard professional behavior)
+                        once: true 
+                    });
                 });
-            });
+            }
+
+            initReveals();
         });
     </script>
 </body>
-
 </html>
