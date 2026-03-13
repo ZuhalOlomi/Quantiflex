@@ -156,6 +156,69 @@
         .trend-down { background: rgba(231,76,60,0.12);   color: #e74c3c; }
         .trend-flat { background: rgba(149,165,166,0.15); color: #7f8c8d; }
 
+        /* ── Healthy comparison cards ── */
+        .cmp-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .cmp-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+        }
+        .cmp-card-header {
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e1e8ed;
+            font-size: 0.82em;
+            font-weight: 600;
+            color: #333;
+        }
+        .cmp-card-body { padding: 12px 14px; }
+        .cmp-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .cmp-row-label { font-size: 0.72em; color: #aaa; }
+        .cmp-row-val   { font-size: 1.05em; font-weight: 700; }
+        .cmp-bar-track {
+            position: relative;
+            background: #f0f0f0;
+            border-radius: 4px;
+            height: 10px;
+            margin: 9px 0 5px;
+            overflow: visible;
+        }
+        .cmp-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease, background 0.6s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .cmp-ref-tick {
+            position: absolute;
+            top: -5px;
+            width: 3px;
+            height: 20px;
+            background: #27ae60;
+            border-radius: 2px;
+            z-index: 2;
+            box-shadow: 0 0 4px rgba(39,174,96,0.6);
+        }
+        .cmp-diff-label {
+            font-size: 0.71em;
+            text-align: right;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
         /* ── Storage bar ── */
         .storage-bar-wrap {
             display: flex; align-items: center; gap: 10px;
@@ -193,7 +256,11 @@
 
         @media (max-width: 860px) {
             .two-col { grid-template-columns: 1fr; }
+            .cmp-grid { grid-template-columns: 1fr 1fr; }
             .ratio-legend { flex-wrap: wrap; }
+        }
+        @media (max-width: 500px) {
+            .cmp-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -272,6 +339,91 @@
                     </div>
                 </div>
                 <div class="chart-body-mid"><canvas id="ratioChart"></canvas></div>
+            </div>
+
+            <!-- Healthy Baseline Comparison -->
+            <div class="section-title" style="margin-bottom:10px;">
+                <span>🩺 Healthy Baseline Comparison</span>
+                <span style="font-size:0.74em;color:#bbb;font-weight:400;">Based on reference session &middot; latest session shown &middot; <span style="color:#27ae60;">▌</span> green tick = healthy target</span>
+            </div>
+            <div class="cmp-grid">
+
+                <div class="cmp-card">
+                    <div class="cmp-card-header">Avg Knee Flexion</div>
+                    <div class="cmp-card-body">
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Your latest</span>
+                            <span class="cmp-row-val" id="cmpAvgFlex" style="color:#e74c3c;">—°</span>
+                        </div>
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Healthy ref</span>
+                            <span class="cmp-row-val" style="color:#27ae60;">91.6°</span>
+                        </div>
+                        <div class="cmp-bar-track">
+                            <div class="cmp-bar-fill" id="cmpAvgFlexBar" style="background:#e74c3c;width:0%;"></div>
+                            <div class="cmp-ref-tick" style="left:66.7%;"></div>
+                        </div>
+                        <div class="cmp-diff-label" id="cmpAvgFlexLabel" style="color:#bbb;">—</div>
+                    </div>
+                </div>
+
+                <div class="cmp-card">
+                    <div class="cmp-card-header">Peak Knee Flexion</div>
+                    <div class="cmp-card-body">
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Your latest</span>
+                            <span class="cmp-row-val" id="cmpPeakFlex" style="color:#ad1c1c;">—°</span>
+                        </div>
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Healthy ref</span>
+                            <span class="cmp-row-val" style="color:#27ae60;">109.7°</span>
+                        </div>
+                        <div class="cmp-bar-track">
+                            <div class="cmp-bar-fill" id="cmpPeakFlexBar" style="background:#ad1c1c;width:0%;"></div>
+                            <div class="cmp-ref-tick" style="left:66.7%;"></div>
+                        </div>
+                        <div class="cmp-diff-label" id="cmpPeakFlexLabel" style="color:#bbb;">—</div>
+                    </div>
+                </div>
+
+                <div class="cmp-card">
+                    <div class="cmp-card-header">EMG Ch1 Avg Intensity</div>
+                    <div class="cmp-card-body">
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Your latest</span>
+                            <span class="cmp-row-val" id="cmpEmg1" style="color:#4d82ad;">—</span>
+                        </div>
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Healthy ref</span>
+                            <span class="cmp-row-val" style="color:#27ae60;">417</span>
+                        </div>
+                        <div class="cmp-bar-track">
+                            <div class="cmp-bar-fill" id="cmpEmg1Bar" style="background:#4d82ad;width:0%;"></div>
+                            <div class="cmp-ref-tick" style="left:66.7%;"></div>
+                        </div>
+                        <div class="cmp-diff-label" id="cmpEmg1Label" style="color:#bbb;">—</div>
+                    </div>
+                </div>
+
+                <div class="cmp-card">
+                    <div class="cmp-card-header">EMG Ch2 Avg Intensity</div>
+                    <div class="cmp-card-body">
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Your latest</span>
+                            <span class="cmp-row-val" id="cmpEmg2" style="color:#e67e22;">—</span>
+                        </div>
+                        <div class="cmp-row">
+                            <span class="cmp-row-label">Healthy ref</span>
+                            <span class="cmp-row-val" style="color:#27ae60;">295</span>
+                        </div>
+                        <div class="cmp-bar-track">
+                            <div class="cmp-bar-fill" id="cmpEmg2Bar" style="background:#e67e22;width:0%;"></div>
+                            <div class="cmp-ref-tick" style="left:66.7%;"></div>
+                        </div>
+                        <div class="cmp-diff-label" id="cmpEmg2Label" style="color:#bbb;">—</div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Trends -->
@@ -390,8 +542,8 @@
                 document.body.appendChild(link); link.click(); document.body.removeChild(link);
             };
         }
-        const historyBody     = document.getElementById('historyBody');
 
+        const historyBody = document.getElementById('historyBody');
         const HISTORY_KEY  = 'utbiome_history';
         const MAX_SESSIONS = 15;
         const DOWNSAMPLE_N = 2;
@@ -457,7 +609,6 @@
             return `rgb(${CR.join(',')})`;
         }
 
-        // ── Health zone plugin ────────────────────────────────────────────
         // ── Charts ────────────────────────────────────────────────────────
         const emgChart = new Chart(document.getElementById('emgChart').getContext('2d'),{
             type:'line',
@@ -517,7 +668,7 @@
         const emg1TrendChart     = makeTrend('emg1TrendChart',    '#4d82ad','ADC');
         const emg2TrendChart     = makeTrend('emg2TrendChart',    '#e67e22','ADC');
 
-        // ── Clear charts (in-place) ───────────────────────────────────────
+        // ── Clear charts ─────────────────────────────────────────────────
         function clearChart(chart) {
             chart.data.labels.length = 0;
             chart.data.datasets.forEach(d => { d.data.length = 0; });
@@ -547,6 +698,68 @@
             if(Math.abs(pct)<2){el.textContent='→ Stable';el.className='trend-badge trend-flat';}
             else if(pct>0){el.textContent=`↑ +${pct.toFixed(1)}%`;el.className='trend-badge trend-up';}
             else{el.textContent=`↓ ${pct.toFixed(1)}%`;el.className='trend-badge trend-down';}
+        }
+
+        // ── Healthy baseline comparison ───────────────────────────────────
+        // Stats derived from not_bad_data.csv reference session
+        const HEALTHY = { avgFlex: 91.6, peakFlex: 109.7, emg1: 417, emg2: 295 };
+
+        function updateComparison() {
+            const history = loadHistory();
+            if (!history.length) return;
+            const latest = history[0];
+
+            const avgFlex  = parseFloat(latest.avgDelta) || 0;
+            const peakFlex = parseFloat(latest.peakKnee) || 0;
+            const emg1     = parseInt((latest.avg||'').split('/')[0]) || 0;
+            const emg2     = parseInt((latest.avg||'').split('/')[1]) || 0;
+
+            // maxVal = 1.5× ref so the ref tick lands at 66.7% across the bar
+            function ombreColor(val, ref) {
+                // 0 = fully red, 1 = fully green, based on closeness to ref
+                const closeness = Math.max(0, 1 - Math.abs(val - ref) / ref);
+                // red: 231,76,60  →  green: 39,174,96
+                const r = Math.round(231 + (39  - 231) * closeness);
+                const g = Math.round(76  + (174 - 76)  * closeness);
+                const b = Math.round(60  + (96  - 60)  * closeness);
+                // slightly lighter midpoint colour for gradient end
+                const r2 = Math.round(r * 0.7);
+                const g2 = Math.round(g * 0.7 + 80);
+                const b2 = Math.round(b * 0.85);
+                return `linear-gradient(to right, rgb(${r},${g},${b}), rgb(${r2},${g2},${b2}))`;
+            }
+
+            function setCard(valId, barId, lblId, val, ref, isFloat) {
+                const valEl = document.getElementById(valId);
+                const barEl = document.getElementById(barId);
+                const lblEl = document.getElementById(lblId);
+                if (!valEl) return;
+
+                const unit = isFloat ? '°' : '';
+                valEl.textContent = val > 0 ? (isFloat ? val.toFixed(1) : Math.round(val)) + unit : '—' + unit;
+
+                if (val <= 0) {
+                    barEl.style.width = '0%';
+                    lblEl.textContent = 'No data yet';
+                    lblEl.style.color = '#bbb';
+                    return;
+                }
+
+                const maxVal = ref * 1.5;
+                barEl.style.width = Math.min((val / maxVal) * 100, 100) + '%';
+                barEl.style.background = ombreColor(val, ref);
+
+                const diff = val - ref;
+                const diffPct = ((diff / ref) * 100).toFixed(1);
+                const absPct = Math.abs(diff / ref);
+                lblEl.textContent = (diff >= 0 ? '+' : '') + diffPct + '% vs healthy ref';
+                lblEl.style.color = absPct <= 0.10 ? '#27ae60' : val < ref ? '#e74c3c' : '#4d82ad';
+            }
+
+            setCard('cmpAvgFlex',  'cmpAvgFlexBar',  'cmpAvgFlexLabel',  avgFlex,  HEALTHY.avgFlex,  true);
+            setCard('cmpPeakFlex', 'cmpPeakFlexBar', 'cmpPeakFlexLabel', peakFlex, HEALTHY.peakFlex, true);
+            setCard('cmpEmg1',     'cmpEmg1Bar',     'cmpEmg1Label',     emg1,     HEALTHY.emg1,     false);
+            setCard('cmpEmg2',     'cmpEmg2Bar',     'cmpEmg2Label',     emg2,     HEALTHY.emg2,     false);
         }
 
         // ── Update trend charts ───────────────────────────────────────────
@@ -617,13 +830,13 @@
 
             let head = 0, paused = false, finished = false;
 
-            const scrollWrap    = document.getElementById('replayScrollWrap');
-            const scrollBar     = document.getElementById('replayScrollBar');
-            const scrollLbl     = document.getElementById('replayScrollLabel');
-            const playPauseBtn  = document.getElementById('replayPlayPauseBtn');
-            const restartBtn    = document.getElementById('replayRestartBtn');
-            const speedSlider   = document.getElementById('speedSlider');
-            const speedLabel    = document.getElementById('speedLabel');
+            const scrollWrap   = document.getElementById('replayScrollWrap');
+            const scrollBar    = document.getElementById('replayScrollBar');
+            const scrollLbl    = document.getElementById('replayScrollLabel');
+            const playPauseBtn = document.getElementById('replayPlayPauseBtn');
+            const restartBtn   = document.getElementById('replayRestartBtn');
+            const speedSlider  = document.getElementById('speedSlider');
+            const speedLabel   = document.getElementById('speedLabel');
 
             scrollBar.value = 0;
             scrollLbl.textContent = 'Replaying...';
@@ -641,7 +854,6 @@
                 return Math.max(8, Math.round(BASE_INTERVAL_MS / parseFloat(speedSlider.value)));
             }
 
-            // In-place fill helper
             function fill(arr,src,from,to){arr.length=0;for(let i=from;i<to;i++)arr.push(src[i]);}
 
             function renderWindow(startOverride) {
@@ -651,7 +863,6 @@
                 } else {
                     ve = head; vs = Math.max(0, ve - WINDOW);
                 }
-                // Update scrub bar position
                 const pct = allLbl.length > 1 ? (head / (allLbl.length - 1)) * 100 : 100;
                 scrollBar.value = pct;
                 scrollLbl.textContent = `${head} / ${allLbl.length}`;
@@ -685,40 +896,29 @@
                     head = data.length - 1;
                     renderWindow();
                     scrollLbl.textContent = '← scrub to explore →';
-                    setPlayPauseBtn(true); // show Play to allow restart-from-end
+                    setPlayPauseBtn(true);
                     return;
                 }
                 head++;
                 renderWindow();
             }
 
-            // Play / Pause
             playPauseBtn.onclick = () => {
                 if (finished) {
-                    // Restart from beginning
-                    finished = false;
-                    head = 0;
-                    paused = false;
-                    setPlayPauseBtn(false);
-                    startInterval();
-                    return;
+                    finished = false; head = 0; paused = false;
+                    setPlayPauseBtn(false); startInterval(); return;
                 }
                 paused = !paused;
                 setPlayPauseBtn(paused);
                 if (!paused && !activeReplayInterval) startInterval();
             };
 
-            // Restart
             restartBtn.onclick = () => {
-                clearInterval(activeReplayInterval);
-                activeReplayInterval = null;
+                clearInterval(activeReplayInterval); activeReplayInterval = null;
                 head = 0; paused = false; finished = false;
-                setPlayPauseBtn(false);
-                renderWindow();
-                startInterval();
+                setPlayPauseBtn(false); renderWindow(); startInterval();
             };
 
-            // Scrub bar — works anytime (paused or playing)
             scrollBar.oninput = () => {
                 head = Math.round((scrollBar.value / 100) * (allLbl.length - 1));
                 renderWindow();
@@ -726,14 +926,10 @@
                 else if (!paused && !activeReplayInterval) startInterval();
             };
 
-            // Speed slider
             speedSlider.oninput = () => {
                 const s = parseFloat(speedSlider.value);
                 speedLabel.textContent = s % 1 === 0 ? s + '×' : s.toFixed(1) + '×';
-                if (!paused && !finished) {
-                    clearInterval(activeReplayInterval);
-                    startInterval();
-                }
+                if (!paused && !finished) { clearInterval(activeReplayInterval); startInterval(); }
             };
 
             startInterval();
@@ -798,7 +994,6 @@
                 });
                 if(!data.length){alert('No valid rows found in CSV.');return;}
 
-                // Save to history
                 const ch1=data.map(d=>d.v1).filter(v=>v<2800);
                 const ch2=data.map(d=>d.v2).filter(v=>v<2800);
                 const peak1=Math.max(...ch1),peak2=Math.max(...ch2);
@@ -819,11 +1014,9 @@
                     avgDelta,peakKnee,samples:downsampled};
                 let history=loadHistory();
                 if(!history.some(h=>h.id===sess.id)){
-                    history.unshift(sess);saveHistory(history.slice(0,MAX_SESSIONS));
+                    history.unshift(sess); saveHistory(history.slice(0,MAX_SESSIONS));
                 }
-                renderHistory();updateTrends();
-
-                // Replay it immediately
+                renderHistory(); updateTrends(); updateComparison();
                 replaySession(sess);
                 csvFileInput.value='';
             };
@@ -833,23 +1026,22 @@
         clearHistoryBtn.onclick=()=>{
             if(confirm('Delete all session history? This cannot be undone.')){
                 localStorage.removeItem(HISTORY_KEY);
-                renderHistory();updateTrends();
-                clearChart(emgChart);clearChart(imuChart);clearChart(ratioChart);
+                renderHistory(); updateTrends(); updateComparison();
+                clearChart(emgChart); clearChart(imuChart); clearChart(ratioChart);
                 document.getElementById('replayScrollWrap').classList.remove('visible');
             }
         };
 
         const exerciseFilter = document.getElementById('exerciseFilter');
-        exerciseFilter.onchange = () => { updateTrends(); renderHistory(); };
+        exerciseFilter.onchange = () => { updateTrends(); renderHistory(); updateComparison(); };
 
-        // Refresh exercise list when tab gains focus (in case record page added new ones)
-        window.addEventListener('focus', () => { populateFilterSelect(); renderHistory(); updateTrends(); });
+        window.addEventListener('focus', () => { populateFilterSelect(); renderHistory(); updateTrends(); updateComparison(); });
 
         // ── Init ──────────────────────────────────────────────────────────
         renderHistory();
         updateTrends();
+        updateComparison();
 
-        // Auto-replay most recent session if one exists
         const history=loadHistory();
         if(history.length) replaySession(history[0]);
     });
